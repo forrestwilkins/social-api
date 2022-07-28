@@ -1,6 +1,6 @@
 ## Social API
 
-E-commerce platform API built with NestJS and TypeORM 🏜🌴
+Social networking API
 
 ## WIP
 
@@ -62,11 +62,6 @@ $ yarn test:cov
 # Enable pre-commit hook with Husky
 $ npx husky install && npx husky add .husky/pre-commit "yarn lint-staged"
 ```
-
-## Tools to get Involved and Collaborate
-
-- Discord: https://discord.gg/UbmSm6Kb47, or message me at **forrest#2807**
-- Notion: A link to the Notion page can be obtained upon request.
 
 ## Contributions
 
