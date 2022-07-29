@@ -11,25 +11,17 @@ import { Image } from "../../images/models/image.model";
 
 @ObjectType()
 @Entity()
-export class Product {
+export class Post {
   @Field((_type) => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
   @Field()
   @Column()
-  name: string;
-
-  @Field()
-  @Column()
-  description: string;
-
-  @Field((_type) => Int)
-  @Column()
-  price: number;
+  body: string;
 
   @Field((_type) => [Image])
-  @OneToMany(() => Image, (image) => image.product)
+  @OneToMany(() => Image, (image) => image.post)
   images: Image[];
 
   @Field()

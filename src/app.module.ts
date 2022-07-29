@@ -7,7 +7,7 @@ import { AppResolver } from "./app.resolver";
 import { AuthModule } from "./auth/auth.module";
 import { ImagesModule } from "./images/images.module";
 import ormconfig from "./ormconfig";
-import { ProductsModule } from "./products/products.module";
+import { PostsModule } from "./posts/posts.module";
 import { UsersModule } from "./users/users.module";
 
 @Module({
@@ -21,7 +21,7 @@ import { UsersModule } from "./users/users.module";
     }),
     AuthModule,
     ImagesModule,
-    ProductsModule,
+    PostsModule,
     UsersModule,
   ],
   controllers: [AppController],

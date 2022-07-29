@@ -9,20 +9,20 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { UploadImages } from "../images/decorators/upload-images.decorator";
-import { ProductsService } from "./products.service";
+import { PostsService } from "./posts.service";
 
-@ApiTags("products")
-@Controller("products")
-export class ProductsController {
-  constructor(private readonly service: ProductsService) {}
+@ApiTags("posts")
+@Controller("posts")
+export class PostsController {
+  constructor(private readonly service: PostsService) {}
 
-  @Post(":productId/upload-images")
+  @Post(":postId/upload-images")
   @UploadImages()
   @UseGuards(JwtAuthGuard)
-  async uploadProductImages(
-    @Param("productId", ParseIntPipe) productId: number,
+  async uploadPostImages(
+    @Param("postId", ParseIntPipe) postId: number,
     @UploadedFiles() images: Express.Multer.File[]
   ) {
-    return this.service.saveProductImages(productId, images);
+    return this.service.savePostImages(postId, images);
   }
 }

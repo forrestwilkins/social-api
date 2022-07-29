@@ -4,50 +4,48 @@ import { Repository } from "typeorm";
 import { deleteImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
-import { ProductInput } from "./models/product-input.model";
-import { Product } from "./models/product.model";
+import { PostInput } from "./models/post-input.model";
+import { Post } from "./models/post.model";
 
 @Injectable()
-export class ProductsService {
+export class PostsService {
   constructor(
-    @InjectRepository(Product)
-    private repository: Repository<Product>,
+    @InjectRepository(Post)
+    private repository: Repository<Post>,
 
     private readonly imagesService: ImagesService
   ) {}
 
-  async getProduct(id: number, withImages?: boolean) {
+  async getPost(id: number, withImages?: boolean) {
     return this.repository.findOne({
       where: { id },
       relations: withImages ? ["images"] : [],
     });
   }
 
-  async getProducts(withImages?: boolean) {
-    const products = await this.repository.find({
+  async getPosts(withImages?: boolean) {
+    const posts = await this.repository.find({
       relations: withImages ? ["images"] : [],
     });
-    return products.sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-    );
+    return posts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
-  async createProduct(data: ProductInput) {
+  async createPost(data: PostInput) {
     return this.repository.save(data);
   }
 
-  async updateProduct(productId: number, data: ProductInput) {
-    await this.repository.update(productId, data);
-    return this.getProduct(productId);
+  async updatePost(postId: number, data: PostInput) {
+    await this.repository.update(postId, data);
+    return this.getPost(postId);
   }
 
-  async saveProductImages(productId: number, images: Express.Multer.File[]) {
+  async savePostImages(postId: number, images: Express.Multer.File[]) {
     const savedImages: Image[] = [];
 
     for (const { filename } of images) {
       const image = await this.imagesService.createImage({
         filename,
-        productId,
+        postId,
       });
       savedImages.push(image);
     }
@@ -55,12 +53,12 @@ export class ProductsService {
     return savedImages;
   }
 
-  async deleteProduct(productId: number) {
-    const { images } = await this.getProduct(productId, true);
+  async deletePost(postId: number) {
+    const { images } = await this.getPost(postId, true);
     for (const { filename } of images) {
       await deleteImage(filename);
     }
-    this.repository.delete(productId);
+    this.repository.delete(postId);
     return true;
   }
 }
