@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Product } from "../../products/models/product.model";
+import { Post } from "../../posts/models/post.model";
 
 @ObjectType()
 @Entity()
@@ -22,13 +22,13 @@ export class Image {
 
   @Field()
   @Column()
-  productId: number;
+  postId: number;
 
-  @Field((_type) => Product)
-  @ManyToOne(() => Product, (product) => product.images, {
+  @Field((_type) => Post)
+  @ManyToOne(() => Post, (product) => product.images, {
     onDelete: "CASCADE",
   })
-  product: Product;
+  product: Post;
 
   @Field()
   @CreateDateColumn()
