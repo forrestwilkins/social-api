@@ -21,7 +21,7 @@ export class Post {
   body: string;
 
   @Field((_type) => [Image])
-  @OneToMany(() => Image, (image) => image.product)
+  @OneToMany(() => Image, (image) => image.post)
   images: Image[];
 
   @Field()

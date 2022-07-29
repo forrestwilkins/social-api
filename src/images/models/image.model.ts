@@ -25,10 +25,10 @@ export class Image {
   postId: number;
 
   @Field((_type) => Post)
-  @ManyToOne(() => Post, (product) => product.images, {
+  @ManyToOne(() => Post, (post) => post.images, {
     onDelete: "CASCADE",
   })
-  product: Post;
+  post: Post;
 
   @Field()
   @CreateDateColumn()
