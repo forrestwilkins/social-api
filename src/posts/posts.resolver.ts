@@ -18,7 +18,12 @@ export class PostsResolver {
 
   @Query(() => [Post])
   async posts() {
-    return this.service.getPosts(true);
+    return this.service.getPosts();
+  }
+
+  @Query(() => [Post])
+  async postsByUserName(@Args("name") name: string) {
+    return this.service.getPosts({ user: { name } });
   }
 
   @UseGuards(GqlAuthGuard)
