@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
+import { Post } from "../../posts/models/post.model";
 
 @Entity()
 @ObjectType()
@@ -27,6 +28,12 @@ export class User {
   @Column()
   @Field()
   password: string;
+
+  @OneToMany(() => Post, (post) => post.user, {
+    cascade: true,
+  })
+  @Field((_type) => [Post])
+  posts: Post[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     cascade: true,

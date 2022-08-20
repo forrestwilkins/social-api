@@ -4,6 +4,8 @@ import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { Post } from "./models/post.model";
 import { PostInput } from "./models/post-input.model";
 import { PostsService } from "./posts.service";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import { User } from "../users/models/user.model";
 
 @Resolver((_of: Post) => Post)
 export class PostsResolver {
@@ -21,8 +23,11 @@ export class PostsResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Post)
-  async createPost(@Args("postData") postData: PostInput) {
-    return this.service.createPost(postData);
+  async createPost(
+    @Args("postData") postData: PostInput,
+    @CurrentUser() user: User
+  ) {
+    return this.service.createPost(user.id, postData);
   }
 
   @UseGuards(GqlAuthGuard)

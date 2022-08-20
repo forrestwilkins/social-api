@@ -30,8 +30,8 @@ export class PostsService {
     return posts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
-  async createPost(data: PostInput) {
-    return this.repository.save(data);
+  async createPost(userId: number, postData: PostInput) {
+    return this.repository.save({ ...postData, userId });
   }
 
   async updatePost(postId: number, data: PostInput) {
