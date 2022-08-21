@@ -3,6 +3,8 @@ import * as fs from "fs";
 import { extname } from "path";
 import { promisify } from "util";
 
+export const DEFAULT_IMAGES_SIZE = 10;
+
 export const imageFileFilter = (
   _req: Request,
   file: Express.Multer.File,
@@ -23,13 +25,18 @@ export const editFileName = (
   callback(null, `${generateImageName()}${fileExtName}`);
 };
 
-export const generateImageName = (): string =>
+export const generateImageName = () =>
   Math.random()
     .toString(36)
     .slice(2, 10)
     .split("")
     .map((c) => (Math.random() < 0.5 ? c : c.toUpperCase()))
     .join("");
+
+export const randomDefaultImagePath = () =>
+  `./src/images/assets/defaults/${
+    Math.floor(Math.random() * DEFAULT_IMAGES_SIZE) + 1
+  }.jpeg`;
 
 export const deleteImage = async (filename: string) => {
   const unlinkAsync = promisify(fs.unlink);

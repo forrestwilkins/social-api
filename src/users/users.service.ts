@@ -1,7 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import * as fs from "fs";
 import { FindOneOptions, Repository } from "typeorm";
-import { ImagesService } from "../images/images.service";
+import {
+  generateImageName,
+  randomDefaultImagePath,
+} from "../images/image.utils";
+import { ImagesService, ImageTypes } from "../images/images.service";
 import { User } from "./models/user.model";
 
 @Injectable()
@@ -31,19 +36,42 @@ export class UsersService {
   }
 
   async createUser(data: Partial<User>) {
-    return this.usersRepository.save(data);
+    const user = await this.usersRepository.save(data);
+    await this.saveDefaultProfilePicture(user.id);
+    return user;
   }
 
   async updateUser(userId: number, data: Partial<User>) {
     return this.usersRepository.update(userId, data);
   }
 
-  async saveProfilePicture(postId: number, { filename }: Express.Multer.File) {
+  // TODO: Consider moving to image service
+  async saveProfilePicture(userId: number, { filename }: Express.Multer.File) {
     return this.imagesService.createImage({
+      imageType: ImageTypes.ProfilePicture,
       filename,
-      postId,
-      imageType: "profilePicture",
+      userId,
     });
+  }
+
+  async saveDefaultProfilePicture(userId: number) {
+    const sourcePath = randomDefaultImagePath();
+    const filename = `${generateImageName()}.jpeg`;
+    const copyPath = `./uploads/${filename}`;
+
+    fs.copyFile(sourcePath, copyPath, (err) => {
+      if (err) {
+        throw new Error(`Failed to save default profile picture: ${err}`);
+      }
+    });
+
+    const image = await this.imagesService.createImage({
+      imageType: ImageTypes.ProfilePicture,
+      filename,
+      userId,
+    });
+
+    return image;
   }
 
   async deleteUser(userId: number) {

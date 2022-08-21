@@ -22,7 +22,7 @@ export class Image {
   filename: string;
 
   @Field()
-  @Column()
+  @Column({ nullable: true })
   imageType: string;
 
   @Field((_type) => Post)
@@ -32,7 +32,7 @@ export class Image {
   post: Post;
 
   @Field()
-  @Column()
+  @Column({ nullable: true })
   postId: number;
 
   @Field((_type) => User)
@@ -42,7 +42,7 @@ export class Image {
   user: User;
 
   @Field()
-  @Column()
+  @Column({ nullable: true })
   userId: number;
 
   @Field()
