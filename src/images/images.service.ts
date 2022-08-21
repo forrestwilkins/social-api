@@ -4,6 +4,10 @@ import { Repository } from "typeorm";
 import { deleteImage } from "./image.utils";
 import { Image } from "./models/image.model";
 
+export const enum ImageTypes {
+  ProfilePicture = "profilePicture",
+}
+
 @Injectable()
 export class ImagesService {
   constructor(

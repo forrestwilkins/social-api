@@ -1,13 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOneOptions, Repository } from "typeorm";
+import { ImagesService } from "../images/images.service";
 import { User } from "./models/user.model";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>
+    private usersRepository: Repository<User>,
+    private readonly imagesService: ImagesService
   ) {}
 
   async getUser(options: FindOneOptions<User>) {
@@ -34,6 +36,14 @@ export class UsersService {
 
   async updateUser(userId: number, data: Partial<User>) {
     return this.usersRepository.update(userId, data);
+  }
+
+  async saveProfilePicture(postId: number, { filename }: Express.Multer.File) {
+    return this.imagesService.createImage({
+      filename,
+      postId,
+      imageType: "profilePicture",
+    });
   }
 
   async deleteUser(userId: number) {
