@@ -45,7 +45,14 @@ export class UsersService {
     return this.usersRepository.update(userId, data);
   }
 
-  // TODO: Consider moving to image service
+  async getProfilePicture(userId: number) {
+    const profilePictures = await this.imagesService.getImages({
+      imageType: ImageTypes.ProfilePicture,
+      userId,
+    });
+    return profilePictures[0];
+  }
+
   async saveProfilePicture(userId: number, { filename }: Express.Multer.File) {
     return this.imagesService.createImage({
       imageType: ImageTypes.ProfilePicture,
