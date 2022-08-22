@@ -23,8 +23,14 @@ export class UsersResolver {
   }
 
   @Query(() => Image)
-  async profilePicture(@Args("userId", { type: () => ID }) userId: number) {
-    return this.service.getProfilePicture(userId);
+  async profilePicture(@Args("id", { type: () => ID }) id: number) {
+    return this.service.getProfilePicture(id);
+  }
+
+  @Query(() => Image)
+  @UseGuards(GqlAuthGuard)
+  async myProfilePicture(@CurrentUser() user: User) {
+    return this.service.getProfilePicture(user.id);
   }
 
   @Query(() => [User])
