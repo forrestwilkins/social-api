@@ -30,6 +30,10 @@ export class User {
   @Field()
   password: string;
 
+  @Column({ nullable: true })
+  @Field()
+  bio: string;
+
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,
   })
