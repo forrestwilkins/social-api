@@ -60,7 +60,9 @@ export class RefreshTokensService {
         throw new UnprocessableEntityException("Refresh token revoked");
       }
 
-      const user = await this.usersService.getUserById(userId);
+      const user = await this.usersService.getUserWithoutPassword({
+        id: userId,
+      });
 
       if (!user) {
         throw new UnprocessableEntityException("Refresh token malformed");

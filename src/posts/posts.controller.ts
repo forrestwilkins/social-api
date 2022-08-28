@@ -14,7 +14,7 @@ import { PostsService } from "./posts.service";
 @ApiTags("posts")
 @Controller("posts")
 export class PostsController {
-  constructor(private readonly service: PostsService) {}
+  constructor(private service: PostsService) {}
 
   @Post(":postId/upload-images")
   @UploadImages()

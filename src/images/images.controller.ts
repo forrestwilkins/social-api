@@ -17,7 +17,7 @@ import { ImagesService } from "./images.service";
 @ApiTags("images")
 @Controller("images")
 export class ImagesController {
-  constructor(private readonly service: ImagesService) {}
+  constructor(private service: ImagesService) {}
 
   @Get(":imageId/view")
   async getImageFile(

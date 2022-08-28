@@ -27,11 +27,10 @@ export class User {
   email: string;
 
   @Column()
-  @Field()
   password: string;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   bio: string;
 
   @OneToMany(() => Post, (post) => post.user, {

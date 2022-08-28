@@ -14,7 +14,7 @@ import { UsersService } from "./users.service";
 @ApiTags("users")
 @Controller("users")
 export class UsersController {
-  constructor(private readonly service: UsersService) {}
+  constructor(private service: UsersService) {}
 
   // TODO: Fully test endpoint
   @Post(":userId/profile-picture")

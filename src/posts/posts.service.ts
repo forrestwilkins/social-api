@@ -12,8 +12,7 @@ export class PostsService {
   constructor(
     @InjectRepository(Post)
     private repository: Repository<Post>,
-
-    private readonly imagesService: ImagesService
+    private imagesService: ImagesService
   ) {}
 
   async getPost(id: number, withImages?: boolean) {

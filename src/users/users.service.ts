@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
-import { FindOneOptions, Repository } from "typeorm";
+import { FindOneOptions, FindOptionsWhere, Repository } from "typeorm";
 import {
   generateImageName,
   randomDefaultImagePath,
@@ -14,18 +14,26 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private readonly imagesService: ImagesService
+    private imagesService: ImagesService
   ) {}
 
   async getUser(options: FindOneOptions<User>) {
     return this.usersRepository.findOne(options);
   }
 
-  async getUserById(id: number): Promise<Omit<User, "password">> {
+  /**
+   * TODO: Determine whether excluding password here is necessary
+   * Password is already excluded from queryable fields in User model
+   */
+  async getUserWithoutPassword(
+    where: FindOptionsWhere<User> | FindOptionsWhere<User>[]
+  ): Promise<Omit<User, "password">> {
     try {
-      const { password: _password, ...rest } =
-        await this.usersRepository.findOneByOrFail({ id });
-      return rest;
+      const { password: _password, ...userWithoutPassword } =
+        await this.getUser({
+          where,
+        });
+      return userWithoutPassword;
     } catch {
       throw new Error("Failed to find user");
     }
