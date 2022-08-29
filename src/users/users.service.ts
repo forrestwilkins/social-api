@@ -61,6 +61,14 @@ export class UsersService {
     return profilePictures[0];
   }
 
+  async getCoverPhoto(userId: number) {
+    const coverPhotos = await this.imagesService.getImages({
+      imageType: ImageTypes.CoverPhoto,
+      userId,
+    });
+    return coverPhotos[0];
+  }
+
   async saveProfilePicture(userId: number, { filename }: Express.Multer.File) {
     return this.imagesService.createImage({
       imageType: ImageTypes.ProfilePicture,
