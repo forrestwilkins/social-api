@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { ValidationError } from "apollo-server-express";
 import { compare, hash } from "bcrypt";
@@ -6,30 +6,25 @@ import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 import { LoginInput } from "./models/login.input";
 import { SignUpInput } from "./models/sign-up.input";
-import { RefreshTokensService } from "./refresh-tokens/refresh-tokens.service";
 import { AccessTokenPayload } from "./strategies/jwt.strategy";
 
-const ACCESS_TOKEN_EXPIRES_IN = 60 * 60;
+const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 30;
 const SALT_ROUNDS = 10;
 
 export interface AuthCookiePayload {
   access_token: string;
-  refresh_token: string;
 }
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(forwardRef(() => RefreshTokensService))
-    private refreshTokensService: RefreshTokensService,
-
     private usersService: UsersService,
     private jwtService: JwtService
   ) {}
 
   async login({ email, password }: LoginInput) {
     const user = await this.validateUser(email, password);
-    return this.generateTokens(user.id);
+    return this.generateAccessToken(user.id);
   }
 
   async signUp({ password, ...rest }: SignUpInput) {
@@ -38,17 +33,7 @@ export class AuthService {
       password: passwordHash,
       ...rest,
     });
-    return this.generateTokens(user.id);
-  }
-
-  async generateTokens(userId: number): Promise<AuthCookiePayload> {
-    const access_token = await this.generateAccessToken(userId);
-    const { refresh_token } =
-      await this.refreshTokensService.generateRefreshToken(userId);
-    return {
-      access_token,
-      refresh_token,
-    };
+    return this.generateAccessToken(user.id);
   }
 
   async validateUser(email: string, password: string): Promise<Partial<User>> {
