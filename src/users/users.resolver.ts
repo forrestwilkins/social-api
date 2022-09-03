@@ -27,20 +27,17 @@ export class UsersResolver {
     return this.service.getUserWithoutPassword({ name });
   }
 
-  // TODO: Consider moving to images resolver
-  @Query(() => Image)
+  @Query(() => Image, { nullable: true })
   async profilePicture(@Args("id", { type: () => ID }) id: number) {
     return this.service.getProfilePicture(id);
   }
 
-  // TODO: Consider moving to images resolver
-  @Query(() => Image)
+  @Query(() => Image, { nullable: true })
   @UseGuards(GqlAuthGuard)
   async myProfilePicture(@CurrentUser() user: User) {
     return this.service.getProfilePicture(user.id);
   }
 
-  // TODO: Consider moving to images resolver
   @Query(() => Image, { nullable: true })
   async coverPhoto(@Args("id", { type: () => ID }) id: number) {
     return this.service.getCoverPhoto(id);
