@@ -13,12 +13,12 @@ import { User } from "./models/user.model";
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private repository: Repository<User>,
     private imagesService: ImagesService
   ) {}
 
   async getUser(options: FindOneOptions<User>) {
-    return this.usersRepository.findOne(options);
+    return this.repository.findOne(options);
   }
 
   /**
@@ -40,17 +40,18 @@ export class UsersService {
   }
 
   async getUsers() {
-    return this.usersRepository.find();
+    return this.repository.find();
   }
 
   async createUser(data: Partial<User>) {
-    const user = await this.usersRepository.save(data);
+    const user = await this.repository.save(data);
     await this.saveDefaultProfilePicture(user.id);
     return user;
   }
 
   async updateUser(userId: number, data: Partial<User>) {
-    return this.usersRepository.update(userId, data);
+    await this.repository.update(userId, data);
+    return this.getUserWithoutPassword({ id: userId });
   }
 
   async getProfilePicture(userId: number) {
@@ -98,6 +99,6 @@ export class UsersService {
   }
 
   async deleteUser(userId: number) {
-    return this.usersRepository.delete(userId);
+    return this.repository.delete(userId);
   }
 }
