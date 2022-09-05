@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Stream } from "stream";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { deleteImage } from "./image.utils";
 import { Image } from "./models/image.model";
@@ -7,6 +8,13 @@ import { Image } from "./models/image.model";
 export const enum ImageTypes {
   CoverPhoto = "coverPhoto",
   ProfilePicture = "profilePicture",
+}
+
+export interface FileUpload {
+  createReadStream: () => Stream;
+  encoding: string;
+  filename: string;
+  mimetype: string;
 }
 
 @Injectable()
