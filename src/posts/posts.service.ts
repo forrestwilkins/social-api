@@ -32,7 +32,8 @@ export class PostsService {
 
   async createPost(userId: number, { images, ...rest }: PostInput) {
     console.log(images);
-    return this.repository.save({ ...rest, userId });
+    const post = await this.repository.save({ ...rest, userId });
+    return this.getPost(post.id, true);
   }
 
   async updatePost(postId: number, { images, ...rest }: PostInput) {
