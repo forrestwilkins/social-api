@@ -2,6 +2,7 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { GraphQLUpload } from "graphql-upload-minimal";
 import { AppController } from "./app.controller";
 import { AppResolver } from "./app.resolver";
 import { AuthModule } from "./auth/auth.module";
@@ -18,6 +19,7 @@ import { UsersModule } from "./users/users.module";
       autoSchemaFile: true,
       cors: { origin: true, credentials: true },
       csrfPrevention: process.env.NODE_ENV !== "development",
+      resolvers: { Upload: GraphQLUpload },
     }),
     AuthModule,
     ImagesModule,

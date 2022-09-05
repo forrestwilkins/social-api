@@ -11,5 +11,5 @@ export class PostInput {
   body: string;
 
   @Field((_type) => [GraphQLUpload])
-  images: Promise<FileUpload[]>;
+  images: Promise<FileUpload>[];
 }
