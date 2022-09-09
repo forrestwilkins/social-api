@@ -14,7 +14,7 @@ const bootstrap = async () => {
 
   const config = new DocumentBuilder()
     .setTitle("Social API")
-    .setDescription("E-commerce API built with NestJS and TypeORM")
+    .setDescription("Social networking API built with NestJS and TypeORM")
     .setVersion("1.0")
     .build();
   const document = SwaggerModule.createDocument(app, config);

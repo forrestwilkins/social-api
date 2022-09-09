@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
-import { deleteImage } from "../images/image.utils";
+import { deleteImage, saveImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { PostInput } from "./models/post-input.model";
@@ -31,8 +31,23 @@ export class PostsService {
   }
 
   async createPost(userId: number, { images, ...rest }: PostInput) {
-    console.log(images);
     const post = await this.repository.save({ ...rest, userId });
+
+    // TODO: Move to another service method once this is working
+    for (const image of images) {
+      console.log("Attempting to save image:", image);
+      const filename = await saveImage(image);
+
+      console.log("Saved image:", filename);
+
+      const imageEntity = await this.imagesService.createImage({
+        filename,
+        postId: post.id,
+      });
+
+      console.log("Image entity:", imageEntity);
+    }
+
     return this.getPost(post.id, true);
   }
 
