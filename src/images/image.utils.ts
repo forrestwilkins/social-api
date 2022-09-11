@@ -26,16 +26,8 @@ export const editFileName = (
   callback: (error: Error, filename: string) => void
 ) => {
   const fileExtName = extname(file.originalname);
-  callback(null, `${generateImageName()}${fileExtName}`);
+  callback(null, `${Date.now()}${fileExtName}`);
 };
-
-export const generateImageName = () =>
-  Math.random()
-    .toString(36)
-    .slice(2, 10)
-    .split("")
-    .map((c) => (Math.random() < 0.5 ? c : c.toUpperCase()))
-    .join("");
 
 export const randomDefaultImagePath = () =>
   `./src/images/assets/defaults/${

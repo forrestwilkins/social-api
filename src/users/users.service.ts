@@ -2,10 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
 import { FindOneOptions, FindOptionsWhere, Repository } from "typeorm";
-import {
-  generateImageName,
-  randomDefaultImagePath,
-} from "../images/image.utils";
+import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { User } from "./models/user.model";
 
@@ -115,7 +112,7 @@ export class UsersService {
 
   async saveDefaultProfilePicture(userId: number) {
     const sourcePath = randomDefaultImagePath();
-    const filename = `${generateImageName()}.jpeg`;
+    const filename = `${Date.now()}.jpeg`;
     const copyPath = `./uploads/${filename}`;
 
     fs.copyFile(sourcePath, copyPath, (err) => {
