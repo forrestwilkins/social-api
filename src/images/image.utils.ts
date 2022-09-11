@@ -1,3 +1,4 @@
+import { UnsupportedMediaTypeException } from "@nestjs/common";
 import { Request } from "express";
 import * as fs from "fs";
 import { extname } from "path";
@@ -11,7 +12,10 @@ export const imageFileFilter = (
   callback: (error: Error | null, acceptFile: boolean) => void
 ) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-    return callback(new Error("Only image files are allowed"), false);
+    return callback(
+      new UnsupportedMediaTypeException("Only image files are allowed"),
+      false
+    );
   }
   callback(null, true);
 };
