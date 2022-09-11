@@ -16,7 +16,6 @@ import { UsersService } from "./users.service";
 export class UsersController {
   constructor(private service: UsersService) {}
 
-  // TODO: Fully test endpoint
   @Post(":userId/profile-picture")
   @UploadImage()
   @UseGuards(JwtAuthGuard)
