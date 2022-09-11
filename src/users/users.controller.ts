@@ -25,4 +25,14 @@ export class UsersController {
   ) {
     return this.service.saveProfilePicture(userId, image);
   }
+
+  @Post(":userId/cover-photo")
+  @UploadImage()
+  @UseGuards(JwtAuthGuard)
+  async uploadCoverPhoto(
+    @Param("userId", ParseIntPipe) userId: number,
+    @UploadedFile() image: Express.Multer.File
+  ) {
+    return this.service.saveCoverPhoto(userId, image);
+  }
 }

@@ -105,6 +105,14 @@ export class UsersService {
     });
   }
 
+  async saveCoverPhoto(userId: number, { filename }: Express.Multer.File) {
+    return this.imagesService.createImage({
+      imageType: ImageTypes.CoverPhoto,
+      filename,
+      userId,
+    });
+  }
+
   async saveDefaultProfilePicture(userId: number) {
     const sourcePath = randomDefaultImagePath();
     const filename = `${generateImageName()}.jpeg`;
