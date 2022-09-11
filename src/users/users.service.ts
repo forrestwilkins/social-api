@@ -59,7 +59,7 @@ export class UsersService {
       imageType: ImageTypes.ProfilePicture,
       userId,
     });
-    return profilePictures[0];
+    return profilePictures[profilePictures.length - 1];
   }
 
   async getCoverPhoto(userId: number) {
