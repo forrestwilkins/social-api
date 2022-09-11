@@ -48,7 +48,6 @@ export class User {
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     cascade: true,
   })
-  @Field((_type) => [RefreshToken])
   refreshTokens: RefreshToken[];
 
   @CreateDateColumn()
