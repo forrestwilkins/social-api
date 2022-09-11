@@ -9,6 +9,8 @@ import {
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { User } from "./models/user.model";
 
+type UserWithoutPassword = Omit<User, "password">;
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -18,7 +20,11 @@ export class UsersService {
   ) {}
 
   async getUser(options: FindOneOptions<User>) {
-    return this.repository.findOne(options);
+    const user = await this.repository.findOne(options);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
   }
 
   /**
@@ -26,17 +32,32 @@ export class UsersService {
    * Password is already excluded from queryable fields in User model
    */
   async getUserWithoutPassword(
+    where: FindOptionsWhere<User> | FindOptionsWhere<User>[],
+    relations?: string[]
+  ): Promise<UserWithoutPassword> {
+    const { password: _password, ...userWithoutPassword } = await this.getUser({
+      where,
+      relations,
+    });
+    return userWithoutPassword;
+  }
+
+  async getUserProfile(
     where: FindOptionsWhere<User> | FindOptionsWhere<User>[]
-  ): Promise<Omit<User, "password">> {
-    try {
-      const { password: _password, ...userWithoutPassword } =
-        await this.getUser({
-          where,
-        });
-      return userWithoutPassword;
-    } catch {
-      throw new Error("Failed to find user");
-    }
+  ): Promise<UserWithoutPassword> {
+    const { images, ...user } = await this.getUserWithoutPassword(where, [
+      "posts",
+      "images",
+    ]);
+    const profilePictures = images.filter(
+      (image) => image.imageType === ImageTypes.ProfilePicture
+    );
+    const coverPhotos = images.filter(
+      (image) => image.imageType === ImageTypes.CoverPhoto
+    );
+    const profilePicture = profilePictures[profilePictures.length - 1];
+    const coverPhoto = coverPhotos[profilePictures.length - 1];
+    return { profilePicture, coverPhoto, ...user };
   }
 
   async getUsers() {

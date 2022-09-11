@@ -19,12 +19,12 @@ export class UsersResolver {
 
   @Query(() => User)
   async user(@Args("id", { type: () => ID }) id: number) {
-    return this.service.getUserWithoutPassword({ id });
+    return this.service.getUserProfile({ id });
   }
 
   @Query(() => User)
   async userByName(@Args("name", { type: () => String }) name: string) {
-    return this.service.getUserWithoutPassword({ name });
+    return this.service.getUserProfile({ name });
   }
 
   @Query(() => Image, { nullable: true })

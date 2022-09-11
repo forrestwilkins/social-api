@@ -15,7 +15,7 @@ import { Post } from "../../posts/models/post.model";
 @ObjectType()
 export class User {
   @PrimaryGeneratedColumn()
-  @Field((_type) => Int)
+  @Field(() => Int)
   id: number;
 
   @Column({ unique: true })
@@ -36,14 +36,20 @@ export class User {
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,
   })
-  @Field((_type) => [Post])
+  @Field(() => [Post])
   posts: Post[];
 
   @OneToMany(() => Image, (image) => image.user, {
     cascade: true,
   })
-  @Field((_type) => [Image])
-  images: Image[];
+  @Field(() => [Image])
+  images?: Image[];
+
+  @Field(() => Image)
+  profilePicture: Image;
+
+  @Field(() => Image, { nullable: true })
+  coverPhoto: Image;
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     cascade: true,
