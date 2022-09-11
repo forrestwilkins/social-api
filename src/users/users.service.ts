@@ -62,7 +62,7 @@ export class UsersService {
     const coverPhotos = images.filter(
       (image) => image.imageType === ImageTypes.CoverPhoto
     );
-    const coverPhoto = coverPhotos[profilePictures.length - 1];
+    const coverPhoto = coverPhotos[coverPhotos.length - 1];
     return { profilePicture, coverPhoto, ...user };
   }
 
