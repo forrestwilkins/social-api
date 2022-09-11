@@ -46,7 +46,7 @@ export class UsersService {
     where: FindOptionsWhere<User> | FindOptionsWhere<User>[]
   ): Promise<UserWithoutPassword> {
     const { images, ...user } = await this.getUserWithoutPassword(where, [
-      "posts",
+      "posts.images",
       "images",
     ]);
     const profilePictures = images.filter(
