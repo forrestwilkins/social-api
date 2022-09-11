@@ -29,6 +29,7 @@ export class ImagesController {
     return res.sendFile(image.filename, { root: UPLOADS_DIR });
   }
 
+  // TODO: Determine whether this handler is still needed
   @Post()
   @UploadImages()
   @UseGuards(JwtAuthGuard)
