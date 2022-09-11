@@ -4,10 +4,11 @@ import { MulterOptions } from "@nestjs/platform-express/multer/interfaces/multer
 import { ApiBody, ApiConsumes } from "@nestjs/swagger";
 import { diskStorage } from "multer";
 import { editFileName, imageFileFilter } from "../image.utils";
+import { UPLOADS_DIR } from "../images.module";
 
 export const DEFAULT_MULTER_OPTIONS: MulterOptions = {
   storage: diskStorage({
-    destination: "./uploads",
+    destination: UPLOADS_DIR,
     filename: editFileName,
   }),
   fileFilter: imageFileFilter,

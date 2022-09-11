@@ -12,6 +12,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { Response } from "express";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { UploadImages } from "./decorators/upload-images.decorator";
+import { UPLOADS_DIR } from "./images.module";
 import { ImagesService } from "./images.service";
 
 @ApiTags("images")
@@ -25,7 +26,7 @@ export class ImagesController {
     @Res() res: Response
   ) {
     const image = await this.service.getImage(imageId);
-    return res.sendFile(image.filename, { root: "./uploads" });
+    return res.sendFile(image.filename, { root: UPLOADS_DIR });
   }
 
   @Post()
