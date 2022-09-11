@@ -43,19 +43,25 @@ export class UsersService {
   }
 
   async getUserProfile(
-    where: FindOptionsWhere<User> | FindOptionsWhere<User>[]
+    where: FindOptionsWhere<User> | FindOptionsWhere<User>[],
+    lite = false
   ): Promise<UserWithoutPassword> {
-    const { images, ...user } = await this.getUserWithoutPassword(where, [
-      "posts.images",
-      "images",
-    ]);
+    const { images, ...user } = await this.getUserWithoutPassword(
+      where,
+      lite ? ["images"] : ["posts.images", "images"]
+    );
     const profilePictures = images.filter(
       (image) => image.imageType === ImageTypes.ProfilePicture
     );
+    const profilePicture = profilePictures[profilePictures.length - 1];
+
+    if (lite) {
+      return { profilePicture, ...user };
+    }
+
     const coverPhotos = images.filter(
       (image) => image.imageType === ImageTypes.CoverPhoto
     );
-    const profilePicture = profilePictures[profilePictures.length - 1];
     const coverPhoto = coverPhotos[profilePictures.length - 1];
     return { profilePicture, coverPhoto, ...user };
   }
