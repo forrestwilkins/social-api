@@ -4,11 +4,12 @@ import { MulterOptions } from "@nestjs/platform-express/multer/interfaces/multer
 import { ApiBody, ApiConsumes } from "@nestjs/swagger";
 import { diskStorage } from "multer";
 import { editFileName, imageFileFilter } from "../image.utils";
-import { UPLOADS_DIR } from "../images.module";
 
 export const DEFAULT_MULTER_OPTIONS: MulterOptions = {
   storage: diskStorage({
-    destination: UPLOADS_DIR,
+    // TODO: Determine why settting destination with a variable
+    // or constant causes images to not save to disk
+    destination: "./uploads",
     filename: editFileName,
   }),
   fileFilter: imageFileFilter,

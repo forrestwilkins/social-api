@@ -6,13 +6,13 @@ import { ImagesResolver } from "./images.resolver";
 import { ImagesService } from "./images.service";
 import { Image } from "./models/image.model";
 
-export const UPLOADS_DIR = "./uploads";
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([Image]),
     MulterModule.register({
-      dest: UPLOADS_DIR,
+      // TODO: Determine why settting destination with a variable
+      // or constant causes images to not save to disk
+      dest: "./uploads",
     }),
   ],
   providers: [ImagesService, ImagesResolver],
