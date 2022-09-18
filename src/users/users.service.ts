@@ -28,7 +28,7 @@ export class UsersService {
   }
 
   async getUserProfile(where: WhereUserOptions, lite = false): Promise<User> {
-    const { images, ...user } = await this.getUser(
+    const { images, posts, ...user } = await this.getUser(
       where,
       lite ? ["images"] : ["posts.images", "images"]
     );
@@ -36,16 +36,22 @@ export class UsersService {
       (image) => image.imageType === ImageTypes.ProfilePicture
     );
     const profilePicture = profilePictures[profilePictures.length - 1];
-
     if (lite) {
       return { profilePicture, ...user };
     }
-
     const coverPhotos = images.filter(
       (image) => image.imageType === ImageTypes.CoverPhoto
     );
     const coverPhoto = coverPhotos[coverPhotos.length - 1];
-    return { profilePicture, coverPhoto, ...user };
+    const sortedPosts = posts.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    );
+    return {
+      ...user,
+      coverPhoto,
+      profilePicture,
+      posts: sortedPosts,
+    };
   }
 
   async getUsers() {

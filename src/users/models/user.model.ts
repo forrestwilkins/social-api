@@ -37,7 +37,7 @@ export class User {
     cascade: true,
   })
   @Field(() => [Post])
-  posts: Post[];
+  posts?: Post[];
 
   @OneToMany(() => Image, (image) => image.user, {
     cascade: true,
