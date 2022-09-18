@@ -24,7 +24,7 @@ export class ImagesService {
     return this.repository.find({ where });
   }
 
-  async createImage(data: Partial<Image>) {
+  async createImage(data: Partial<Image>): Promise<Image> {
     return this.repository.save(data);
   }
 
