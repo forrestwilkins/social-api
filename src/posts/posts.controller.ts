@@ -16,7 +16,7 @@ import { PostsService } from "./posts.service";
 export class PostsController {
   constructor(private service: PostsService) {}
 
-  @Post(":postId/upload-images")
+  @Post(":postId/images")
   @UploadImages()
   @UseGuards(JwtAuthGuard)
   async uploadPostImages(
