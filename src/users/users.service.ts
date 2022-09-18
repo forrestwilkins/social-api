@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
-import { FindOneOptions, FindOptionsWhere, Repository } from "typeorm";
+import { FindOptionsWhere, Repository } from "typeorm";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { User } from "./models/user.model";
 
-type UserWithoutPassword = Omit<User, "password">;
+type WhereUserOptions = FindOptionsWhere<User> | FindOptionsWhere<User>[];
 
 @Injectable()
 export class UsersService {
@@ -16,34 +16,19 @@ export class UsersService {
     private imagesService: ImagesService
   ) {}
 
-  async getUser(options: FindOneOptions<User>) {
-    const user = await this.repository.findOne(options);
+  async getUser(where: WhereUserOptions, relations?: string[]) {
+    const user = await this.repository.findOne({
+      where,
+      relations,
+    });
     if (!user) {
       throw new Error("User not found");
     }
     return user;
   }
 
-  /**
-   * TODO: Determine whether excluding password here is necessary
-   * Password is already excluded from queryable fields in User model
-   */
-  async getUserWithoutPassword(
-    where: FindOptionsWhere<User> | FindOptionsWhere<User>[],
-    relations?: string[]
-  ): Promise<UserWithoutPassword> {
-    const { password: _password, ...userWithoutPassword } = await this.getUser({
-      where,
-      relations,
-    });
-    return userWithoutPassword;
-  }
-
-  async getUserProfile(
-    where: FindOptionsWhere<User> | FindOptionsWhere<User>[],
-    lite = false
-  ): Promise<UserWithoutPassword> {
-    const { images, ...user } = await this.getUserWithoutPassword(
+  async getUserProfile(where: WhereUserOptions, lite = false): Promise<User> {
+    const { images, ...user } = await this.getUser(
       where,
       lite ? ["images"] : ["posts.images", "images"]
     );
@@ -75,7 +60,7 @@ export class UsersService {
 
   async updateUser(userId: number, data: Partial<User>) {
     await this.repository.update(userId, data);
-    return this.getUserWithoutPassword({ id: userId });
+    return this.getUser({ id: userId });
   }
 
   async getProfilePicture(userId: number) {

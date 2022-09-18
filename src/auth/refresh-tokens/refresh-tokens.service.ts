@@ -45,7 +45,6 @@ export class RefreshTokensService {
       const token = await this.repository.findOne({
         where: { id: refreshTokenId },
       });
-
       if (!token) {
         throw new UnprocessableEntityException("Refresh token not found");
       }
@@ -60,10 +59,7 @@ export class RefreshTokensService {
         throw new UnprocessableEntityException("Refresh token revoked");
       }
 
-      const user = await this.usersService.getUserWithoutPassword({
-        id: userId,
-      });
-
+      const user = await this.usersService.getUser({ id: userId });
       if (!user) {
         throw new UnprocessableEntityException("Refresh token malformed");
       }
