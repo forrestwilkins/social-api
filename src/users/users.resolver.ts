@@ -18,7 +18,7 @@ export class UsersResolver {
 
   @Query(() => User)
   async user(@Args("id", { type: () => ID }) id: number) {
-    return this.service.getUserProfile({ id });
+    return this.service.getUserProfile({ id }, true);
   }
 
   @Query(() => User)
