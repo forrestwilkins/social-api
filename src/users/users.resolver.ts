@@ -1,11 +1,10 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, ID, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
-import { User } from "./models/user.model";
-import { UserInput } from "./models/user-input.model";
-import { UsersService } from "./users.service";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
-import { Image } from "../images/models/image.model";
+import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
+import { UserInput } from "./models/user-input.model";
+import { User } from "./models/user.model";
+import { UsersService } from "./users.service";
 
 @Resolver((_of: User) => User)
 export class UsersResolver {
@@ -25,22 +24,6 @@ export class UsersResolver {
   @Query(() => User)
   async userProfile(@Args("name", { type: () => String }) name: string) {
     return this.service.getUserProfile({ name });
-  }
-
-  @Query(() => Image, { nullable: true })
-  async profilePicture(@Args("id", { type: () => ID }) id: number) {
-    return this.service.getProfilePicture(id);
-  }
-
-  @Query(() => Image, { nullable: true })
-  @UseGuards(GqlAuthGuard)
-  async myProfilePicture(@CurrentUser() user: User) {
-    return this.service.getProfilePicture(user.id);
-  }
-
-  @Query(() => Image, { nullable: true })
-  async coverPhoto(@Args("id", { type: () => ID }) id: number) {
-    return this.service.getCoverPhoto(id);
   }
 
   @Query(() => [User])
