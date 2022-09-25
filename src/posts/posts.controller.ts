@@ -5,20 +5,23 @@ import {
   Post,
   UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { UploadImages } from "../images/decorators/upload-images.decorator";
+import { ImagesInterceptor } from "../images/images.interceptor";
 import { PostsService } from "./posts.service";
 
 @ApiTags("posts")
 @Controller("posts")
+@UseGuards(JwtAuthGuard)
+@UseInterceptors(ImagesInterceptor)
 export class PostsController {
-  constructor(private readonly service: PostsService) {}
+  constructor(private service: PostsService) {}
 
-  @Post(":postId/upload-images")
+  @Post(":postId/images")
   @UploadImages()
-  @UseGuards(JwtAuthGuard)
   async uploadPostImages(
     @Param("postId", ParseIntPipe) postId: number,
     @UploadedFiles() images: Express.Multer.File[]

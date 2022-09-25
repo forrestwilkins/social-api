@@ -1,8 +1,10 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, ID, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
-import { Post } from "./models/post.model";
+import { User } from "../users/models/user.model";
 import { PostInput } from "./models/post-input.model";
+import { Post } from "./models/post.model";
 import { PostsService } from "./posts.service";
 
 @Resolver((_of: Post) => Post)
@@ -16,13 +18,16 @@ export class PostsResolver {
 
   @Query(() => [Post])
   async posts() {
-    return this.service.getPosts(true);
+    return this.service.getPosts();
   }
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Post)
-  async createPost(@Args("postData") postData: PostInput) {
-    return this.service.createPost(postData);
+  async createPost(
+    @Args("postData") postData: PostInput,
+    @CurrentUser() user: User
+  ) {
+    return this.service.createPost(user.id, postData);
   }
 
   @UseGuards(GqlAuthGuard)

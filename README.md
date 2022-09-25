@@ -1,6 +1,6 @@
 ## Social API
 
-Social networking API
+Social networking platform API built with NestJS and TypeORM
 
 ## WIP
 

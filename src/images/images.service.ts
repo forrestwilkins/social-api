@@ -1,8 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { FindOptionsWhere, Repository } from "typeorm";
 import { deleteImage } from "./image.utils";
 import { Image } from "./models/image.model";
+
+export const enum ImageTypes {
+  CoverPhoto = "coverPhoto",
+  ProfilePicture = "profilePicture",
+}
 
 @Injectable()
 export class ImagesService {
@@ -15,11 +20,11 @@ export class ImagesService {
     return this.repository.findOne({ where: { id } });
   }
 
-  async getImages() {
-    return this.repository.find();
+  async getImages(where?: FindOptionsWhere<Image>) {
+    return this.repository.find({ where });
   }
 
-  async createImage(data: Partial<Image>) {
+  async createImage(data: Partial<Image>): Promise<Image> {
     return this.repository.save(data);
   }
 

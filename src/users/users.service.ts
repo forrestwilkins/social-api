@@ -1,42 +1,127 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOneOptions, Repository } from "typeorm";
+import * as fs from "fs";
+import { FindOptionsWhere, Repository } from "typeorm";
+import { randomDefaultImagePath } from "../images/image.utils";
+import { ImagesService, ImageTypes } from "../images/images.service";
 import { User } from "./models/user.model";
+
+type WhereUserOptions = FindOptionsWhere<User> | FindOptionsWhere<User>[];
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>
+    private repository: Repository<User>,
+    private imagesService: ImagesService
   ) {}
 
-  async getUser(options: FindOneOptions<User>) {
-    return this.usersRepository.findOne(options);
+  async getUser(where: WhereUserOptions, relations?: string[]) {
+    const user = await this.repository.findOne({
+      where,
+      relations,
+    });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
   }
 
-  async getUserById(id: number): Promise<Omit<User, "password">> {
-    try {
-      const { password: _password, ...rest } =
-        await this.usersRepository.findOneByOrFail({ id });
-      return rest;
-    } catch {
-      throw new Error("Failed to find user");
+  async getUserProfile(where: WhereUserOptions, lite = false): Promise<User> {
+    const { images, posts, ...user } = await this.getUser(
+      where,
+      lite ? ["images"] : ["posts.images", "images"]
+    );
+    const profilePictures = images.filter(
+      (image) => image.imageType === ImageTypes.ProfilePicture
+    );
+    const profilePicture = profilePictures[profilePictures.length - 1];
+    if (lite) {
+      return { profilePicture, ...user };
     }
+    const coverPhotos = images.filter(
+      (image) => image.imageType === ImageTypes.CoverPhoto
+    );
+    const coverPhoto = coverPhotos[coverPhotos.length - 1];
+    const sortedPosts = posts.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    );
+    return {
+      ...user,
+      coverPhoto,
+      profilePicture,
+      posts: sortedPosts,
+    };
   }
 
   async getUsers() {
-    return this.usersRepository.find();
+    return this.repository.find();
   }
 
   async createUser(data: Partial<User>) {
-    return this.usersRepository.save(data);
+    const user = await this.repository.save(data);
+    await this.saveDefaultProfilePicture(user.id);
+    return user;
   }
 
   async updateUser(userId: number, data: Partial<User>) {
-    return this.usersRepository.update(userId, data);
+    await this.repository.update(userId, data);
+    return this.getUser({ id: userId });
+  }
+
+  async getProfilePicture(userId: number) {
+    const profilePictures = await this.imagesService.getImages({
+      imageType: ImageTypes.ProfilePicture,
+      userId,
+    });
+    return profilePictures[profilePictures.length - 1];
+  }
+
+  async getCoverPhoto(userId: number) {
+    const coverPhotos = await this.imagesService.getImages({
+      imageType: ImageTypes.CoverPhoto,
+      userId,
+    });
+    return coverPhotos[0];
+  }
+
+  async saveProfilePicture(userId: number, { filename }: Express.Multer.File) {
+    return this.imagesService.createImage({
+      imageType: ImageTypes.ProfilePicture,
+      filename,
+      userId,
+    });
+  }
+
+  async saveCoverPhoto(userId: number, { filename }: Express.Multer.File) {
+    return this.imagesService.createImage({
+      imageType: ImageTypes.CoverPhoto,
+      filename,
+      userId,
+    });
+  }
+
+  async saveDefaultProfilePicture(userId: number) {
+    const sourcePath = randomDefaultImagePath();
+    const filename = `${Date.now()}.jpeg`;
+    const copyPath = `./uploads/${filename}`;
+
+    fs.copyFile(sourcePath, copyPath, (err) => {
+      if (err) {
+        throw new Error(`Failed to save default profile picture: ${err}`);
+      }
+    });
+
+    const image = await this.imagesService.createImage({
+      imageType: ImageTypes.ProfilePicture,
+      filename,
+      userId,
+    });
+
+    return image;
   }
 
   async deleteUser(userId: number) {
-    return this.usersRepository.delete(userId);
+    return this.repository.delete(userId);
   }
 }

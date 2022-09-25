@@ -10,6 +10,8 @@ import { Image } from "./models/image.model";
   imports: [
     TypeOrmModule.forFeature([Image]),
     MulterModule.register({
+      // TODO: Determine why settting destination with a variable
+      // or constant causes images to not save to disk
       dest: "./uploads",
     }),
   ],

@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Post } from "../../posts/models/post.model";
+import { User } from "../../users/models/user.model";
 
 @ObjectType()
 @Entity()
@@ -21,14 +22,28 @@ export class Image {
   filename: string;
 
   @Field()
-  @Column()
-  postId: number;
+  @Column({ nullable: true })
+  imageType: string;
 
   @Field((_type) => Post)
   @ManyToOne(() => Post, (post) => post.images, {
     onDelete: "CASCADE",
   })
   post: Post;
+
+  @Field()
+  @Column({ nullable: true })
+  postId: number;
+
+  @Field((_type) => User)
+  @ManyToOne(() => User, (user) => user.images, {
+    onDelete: "CASCADE",
+  })
+  user: User;
+
+  @Field()
+  @Column({ nullable: true })
+  userId: number;
 
   @Field()
   @CreateDateColumn()

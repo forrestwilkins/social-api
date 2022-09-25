@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { FindOptionsWhere, Repository } from "typeorm";
 import { deleteImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -12,8 +12,7 @@ export class PostsService {
   constructor(
     @InjectRepository(Post)
     private repository: Repository<Post>,
-
-    private readonly imagesService: ImagesService
+    private imagesService: ImagesService
   ) {}
 
   async getPost(id: number, withImages?: boolean) {
@@ -23,15 +22,16 @@ export class PostsService {
     });
   }
 
-  async getPosts(withImages?: boolean) {
+  async getPosts(where?: FindOptionsWhere<Post>) {
     const posts = await this.repository.find({
-      relations: withImages ? ["images"] : [],
+      relations: ["images"],
+      where,
     });
     return posts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
-  async createPost(data: PostInput) {
-    return this.repository.save(data);
+  async createPost(userId: number, postData: PostInput) {
+    return this.repository.save({ ...postData, userId });
   }
 
   async updatePost(postId: number, data: PostInput) {

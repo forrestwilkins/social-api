@@ -53,16 +53,11 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<Partial<User>> {
     try {
-      const user = await this.usersService.getUser({ where: { email } });
-      if (!user) {
-        throw new ValidationError("User not found");
-      }
-
+      const user = await this.usersService.getUser({ email });
       const passwordMatch = await compare(password, user.password);
       if (!passwordMatch) {
         throw new ValidationError("Incorrect username or password");
       }
-
       const { password: _password, ...result } = user;
       return result;
     } catch (err) {
