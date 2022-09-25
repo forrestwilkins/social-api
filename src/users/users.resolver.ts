@@ -36,7 +36,7 @@ export class UsersResolver {
   }
 
   @Query(() => User)
-  async userProfile(@Args("name", { type: () => String }) name: string) {
+  async userByName(@Args("name", { type: () => String }) name: string) {
     return this.usersService.getUser({ name });
   }
 
