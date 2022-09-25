@@ -27,33 +27,6 @@ export class UsersService {
     return user;
   }
 
-  async getUserProfile(where: WhereUserOptions, lite = false): Promise<User> {
-    const { images, posts, ...user } = await this.getUser(
-      where,
-      lite ? ["images"] : ["posts.images", "images"]
-    );
-    const profilePictures = images.filter(
-      (image) => image.imageType === ImageTypes.ProfilePicture
-    );
-    const profilePicture = profilePictures[profilePictures.length - 1];
-    if (lite) {
-      return { profilePicture, ...user };
-    }
-    const coverPhotos = images.filter(
-      (image) => image.imageType === ImageTypes.CoverPhoto
-    );
-    const coverPhoto = coverPhotos[coverPhotos.length - 1];
-    const sortedPosts = posts.sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-    );
-    return {
-      ...user,
-      coverPhoto,
-      profilePicture,
-      posts: sortedPosts,
-    };
-  }
-
   async getUsers() {
     return this.repository.find();
   }
