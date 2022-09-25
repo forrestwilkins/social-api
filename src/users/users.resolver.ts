@@ -17,7 +17,7 @@ import { UserInput } from "./models/user-input.model";
 import { User } from "./models/user.model";
 import { UsersService } from "./users.service";
 
-@Resolver((_of: User) => User)
+@Resolver(() => User)
 export class UsersResolver {
   constructor(
     private postsService: PostsService,

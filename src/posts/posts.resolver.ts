@@ -7,7 +7,7 @@ import { PostInput } from "./models/post-input.model";
 import { Post } from "./models/post.model";
 import { PostsService } from "./posts.service";
 
-@Resolver((_of: Post) => Post)
+@Resolver(() => Post)
 export class PostsResolver {
   constructor(private service: PostsService) {}
 

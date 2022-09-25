@@ -4,7 +4,7 @@ import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { ImagesService } from "./images.service";
 import { Image } from "./models/image.model";
 
-@Resolver((_of: Image) => Image)
+@Resolver(() => Image)
 export class ImagesResolver {
   constructor(private service: ImagesService) {}
 
