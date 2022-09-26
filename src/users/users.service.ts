@@ -16,11 +16,8 @@ export class UsersService {
     private imagesService: ImagesService
   ) {}
 
-  async getUser(where: WhereUserOptions, relations?: string[]) {
-    const user = await this.repository.findOne({
-      where,
-      relations,
-    });
+  async getUser(where: WhereUserOptions) {
+    const user = await this.repository.findOne({ where });
     if (!user) {
       throw new Error("User not found");
     }
