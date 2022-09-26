@@ -6,8 +6,6 @@ import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { User } from "./models/user.model";
 
-type WhereUserOptions = FindOptionsWhere<User> | FindOptionsWhere<User>[];
-
 @Injectable()
 export class UsersService {
   constructor(
@@ -16,7 +14,7 @@ export class UsersService {
     private imagesService: ImagesService
   ) {}
 
-  async getUser(where: WhereUserOptions) {
+  async getUser(where: FindOptionsWhere<User> | FindOptionsWhere<User>[]) {
     const user = await this.repository.findOne({ where });
     if (!user) {
       throw new Error("User not found");
