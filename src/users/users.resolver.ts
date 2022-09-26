@@ -31,13 +31,11 @@ export class UsersResolver {
   }
 
   @Query(() => User)
-  async user(@Args("id", { type: () => ID }) id: number) {
-    return this.usersService.getUser({ id });
-  }
-
-  @Query(() => User)
-  async userByName(@Args("name", { type: () => String }) name: string) {
-    return this.usersService.getUser({ name });
+  async user(
+    @Args("id", { type: () => ID, nullable: true }) id?: number,
+    @Args("name", { type: () => String, nullable: true }) name?: string
+  ) {
+    return this.usersService.getUser({ id, name });
   }
 
   @Query(() => [User])

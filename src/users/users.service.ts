@@ -55,7 +55,7 @@ export class UsersService {
       imageType: ImageTypes.CoverPhoto,
       userId,
     });
-    return coverPhotos[0];
+    return coverPhotos[coverPhotos.length - 1];
   }
 
   async saveProfilePicture(userId: number, { filename }: Express.Multer.File) {
