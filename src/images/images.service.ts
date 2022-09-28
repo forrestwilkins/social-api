@@ -24,6 +24,15 @@ export class ImagesService {
     return this.repository.find({ where });
   }
 
+  async getLastImage(where?: FindOptionsWhere<Image>) {
+    const image = await this.repository.find({
+      order: { id: "DESC" },
+      take: 1,
+      where,
+    });
+    return image[0];
+  }
+
   async createImage(data: Partial<Image>): Promise<Image> {
     return this.repository.save(data);
   }

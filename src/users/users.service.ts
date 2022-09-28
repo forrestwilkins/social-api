@@ -32,25 +32,23 @@ export class UsersService {
     return user;
   }
 
-  async updateUser(userId: number, data: Partial<User>) {
-    await this.repository.update(userId, data);
-    return this.getUser({ id: userId });
+  async updateUser(id: number, data: Partial<User>) {
+    await this.repository.update(id, data);
+    return this.getUser({ id });
   }
 
   async getProfilePicture(userId: number) {
-    const profilePictures = await this.imagesService.getImages({
+    return this.imagesService.getLastImage({
       imageType: ImageTypes.ProfilePicture,
       userId,
     });
-    return profilePictures[profilePictures.length - 1];
   }
 
   async getCoverPhoto(userId: number) {
-    const coverPhotos = await this.imagesService.getImages({
+    return this.imagesService.getLastImage({
       imageType: ImageTypes.CoverPhoto,
       userId,
     });
-    return coverPhotos[coverPhotos.length - 1];
   }
 
   async saveProfilePicture(userId: number, { filename }: Express.Multer.File) {
