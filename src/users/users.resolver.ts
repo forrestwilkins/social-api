@@ -3,10 +3,10 @@ import {
   Args,
   ID,
   Mutation,
+  Parent,
   Query,
   ResolveField,
   Resolver,
-  Root,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
@@ -44,17 +44,17 @@ export class UsersResolver {
   }
 
   @ResolveField(() => [Post])
-  async posts(@Root() { id }: User) {
+  async posts(@Parent() { id }: User) {
     return this.postsService.getPosts({ userId: id });
   }
 
   @ResolveField(() => Image)
-  async profilePicture(@Root() { id }: User) {
+  async profilePicture(@Parent() { id }: User) {
     return this.usersService.getProfilePicture(id);
   }
 
   @ResolveField(() => Image)
-  async coverPhoto(@Root() { id }: User) {
+  async coverPhoto(@Parent() { id }: User) {
     return this.usersService.getCoverPhoto(id);
   }
 

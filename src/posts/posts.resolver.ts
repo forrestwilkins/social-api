@@ -3,10 +3,10 @@ import {
   Args,
   ID,
   Mutation,
+  Parent,
   Query,
   ResolveField,
   Resolver,
-  Root,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
@@ -35,7 +35,7 @@ export class PostsResolver {
   }
 
   @ResolveField(() => [Image])
-  async images(@Root() { id }: Post) {
+  async images(@Parent() { id }: Post) {
     return this.imagesService.getImages({ postId: id });
   }
 
