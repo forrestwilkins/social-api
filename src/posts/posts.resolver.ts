@@ -1,6 +1,7 @@
 import { UseGuards } from "@nestjs/common";
 import {
   Args,
+  Context,
   ID,
   Mutation,
   Parent,
@@ -10,7 +11,7 @@ import {
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
-import { ImagesService } from "../images/images.service";
+import { Dataloaders } from "../dataloader/dataloader.service";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
 import { PostInput } from "./models/post-input.model";
@@ -19,10 +20,7 @@ import { PostsService } from "./posts.service";
 
 @Resolver(() => Post)
 export class PostsResolver {
-  constructor(
-    private imagesService: ImagesService,
-    private postsService: PostsService
-  ) {}
+  constructor(private postsService: PostsService) {}
 
   @Query(() => Post)
   async post(@Args("id", { type: () => ID }) id: number) {
@@ -35,8 +33,11 @@ export class PostsResolver {
   }
 
   @ResolveField(() => [Image])
-  async images(@Parent() { id }: Post) {
-    return this.imagesService.getImages({ postId: id });
+  async images(
+    @Parent() { id }: Post,
+    @Context() { loaders }: { loaders: Dataloaders }
+  ) {
+    return loaders.imagesLoader.load(id);
   }
 
   @UseGuards(GqlAuthGuard)
