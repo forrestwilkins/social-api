@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
-import { ImagesModule } from "../images/images.module";
+import { PostsModule } from "../posts/posts.module";
 import { UsersModule } from "../users/users.module";
 import { DataloaderService } from "./dataloader.service";
 
 @Module({
-  imports: [ImagesModule, UsersModule],
+  imports: [UsersModule, PostsModule],
   providers: [DataloaderService],
   exports: [DataloaderService],
 })

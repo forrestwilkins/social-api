@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { FindOptionsWhere, In, Repository } from "typeorm";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { User } from "./models/user.model";
@@ -24,6 +24,18 @@ export class UsersService {
 
   async getUsers(where?: FindOptionsWhere<User>) {
     return this.repository.find({ where });
+  }
+
+  async getUsersByBatch(userIds: number[]) {
+    const users = await this.getUsers({
+      id: In(userIds),
+    });
+    const mappedUsers = userIds.map(
+      (id) =>
+        users.find((user: User) => user.id === id) ||
+        new Error(`Could not load user ${id}`)
+    );
+    return mappedUsers;
   }
 
   async createUser(data: Partial<User>) {

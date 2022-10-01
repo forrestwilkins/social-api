@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { FindOptionsWhere, In, Repository } from "typeorm";
 import { deleteImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -21,6 +21,18 @@ export class PostsService {
 
   async getPosts(where?: FindOptionsWhere<Post>) {
     return this.repository.find({ where, order: { createdAt: "DESC" } });
+  }
+
+  async getPostImagesByBatch(postIds: number[]) {
+    const images = await this.imagesService.getImages({
+      postId: In(postIds),
+    });
+    const mappedImages = postIds.map(
+      (id) =>
+        images.filter((image: Image) => image.postId === id) ||
+        new Error(`Could not load image ${id}`)
+    );
+    return mappedImages;
   }
 
   async createPost(userId: number, postData: PostInput) {

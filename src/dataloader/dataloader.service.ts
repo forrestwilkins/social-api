@@ -1,20 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import * as DataLoader from "dataloader";
-import { In } from "typeorm";
-import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { PostsService } from "../posts/posts.service";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
-
-export interface Dataloaders {
-  imagesLoader: DataLoader<number, Image[]>;
-  usersLoader: DataLoader<number, User>;
-}
+import { Dataloaders } from "./dataloader.interface";
 
 @Injectable()
 export class DataloaderService {
   constructor(
-    private imagesService: ImagesService,
+    private postsService: PostsService,
     private usersService: UsersService
   ) {}
 
@@ -24,31 +19,15 @@ export class DataloaderService {
     return { imagesLoader, usersLoader };
   }
 
-  _createUsersLoader() {
-    return new DataLoader<number, User>(async (userIds) => {
-      const users = await this.usersService.getUsers({
-        id: In(userIds as number[]),
-      });
-      const mappedUsers = userIds.map(
-        (id) =>
-          users.find((user: User) => user.id === id) ||
-          new Error(`Could not load user ${id}`)
-      );
-      return mappedUsers;
-    });
+  private _createUsersLoader() {
+    return new DataLoader<number, User>(async (userIds) =>
+      this.usersService.getUsersByBatch(userIds as number[])
+    );
   }
 
-  _createImagesLoader() {
-    return new DataLoader<number, Image[]>(async (postIds) => {
-      const images = await this.imagesService.getImages({
-        postId: In(postIds as number[]),
-      });
-      const mappedImages = postIds.map(
-        (id) =>
-          images.filter((image: Image) => image.postId === id) ||
-          new Error(`Could not load image ${id}`)
-      );
-      return mappedImages;
-    });
+  private _createImagesLoader() {
+    return new DataLoader<number, Image[]>(async (postIds) =>
+      this.postsService.getPostImagesByBatch(postIds as number[])
+    );
   }
 }
