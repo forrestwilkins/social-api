@@ -54,7 +54,7 @@ export class PostsResolver {
     @Args("postData") postData: PostInput,
     @CurrentUser() user: User
   ) {
-    return this.postsService.createPost(user.id, postData);
+    return this.postsService.createPost(user, postData);
   }
 
   @UseGuards(GqlAuthGuard)

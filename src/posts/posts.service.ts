@@ -4,6 +4,7 @@ import { FindOptionsWhere, In, Repository } from "typeorm";
 import { deleteImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { User } from "../users/models/user.model";
 import { PostInput } from "./models/post-input.model";
 import { Post } from "./models/post.model";
 
@@ -35,8 +36,9 @@ export class PostsService {
     return mappedImages;
   }
 
-  async createPost(userId: number, postData: PostInput) {
-    return this.repository.save({ ...postData, userId });
+  async createPost(user: User, postData: PostInput): Promise<Post> {
+    const post = await this.repository.save({ ...postData, userId: user.id });
+    return { ...post, user };
   }
 
   async updatePost(id: number, data: PostInput) {

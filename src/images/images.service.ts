@@ -53,10 +53,10 @@ export class ImagesService {
     return this.getImage({ id });
   }
 
-  async deleteImage(id: number) {
-    const { filename } = await this.getImage({ id });
+  async deleteImage(where: FindOptionsWhere<Image>) {
+    const { filename } = await this.getImage(where);
     await deleteImage(filename);
-    this.repository.delete(id);
+    this.repository.delete(where);
     return true;
   }
 }

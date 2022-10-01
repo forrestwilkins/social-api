@@ -21,6 +21,6 @@ export class ImagesResolver {
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
   async deleteImage(@Args("id", { type: () => ID }) id: number) {
-    return this.service.deleteImage(id);
+    return this.service.deleteImage({ id });
   }
 }
