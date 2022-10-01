@@ -14,9 +14,12 @@ export class DataloaderService {
   ) {}
 
   getLoaders(): Dataloaders {
-    const imagesLoader = this._createImagesLoader();
+    const postImagesLoader = this._createPostImagesLoader();
     const usersLoader = this._createUsersLoader();
-    return { imagesLoader, usersLoader };
+    return {
+      postImagesLoader,
+      usersLoader,
+    };
   }
 
   private _createUsersLoader() {
@@ -25,7 +28,7 @@ export class DataloaderService {
     );
   }
 
-  private _createImagesLoader() {
+  private _createPostImagesLoader() {
     return new DataLoader<number, Image[]>(async (postIds) =>
       this.postsService.getPostImagesByBatch(postIds as number[])
     );

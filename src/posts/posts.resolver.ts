@@ -45,7 +45,7 @@ export class PostsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { id }: Post
   ) {
-    return loaders.imagesLoader.load(id);
+    return loaders.postImagesLoader.load(id);
   }
 
   @UseGuards(GqlAuthGuard)
