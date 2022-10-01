@@ -16,8 +16,8 @@ export class ImagesService {
     private repository: Repository<Image>
   ) {}
 
-  async getImage(id: number) {
-    return this.repository.findOne({ where: { id } });
+  async getImage(where: FindOptionsWhere<Image>) {
+    return this.repository.findOne({ where });
   }
 
   async getImages(where?: FindOptionsWhere<Image>) {
@@ -48,10 +48,15 @@ export class ImagesService {
     return savedImages;
   }
 
-  async deleteImage(imageId: number) {
-    const { filename } = await this.getImage(imageId);
+  async updateImage(id: number, data: Partial<Image>) {
+    await this.repository.update(id, data);
+    return this.getImage({ id });
+  }
+
+  async deleteImage(id: number) {
+    const { filename } = await this.getImage({ id });
     await deleteImage(filename);
-    this.repository.delete(imageId);
+    this.repository.delete(id);
     return true;
   }
 }

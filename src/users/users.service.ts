@@ -64,10 +64,12 @@ export class UsersService {
   }
 
   async saveProfilePicture(userId: number, { filename }: Express.Multer.File) {
-    return this.imagesService.createImage({
+    const profilePicture = await this.imagesService.getImage({
       imageType: ImageTypes.ProfilePicture,
-      filename,
       userId,
+    });
+    return this.imagesService.updateImage(profilePicture.id, {
+      filename,
     });
   }
 

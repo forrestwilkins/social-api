@@ -10,7 +10,7 @@ export class ImagesResolver {
 
   @Query(() => Image)
   async image(@Args("id", { type: () => ID }) id: number) {
-    return this.service.getImage(id);
+    return this.service.getImage({ id });
   }
 
   @Query(() => [Image])
