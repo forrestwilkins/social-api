@@ -32,10 +32,18 @@ export class PostsResolver {
     return this.postsService.getPosts();
   }
 
+  @ResolveField(() => User)
+  async user(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { userId }: Post
+  ) {
+    return loaders.usersLoader.load(userId);
+  }
+
   @ResolveField(() => [Image])
   async images(
-    @Parent() { id }: Post,
-    @Context() { loaders }: { loaders: Dataloaders }
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Post
   ) {
     return loaders.imagesLoader.load(id);
   }

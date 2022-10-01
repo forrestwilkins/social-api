@@ -22,8 +22,8 @@ export class UsersService {
     return user;
   }
 
-  async getUsers() {
-    return this.repository.find();
+  async getUsers(where?: FindOptionsWhere<User>) {
+    return this.repository.find({ where });
   }
 
   async createUser(data: Partial<User>) {
