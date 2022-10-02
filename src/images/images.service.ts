@@ -28,22 +28,6 @@ export class ImagesService {
     return this.repository.save(data);
   }
 
-  async saveImages(images: Express.Multer.File[]) {
-    const savedImages: Image[] = [];
-
-    for (const { filename } of images) {
-      const image = await this.createImage({ filename });
-      savedImages.push(image);
-    }
-
-    return savedImages;
-  }
-
-  async updateImage(id: number, data: Partial<Image>) {
-    await this.repository.update(id, data);
-    return this.getImage({ id });
-  }
-
   async deleteImage(where: FindOptionsWhere<Image>) {
     const { filename } = await this.getImage(where);
     await deleteImageFile(filename);

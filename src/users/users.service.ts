@@ -50,13 +50,6 @@ export class UsersService {
     return this.getUser({ id });
   }
 
-  async getProfilePicture(userId: number) {
-    return this.imagesService.getImage({
-      imageType: ImageTypes.ProfilePicture,
-      userId,
-    });
-  }
-
   async getProfilePicturesByBatch(userIds: number[]) {
     const profilePictures = await this.imagesService.getImages({
       imageType: ImageTypes.ProfilePicture,
