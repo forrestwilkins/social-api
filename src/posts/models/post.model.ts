@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Group } from "../../groups/group.model";
 import { Image } from "../../images/models/image.model";
 import { User } from "../../users/models/user.model";
 
@@ -35,6 +36,14 @@ export class Post {
   @Column()
   @Field()
   userId: number;
+
+  @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
+  @Field(() => Group)
+  group: Group;
+
+  @Column()
+  @Field()
+  groupId: number;
 
   @Field()
   @CreateDateColumn()

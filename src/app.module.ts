@@ -11,6 +11,7 @@ import { ImagesModule } from "./images/images.module";
 import ormconfig from "./ormconfig";
 import { PostsModule } from "./posts/posts.module";
 import { UsersModule } from "./users/users.module";
+import { GroupsModule } from "./groups/groups.module";
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { UsersModule } from "./users/users.module";
     }),
     AuthModule,
     DataloaderModule,
+    GroupsModule,
     ImagesModule,
     PostsModule,
     UsersModule,
