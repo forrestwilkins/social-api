@@ -29,7 +29,7 @@ export class Post {
   images: Image[];
 
   @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
-  @Field(() => User, { nullable: true })
+  @Field(() => User)
   user: User;
 
   @Column()
