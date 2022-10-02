@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
-import { deleteImage } from "./image.utils";
+import { deleteImageFile } from "./image.utils";
 import { Image } from "./models/image.model";
 
 export const enum ImageTypes {
@@ -55,7 +55,7 @@ export class ImagesService {
 
   async deleteImage(where: FindOptionsWhere<Image>) {
     const { filename } = await this.getImage(where);
-    await deleteImage(filename);
+    await deleteImageFile(filename);
     this.repository.delete(where);
     return true;
   }

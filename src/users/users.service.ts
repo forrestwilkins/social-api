@@ -73,10 +73,11 @@ export class UsersService {
   }
 
   async saveCoverPhoto(userId: number, { filename }: Express.Multer.File) {
+    const imageData = { imageType: ImageTypes.CoverPhoto, userId };
+    await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({
-      imageType: ImageTypes.CoverPhoto,
+      ...imageData,
       filename,
-      userId,
     });
   }
 

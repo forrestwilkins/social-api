@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, In, Repository } from "typeorm";
-import { deleteImage } from "../images/image.utils";
+import { deleteImageFile } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
@@ -58,7 +58,7 @@ export class PostsService {
   async deletePost(postId: number) {
     const images = await this.imagesService.getImages({ postId });
     for (const { filename } of images) {
-      await deleteImage(filename);
+      await deleteImageFile(filename);
     }
     this.repository.delete(postId);
     return true;
