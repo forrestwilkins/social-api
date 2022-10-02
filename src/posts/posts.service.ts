@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
-import { deleteImage } from "../images/image.utils";
+import { FindOptionsWhere, In, Repository } from "typeorm";
+import { deleteImageFile } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { User } from "../users/models/user.model";
 import { PostInput } from "./models/post-input.model";
 import { Post } from "./models/post.model";
 
@@ -15,48 +16,49 @@ export class PostsService {
     private imagesService: ImagesService
   ) {}
 
-  async getPost(id: number, withImages?: boolean) {
-    return this.repository.findOne({
-      where: { id },
-      relations: withImages ? ["images"] : [],
-    });
+  async getPost(id: number) {
+    return this.repository.findOne({ where: { id } });
   }
 
   async getPosts(where?: FindOptionsWhere<Post>) {
-    const posts = await this.repository.find({
-      relations: ["images"],
-      where,
+    return this.repository.find({ where, order: { createdAt: "DESC" } });
+  }
+
+  async getPostImagesByBatch(postIds: number[]) {
+    const images = await this.imagesService.getImages({
+      postId: In(postIds),
     });
-    return posts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    const mappedImages = postIds.map(
+      (id) =>
+        images.filter((image: Image) => image.postId === id) ||
+        new Error(`Could not load image: ${id}`)
+    );
+    return mappedImages;
   }
 
-  async createPost(userId: number, postData: PostInput) {
-    return this.repository.save({ ...postData, userId });
+  async createPost(user: User, postData: PostInput): Promise<Post> {
+    const post = await this.repository.save({ ...postData, userId: user.id });
+    return { ...post, user };
   }
 
-  async updatePost(postId: number, data: PostInput) {
-    await this.repository.update(postId, data);
-    return this.getPost(postId);
+  async updatePost(id: number, data: PostInput) {
+    await this.repository.update(id, data);
+    return this.getPost(id);
   }
 
   async savePostImages(postId: number, images: Express.Multer.File[]) {
     const savedImages: Image[] = [];
-
     for (const { filename } of images) {
-      const image = await this.imagesService.createImage({
-        filename,
-        postId,
-      });
+      const image = await this.imagesService.createImage({ filename, postId });
       savedImages.push(image);
     }
-
     return savedImages;
   }
 
   async deletePost(postId: number) {
-    const { images } = await this.getPost(postId, true);
+    const images = await this.imagesService.getImages({ postId });
     for (const { filename } of images) {
-      await deleteImage(filename);
+      await deleteImageFile(filename);
     }
     this.repository.delete(postId);
     return true;

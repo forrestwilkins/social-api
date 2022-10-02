@@ -7,7 +7,7 @@ import { JwtRefreshAuthGuard } from "./guards/jwt-refresh-auth.guard";
 import { RefreshToken } from "./models/refresh-token.model";
 import { RefreshTokensService } from "./refresh-tokens.service";
 
-@Resolver((_of: RefreshToken) => RefreshToken)
+@Resolver(() => RefreshToken)
 export class RefreshTokensResolver {
   constructor(private refreshTokensService: RefreshTokensService) {}
 

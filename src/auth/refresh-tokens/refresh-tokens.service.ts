@@ -40,11 +40,9 @@ export class RefreshTokensService {
     return { access_token, refresh_token };
   }
 
-  async validateRefreshToken(userId: number, refreshTokenId: number) {
+  async validateRefreshToken(id: number, userId: number) {
     try {
-      const token = await this.repository.findOne({
-        where: { id: refreshTokenId },
-      });
+      const token = await this.repository.findOne({ where: { id } });
       if (!token) {
         throw new UnprocessableEntityException("Refresh token not found");
       }

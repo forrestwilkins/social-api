@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
-import { deleteImage } from "./image.utils";
+import { deleteImageFile } from "./image.utils";
 import { Image } from "./models/image.model";
 
 export const enum ImageTypes {
@@ -16,8 +16,8 @@ export class ImagesService {
     private repository: Repository<Image>
   ) {}
 
-  async getImage(id: number) {
-    return this.repository.findOne({ where: { id } });
+  async getImage(where: FindOptionsWhere<Image>) {
+    return this.repository.findOne({ where });
   }
 
   async getImages(where?: FindOptionsWhere<Image>) {
@@ -28,21 +28,10 @@ export class ImagesService {
     return this.repository.save(data);
   }
 
-  async saveImages(images: Express.Multer.File[]) {
-    const savedImages: Image[] = [];
-
-    for (const { filename } of images) {
-      const image = await this.createImage({ filename });
-      savedImages.push(image);
-    }
-
-    return savedImages;
-  }
-
-  async deleteImage(imageId: number) {
-    const { filename } = await this.getImage(imageId);
-    await deleteImage(filename);
-    this.repository.delete(imageId);
+  async deleteImage(where: FindOptionsWhere<Image>) {
+    const { filename } = await this.getImage(where);
+    await deleteImageFile(filename);
+    this.repository.delete(where);
     return true;
   }
 }

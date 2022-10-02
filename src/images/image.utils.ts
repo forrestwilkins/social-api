@@ -34,7 +34,7 @@ export const randomDefaultImagePath = () =>
     Math.floor(Math.random() * DEFAULT_IMAGES_SIZE) + 1
   }.jpeg`;
 
-export const deleteImage = async (filename: string) => {
+export const deleteImageFile = async (filename: string) => {
   const unlinkAsync = promisify(fs.unlink);
   const path = `./uploads/${filename}`;
   await unlinkAsync(path);

@@ -8,12 +8,12 @@ import { ImagesService } from "./images.service";
 export class ImagesController {
   constructor(private service: ImagesService) {}
 
-  @Get(":imageId/view")
+  @Get(":id/view")
   async getImageFile(
-    @Param("imageId", ParseIntPipe) imageId: number,
+    @Param("id", ParseIntPipe) id: number,
     @Res() res: Response
   ) {
-    const image = await this.service.getImage(imageId);
+    const image = await this.service.getImage({ id });
     return res.sendFile(image.filename, { root: "./uploads" });
   }
 }

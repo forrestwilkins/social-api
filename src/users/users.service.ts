@@ -1,12 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { FindOptionsWhere, In, Repository } from "typeorm";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
+import { Image } from "../images/models/image.model";
 import { User } from "./models/user.model";
-
-type WhereUserOptions = FindOptionsWhere<User> | FindOptionsWhere<User>[];
 
 @Injectable()
 export class UsersService {
@@ -16,46 +15,28 @@ export class UsersService {
     private imagesService: ImagesService
   ) {}
 
-  async getUser(where: WhereUserOptions, relations?: string[]) {
-    const user = await this.repository.findOne({
-      where,
-      relations,
-    });
+  async getUser(where: FindOptionsWhere<User>) {
+    const user = await this.repository.findOne({ where });
     if (!user) {
       throw new Error("User not found");
     }
     return user;
   }
 
-  async getUserProfile(where: WhereUserOptions, lite = false): Promise<User> {
-    const { images, posts, ...user } = await this.getUser(
-      where,
-      lite ? ["images"] : ["posts.images", "images"]
-    );
-    const profilePictures = images.filter(
-      (image) => image.imageType === ImageTypes.ProfilePicture
-    );
-    const profilePicture = profilePictures[profilePictures.length - 1];
-    if (lite) {
-      return { profilePicture, ...user };
-    }
-    const coverPhotos = images.filter(
-      (image) => image.imageType === ImageTypes.CoverPhoto
-    );
-    const coverPhoto = coverPhotos[coverPhotos.length - 1];
-    const sortedPosts = posts.sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-    );
-    return {
-      ...user,
-      coverPhoto,
-      profilePicture,
-      posts: sortedPosts,
-    };
+  async getUsers(where?: FindOptionsWhere<User>) {
+    return this.repository.find({ where });
   }
 
-  async getUsers() {
-    return this.repository.find();
+  async getUsersByBatch(userIds: number[]) {
+    const users = await this.getUsers({
+      id: In(userIds),
+    });
+    const mappedUsers = userIds.map(
+      (id) =>
+        users.find((user: User) => user.id === id) ||
+        new Error(`Could not load user: ${id}`)
+    );
+    return mappedUsers;
   }
 
   async createUser(data: Partial<User>) {
@@ -64,40 +45,47 @@ export class UsersService {
     return user;
   }
 
-  async updateUser(userId: number, data: Partial<User>) {
-    await this.repository.update(userId, data);
-    return this.getUser({ id: userId });
+  async updateUser(id: number, data: Partial<User>) {
+    await this.repository.update(id, data);
+    return this.getUser({ id });
   }
 
-  async getProfilePicture(userId: number) {
+  async getProfilePicturesByBatch(userIds: number[]) {
     const profilePictures = await this.imagesService.getImages({
       imageType: ImageTypes.ProfilePicture,
-      userId,
+      userId: In(userIds),
     });
-    return profilePictures[profilePictures.length - 1];
+    const mappedProfilePictures = userIds.map(
+      (id) =>
+        profilePictures.find(
+          (profilePicture: Image) => profilePicture.userId === id
+        ) || new Error(`Could not load profile picture: ${id}`)
+    );
+    return mappedProfilePictures;
   }
 
   async getCoverPhoto(userId: number) {
-    const coverPhotos = await this.imagesService.getImages({
+    return this.imagesService.getImage({
       imageType: ImageTypes.CoverPhoto,
       userId,
     });
-    return coverPhotos[0];
   }
 
   async saveProfilePicture(userId: number, { filename }: Express.Multer.File) {
+    const imageData = { imageType: ImageTypes.ProfilePicture, userId };
+    await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({
-      imageType: ImageTypes.ProfilePicture,
+      ...imageData,
       filename,
-      userId,
     });
   }
 
   async saveCoverPhoto(userId: number, { filename }: Express.Multer.File) {
+    const imageData = { imageType: ImageTypes.CoverPhoto, userId };
+    await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({
-      imageType: ImageTypes.CoverPhoto,
+      ...imageData,
       filename,
-      userId,
     });
   }
 
