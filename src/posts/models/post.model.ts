@@ -1,3 +1,5 @@
+// TODO: Determine whether GraphQL models should be separate from TypeORM entities
+
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import {
   Column,
