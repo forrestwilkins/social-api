@@ -1,6 +1,7 @@
 import { UseGuards } from "@nestjs/common";
 import {
   Args,
+  Context,
   ID,
   Mutation,
   Parent,
@@ -10,6 +11,7 @@ import {
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
+import { Dataloaders } from "../dataloader/dataloader.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
@@ -49,8 +51,11 @@ export class UsersResolver {
   }
 
   @ResolveField(() => Image)
-  async profilePicture(@Parent() { id }: User) {
-    return this.usersService.getProfilePicture(id);
+  async profilePicture(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: User
+  ) {
+    return loaders.profilePicturesLoader.load(id);
   }
 
   @ResolveField(() => Image)

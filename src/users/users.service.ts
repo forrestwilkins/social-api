@@ -4,6 +4,7 @@ import * as fs from "fs";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
+import { Image } from "../images/models/image.model";
 import { User } from "./models/user.model";
 
 @Injectable()
@@ -33,7 +34,7 @@ export class UsersService {
     const mappedUsers = userIds.map(
       (id) =>
         users.find((user: User) => user.id === id) ||
-        new Error(`Could not load user ${id}`)
+        new Error(`Could not load user: ${id}`)
     );
     return mappedUsers;
   }
@@ -54,6 +55,20 @@ export class UsersService {
       imageType: ImageTypes.ProfilePicture,
       userId,
     });
+  }
+
+  async getProfilePicturesByBatch(userIds: number[]) {
+    const profilePictures = await this.imagesService.getImages({
+      imageType: ImageTypes.ProfilePicture,
+      userId: In(userIds),
+    });
+    const mappedProfilePictures = userIds.map(
+      (id) =>
+        profilePictures.find(
+          (profilePicture: Image) => profilePicture.userId === id
+        ) || new Error(`Could not load profile picture: ${id}`)
+    );
+    return mappedProfilePictures;
   }
 
   async getCoverPhoto(userId: number) {

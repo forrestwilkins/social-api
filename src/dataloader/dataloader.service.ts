@@ -4,7 +4,12 @@ import { Image } from "../images/models/image.model";
 import { PostsService } from "../posts/posts.service";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
-import { Dataloaders } from "./dataloader.interface";
+
+export interface Dataloaders {
+  postImagesLoader: DataLoader<number, Image[]>;
+  profilePicturesLoader: DataLoader<number, Image>;
+  usersLoader: DataLoader<number, User>;
+}
 
 @Injectable()
 export class DataloaderService {
@@ -15,9 +20,12 @@ export class DataloaderService {
 
   getLoaders(): Dataloaders {
     const postImagesLoader = this._createPostImagesLoader();
+    const profilePicturesLoader = this._createProfilePicturesLoader();
     const usersLoader = this._createUsersLoader();
+
     return {
       postImagesLoader,
+      profilePicturesLoader,
       usersLoader,
     };
   }
@@ -25,6 +33,12 @@ export class DataloaderService {
   private _createUsersLoader() {
     return new DataLoader<number, User>(async (userIds) =>
       this.usersService.getUsersByBatch(userIds as number[])
+    );
+  }
+
+  private _createProfilePicturesLoader() {
+    return new DataLoader<number, Image>(async (userIds) =>
+      this.usersService.getProfilePicturesByBatch(userIds as number[])
     );
   }
 

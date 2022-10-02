@@ -11,7 +11,7 @@ import {
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
-import { Dataloaders } from "../dataloader/dataloader.interface";
+import { Dataloaders } from "../dataloader/dataloader.service";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
 import { PostInput } from "./models/post-input.model";
