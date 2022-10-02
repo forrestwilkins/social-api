@@ -14,7 +14,7 @@ export class UsersService {
     private imagesService: ImagesService
   ) {}
 
-  async getUser(where: FindOptionsWhere<User> | FindOptionsWhere<User>[]) {
+  async getUser(where: FindOptionsWhere<User>) {
     const user = await this.repository.findOne({ where });
     if (!user) {
       throw new Error("User not found");
