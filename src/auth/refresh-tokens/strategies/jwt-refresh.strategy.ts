@@ -31,7 +31,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
   }
 
   async validate({ sub, jti }: RefreshTokenPayload) {
-    return this.refreshTokensService.validateRefreshToken(sub, jti);
+    return this.refreshTokensService.validateRefreshToken(jti, sub);
   }
 
   private static extractJWT(req: Request): string | null {
