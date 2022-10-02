@@ -50,14 +50,14 @@ export class UsersService {
   }
 
   async getProfilePicture(userId: number) {
-    return this.imagesService.getLastImage({
+    return this.imagesService.getImage({
       imageType: ImageTypes.ProfilePicture,
       userId,
     });
   }
 
   async getCoverPhoto(userId: number) {
-    return this.imagesService.getLastImage({
+    return this.imagesService.getImage({
       imageType: ImageTypes.CoverPhoto,
       userId,
     });
