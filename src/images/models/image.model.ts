@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Group } from "../../groups/models/group.model";
 import { Post } from "../../posts/models/post.model";
 import { User } from "../../users/models/user.model";
 
@@ -44,6 +45,16 @@ export class Image {
   @Field()
   @Column({ nullable: true })
   userId: number;
+
+  @Field((_type) => Group)
+  @ManyToOne(() => Group, (group) => group.images, {
+    onDelete: "CASCADE",
+  })
+  group: Group;
+
+  @Field()
+  @Column({ nullable: true })
+  groupId: number;
 
   @Field()
   @CreateDateColumn()

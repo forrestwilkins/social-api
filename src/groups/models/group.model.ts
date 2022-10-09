@@ -31,7 +31,7 @@ export class Group {
   @Field(() => [Post])
   posts: Post[];
 
-  @OneToMany(() => Image, (image) => image.user, {
+  @OneToMany(() => Image, (image) => image.group, {
     cascade: true,
   })
   @Field(() => [Image])

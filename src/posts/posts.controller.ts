@@ -20,12 +20,12 @@ import { PostsService } from "./posts.service";
 export class PostsController {
   constructor(private service: PostsService) {}
 
-  @Post(":postId/images")
+  @Post(":id/images")
   @UploadImages()
   async uploadPostImages(
-    @Param("postId", ParseIntPipe) postId: number,
+    @Param("id", ParseIntPipe) id: number,
     @UploadedFiles() images: Express.Multer.File[]
   ) {
-    return this.service.savePostImages(postId, images);
+    return this.service.savePostImages(id, images);
   }
 }

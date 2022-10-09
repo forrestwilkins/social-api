@@ -1,5 +1,13 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, ID, Mutation, Query, Resolver } from "@nestjs/graphql";
+import {
+  Args,
+  ID,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from "@nestjs/graphql";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { GroupsService } from "./groups.service";
 import { GroupInput } from "./models/group-input.model";
@@ -17,6 +25,11 @@ export class GroupsResolver {
   @Query(() => [Group])
   async groups() {
     return this.groupsService.getGroups();
+  }
+
+  @ResolveField(() => Image)
+  async coverPhoto(@Parent() { id }: Group) {
+    return this.groupsService.getCoverPhoto(id);
   }
 
   @UseGuards(GqlAuthGuard)

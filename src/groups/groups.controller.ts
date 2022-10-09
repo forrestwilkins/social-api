@@ -11,25 +11,16 @@ import { ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { UploadImage } from "../images/decorators/upload-image.decorator";
 import { ImagesInterceptor } from "../images/images.interceptor";
-import { UsersService } from "./users.service";
+import { GroupsService } from "./groups.service";
 
-@ApiTags("users")
-@Controller("users")
+@ApiTags("groups")
+@Controller("groups")
 @UseGuards(JwtAuthGuard)
 @UseInterceptors(ImagesInterceptor)
-export class UsersController {
-  constructor(private service: UsersService) {}
+export class GroupsController {
+  constructor(private service: GroupsService) {}
 
-  @Post(":id/profile-picture")
-  @UploadImage()
-  async uploadProfilePicture(
-    @Param("id", ParseIntPipe) id: number,
-    @UploadedFile() image: Express.Multer.File
-  ) {
-    return this.service.saveProfilePicture(id, image);
-  }
-
-  @Post(":userId/cover-photo")
+  @Post(":id/cover-photo")
   @UploadImage()
   async uploadCoverPhoto(
     @Param("id", ParseIntPipe) id: number,
