@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
-import { Group } from "./group.model";
+import { GroupInput } from "./models/group-input.model";
+import { Group } from "./models/group.model";
 
 @Injectable()
 export class GroupsService {
@@ -16,5 +17,9 @@ export class GroupsService {
 
   async getGroups(where?: FindOptionsWhere<Group>) {
     return this.repository.find({ where, order: { createdAt: "DESC" } });
+  }
+
+  async createPost(groupData: GroupInput): Promise<Group> {
+    return this.repository.save(groupData);
   }
 }

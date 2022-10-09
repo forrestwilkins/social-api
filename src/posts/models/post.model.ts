@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Group } from "../../groups/group.model";
+import { Group } from "../../groups/models/group.model";
 import { Image } from "../../images/models/image.model";
 import { User } from "../../users/models/user.model";
 

@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Image } from "../images/models/image.model";
-import { Post } from "../posts/models/post.model";
+import { Image } from "../../images/models/image.model";
+import { Post } from "../../posts/models/post.model";
 
 @Entity()
 @ObjectType()
