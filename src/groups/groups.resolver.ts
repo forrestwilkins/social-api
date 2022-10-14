@@ -1,7 +1,6 @@
 import { UseGuards } from "@nestjs/common";
 import {
   Args,
-  ID,
   Mutation,
   Parent,
   Query,
@@ -18,8 +17,8 @@ export class GroupsResolver {
   constructor(private groupsService: GroupsService) {}
 
   @Query(() => Group)
-  async group(@Args("id", { type: () => ID }) id: number) {
-    return this.groupsService.getGroup(id);
+  async group(@Args("name", { type: () => String }) name: string) {
+    return this.groupsService.getGroup({ name });
   }
 
   @Query(() => [Group])

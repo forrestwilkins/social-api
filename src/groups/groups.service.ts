@@ -13,8 +13,8 @@ export class GroupsService {
     private imagesService: ImagesService
   ) {}
 
-  async getGroup(id: number) {
-    return this.repository.findOne({ where: { id } });
+  async getGroup(where: FindOptionsWhere<Group>) {
+    return this.repository.findOne({ where });
   }
 
   async getGroups(where?: FindOptionsWhere<Group>) {
