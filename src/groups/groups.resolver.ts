@@ -34,6 +34,12 @@ export class GroupsResolver {
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Group)
   async createGroup(@Args("groupData") groupData: GroupInput) {
-    return this.groupsService.createPost(groupData);
+    return this.groupsService.createGroup(groupData);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Group)
+  async updateGroup(@Args("groupData") groupData: GroupInput) {
+    return this.groupsService.updateGroup(groupData);
   }
 }

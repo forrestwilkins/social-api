@@ -28,8 +28,13 @@ export class GroupsService {
     });
   }
 
-  async createPost(groupData: GroupInput): Promise<Group> {
+  async createGroup(groupData: GroupInput): Promise<Group> {
     return this.repository.save(groupData);
+  }
+
+  async updateGroup({ id, ...groupData }: GroupInput): Promise<Group> {
+    await this.repository.update(id, groupData);
+    return this.getGroup({ id });
   }
 
   async saveCoverPhoto(groupId: number, { filename }: Express.Multer.File) {
