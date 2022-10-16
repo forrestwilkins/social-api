@@ -60,7 +60,7 @@ export class PostsService {
     for (const { filename } of images) {
       await deleteImageFile(filename);
     }
-    this.repository.delete(postId);
+    await this.repository.delete(postId);
     return true;
   }
 }

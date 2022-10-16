@@ -38,11 +38,24 @@ export class GroupsService {
   }
 
   async saveCoverPhoto(groupId: number, { filename }: Express.Multer.File) {
-    const imageData = { imageType: ImageTypes.CoverPhoto, groupId };
-    await this.imagesService.deleteImage(imageData);
+    await this.deleteCoverPhoto(groupId);
     return this.imagesService.createImage({
-      ...imageData,
+      imageType: ImageTypes.CoverPhoto,
       filename,
+      groupId,
+    });
+  }
+
+  async deleteGroup(groupId: number) {
+    await this.deleteCoverPhoto(groupId);
+    await this.repository.delete(groupId);
+    return true;
+  }
+
+  async deleteCoverPhoto(groupId: number) {
+    await this.imagesService.deleteImage({
+      imageType: ImageTypes.CoverPhoto,
+      groupId,
     });
   }
 }
