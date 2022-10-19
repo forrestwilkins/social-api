@@ -42,7 +42,7 @@ export class Post {
   group: Group;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   groupId: number;
 
   @Field()
