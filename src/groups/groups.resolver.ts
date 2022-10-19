@@ -9,13 +9,17 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
+import { PostsService } from "../posts/posts.service";
 import { GroupsService } from "./groups.service";
 import { GroupInput } from "./models/group-input.model";
 import { Group } from "./models/group.model";
 
 @Resolver(() => Group)
 export class GroupsResolver {
-  constructor(private groupsService: GroupsService) {}
+  constructor(
+    private groupsService: GroupsService,
+    private postsService: PostsService
+  ) {}
 
   @Query(() => Group)
   async group(@Args("name", { type: () => String }) name: string) {
@@ -25,6 +29,11 @@ export class GroupsResolver {
   @Query(() => [Group])
   async groups() {
     return this.groupsService.getGroups();
+  }
+
+  @ResolveField(() => Image)
+  async posts(@Parent() { id }: Group) {
+    return this.postsService.getPosts({ groupId: id });
   }
 
   @ResolveField(() => Image)
