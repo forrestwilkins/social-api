@@ -29,7 +29,7 @@ export class UsersController {
     return this.service.saveProfilePicture(id, image);
   }
 
-  @Post(":userId/cover-photo")
+  @Post(":id/cover-photo")
   @UploadImage()
   async uploadCoverPhoto(
     @Param("id", ParseIntPipe) id: number,
