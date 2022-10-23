@@ -54,7 +54,7 @@ export class PostsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { groupId }: Post
   ) {
-    return loaders.groupsLoader.load(groupId);
+    return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
 
   @UseGuards(GqlAuthGuard)
