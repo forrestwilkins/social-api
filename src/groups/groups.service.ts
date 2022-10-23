@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { FindOptionsWhere, In, Repository } from "typeorm";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { GroupInput } from "./models/group-input.model";
 import { Group } from "./models/group.model";
@@ -26,6 +26,18 @@ export class GroupsService {
       imageType: ImageTypes.CoverPhoto,
       groupId,
     });
+  }
+
+  async getGroupsByBatch(groupIds: number[]) {
+    const groups = await this.getGroups({
+      id: In(groupIds),
+    });
+    const mappedGroups = groupIds.map(
+      (id) =>
+        groups.find((group: Group) => group.id === id) ||
+        new Error(`Could not load group: ${id}`)
+    );
+    return mappedGroups;
   }
 
   async createGroup(groupData: GroupInput): Promise<Group> {

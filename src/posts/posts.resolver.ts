@@ -12,6 +12,7 @@ import {
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../dataloader/dataloader.service";
+import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
 import { PostInput } from "./models/post-input.model";
@@ -32,6 +33,14 @@ export class PostsResolver {
     return this.postsService.getPosts();
   }
 
+  @ResolveField(() => [Image])
+  async images(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Post
+  ) {
+    return loaders.postImagesLoader.load(id);
+  }
+
   @ResolveField(() => User)
   async user(
     @Context() { loaders }: { loaders: Dataloaders },
@@ -40,12 +49,12 @@ export class PostsResolver {
     return loaders.usersLoader.load(userId);
   }
 
-  @ResolveField(() => [Image])
-  async images(
+  @ResolveField(() => Group)
+  async group(
     @Context() { loaders }: { loaders: Dataloaders },
-    @Parent() { id }: Post
+    @Parent() { groupId }: Post
   ) {
-    return loaders.postImagesLoader.load(id);
+    return loaders.groupsLoader.load(groupId);
   }
 
   @UseGuards(GqlAuthGuard)

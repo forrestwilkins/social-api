@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common";
+import { GroupsModule } from "../groups/groups.module";
 import { PostsModule } from "../posts/posts.module";
 import { UsersModule } from "../users/users.module";
 import { DataloaderService } from "./dataloader.service";
 
 @Module({
-  imports: [UsersModule, PostsModule],
+  imports: [UsersModule, PostsModule, GroupsModule],
   providers: [DataloaderService],
   exports: [DataloaderService],
 })
