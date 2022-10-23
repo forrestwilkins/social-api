@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, In, Repository } from "typeorm";
-import { GroupsService } from "../groups/groups.service";
 import { deleteImageFile } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -14,8 +13,7 @@ export class PostsService {
   constructor(
     @InjectRepository(Post)
     private repository: Repository<Post>,
-    private imagesService: ImagesService,
-    private groupsService: GroupsService
+    private imagesService: ImagesService
   ) {}
 
   async getPost(id: number) {
@@ -39,9 +37,7 @@ export class PostsService {
   }
 
   async createPost(user: User, postData: PostInput): Promise<Post> {
-    const post = await this.repository.save({ ...postData, userId: user.id });
-    const group = await this.groupsService.getGroup({ id: postData.groupId });
-    return { ...post, user, group };
+    return this.repository.save({ ...postData, userId: user.id });
   }
 
   async updatePost(id: number, data: PostInput) {

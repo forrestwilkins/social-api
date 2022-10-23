@@ -1,11 +1,11 @@
-import { Field, ID, InputType } from "@nestjs/graphql";
+import { Field, InputType, Int } from "@nestjs/graphql";
 
 @InputType()
 export class PostInput {
-  @Field((_type) => ID, { nullable: true })
+  @Field((_type) => Int, { nullable: true })
   id?: number;
 
-  @Field((_type) => ID, { nullable: true })
+  @Field((_type) => Int, { nullable: true })
   groupId?: number;
 
   @Field()
