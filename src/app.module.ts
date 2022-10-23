@@ -10,6 +10,10 @@ import { ImagesModule } from "./images/images.module";
 import ormconfig from "./ormconfig";
 import { PostsModule } from "./posts/posts.module";
 import { UsersModule } from "./users/users.module";
+import { GroupMembersModule } from "./group-members/group-members.module";
+import { MemberRequestsModule } from "./member-requests/member-requests.module";
+import { GroupMembersService } from "./group-members/group-members.service";
+import { MemberRequestsService } from "./member-requests/member-requests.service";
 
 @Module({
   imports: [
@@ -33,6 +37,9 @@ import { UsersModule } from "./users/users.module";
     ImagesModule,
     PostsModule,
     UsersModule,
+    GroupMembersModule,
+    MemberRequestsModule,
   ],
+  providers: [GroupMembersService, MemberRequestsService],
 })
 export class AppModule {}
