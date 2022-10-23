@@ -38,7 +38,7 @@ export class Post {
   userId: number;
 
   @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
-  @Field(() => Group)
+  @Field(() => Group, { nullable: true })
   group: Group;
 
   @Column({ nullable: true })
