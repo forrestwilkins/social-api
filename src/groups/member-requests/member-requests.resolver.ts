@@ -1,8 +1,11 @@
+import { UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { GqlAuthGuard } from "../../auth/guards/gql-auth.guard";
 import { MemberRequestsService } from "./member-requests.service";
 import { MemberRequest } from "./models/member-request.model";
 
 @Resolver()
+@UseGuards(GqlAuthGuard)
 export class MemberRequestsResolver {
   constructor(private service: MemberRequestsService) {}
 
