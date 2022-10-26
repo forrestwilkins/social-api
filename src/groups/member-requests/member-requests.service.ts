@@ -13,4 +13,11 @@ export class MemberRequestsService {
   async getMemberRequests(where?: FindOptionsWhere<MemberRequest>) {
     return this.repository.find({ where, order: { createdAt: "DESC" } });
   }
+
+  async createMemberRequest(
+    groupId: number,
+    userId: number
+  ): Promise<MemberRequest> {
+    return this.repository.save({ groupId, userId });
+  }
 }
