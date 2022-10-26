@@ -9,6 +9,7 @@ import { MemberRequest } from "./models/member-request.model";
 export class MemberRequestsResolver {
   constructor(private service: MemberRequestsService) {}
 
+  // TODO: Remove when no longer needed for testing
   @Query(() => [MemberRequest])
   async memberRequests() {
     return this.service.getMemberRequests();
