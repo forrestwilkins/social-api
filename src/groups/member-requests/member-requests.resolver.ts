@@ -1,5 +1,5 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { GqlAuthGuard } from "../../auth/guards/gql-auth.guard";
 import { MemberRequestsService } from "./member-requests.service";
 import { MemberRequest } from "./models/member-request.model";
@@ -16,8 +16,8 @@ export class MemberRequestsResolver {
 
   @Mutation(() => MemberRequest)
   async createMemberRequest(
-    @Args("groupId") groupId: number,
-    @Args("userId") userId: number
+    @Args("groupId", { type: () => Int }) groupId: number,
+    @Args("userId", { type: () => Int }) userId: number
   ) {
     return this.service.createMemberRequest(groupId, userId);
   }
