@@ -48,7 +48,6 @@ export class Group {
   @OneToMany(() => MemberRequest, (memberRequest) => memberRequest.group, {
     cascade: true,
   })
-  @Field(() => [MemberRequest])
   memberRequests: MemberRequest[];
 
   @Field(() => Image, { nullable: true })

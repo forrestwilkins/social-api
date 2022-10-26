@@ -10,6 +10,8 @@ import {
 } from "@nestjs/graphql";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { PostsService } from "../posts/posts.service";
+import { GroupMembersService } from "./group-members/group-members.service";
+import { GroupMember } from "./group-members/models/group-member.model";
 import { GroupsService } from "./groups.service";
 import { GroupInput } from "./models/group-input.model";
 import { Group } from "./models/group.model";
@@ -18,6 +20,7 @@ import { Group } from "./models/group.model";
 export class GroupsResolver {
   constructor(
     private groupsService: GroupsService,
+    private groupMembersService: GroupMembersService,
     private postsService: PostsService
   ) {}
 
@@ -39,6 +42,11 @@ export class GroupsResolver {
   @ResolveField(() => Image)
   async coverPhoto(@Parent() { id }: Group) {
     return this.groupsService.getCoverPhoto(id);
+  }
+
+  @ResolveField(() => GroupMember)
+  async members(@Parent() { id }: Group) {
+    return this.groupMembersService.getGroupMembers({ groupId: id });
   }
 
   @UseGuards(GqlAuthGuard)

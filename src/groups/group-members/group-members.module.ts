@@ -7,5 +7,6 @@ import { GroupMember } from "./models/group-member.model";
 @Module({
   imports: [TypeOrmModule.forFeature([GroupMember])],
   providers: [GroupMembersResolver, GroupMembersService],
+  exports: [GroupMembersService],
 })
 export class GroupMembersModule {}
