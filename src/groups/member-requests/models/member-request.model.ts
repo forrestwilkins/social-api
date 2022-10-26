@@ -10,6 +10,12 @@ import {
 import { User } from "../../../users/models/user.model";
 import { Group } from "../../models/group.model";
 
+export enum MemberRequestStatus {
+  Approved = "approved",
+  Denied = "denied",
+  Pending = "pending",
+}
+
 @Entity()
 @ObjectType()
 export class MemberRequest {
@@ -17,7 +23,7 @@ export class MemberRequest {
   @Field(() => Int)
   id: number;
 
-  @Column()
+  @Column({ default: MemberRequestStatus.Pending })
   @Field()
   status: string;
 
