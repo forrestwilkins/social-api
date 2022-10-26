@@ -9,14 +9,23 @@ import { MemberRequest } from "./models/member-request.model";
 export class MemberRequestsResolver {
   constructor(private service: MemberRequestsService) {}
 
-  // TODO: Remove when no longer needed for testing
+  @Query(() => MemberRequest)
+  async memberRequest(
+    // TODO: Add MemberRequestInput type to reduce repeated code
+    @Args("groupId", { type: () => Int }) groupId: number,
+    @Args("userId", { type: () => Int }) userId: number
+  ) {
+    return this.service.getMemberRequest({ groupId, userId });
+  }
+
   @Query(() => [MemberRequest])
-  async memberRequests() {
-    return this.service.getMemberRequests();
+  async memberRequests(@Args("groupId", { type: () => Int }) groupId: number) {
+    return this.service.getMemberRequests({ groupId });
   }
 
   @Mutation(() => MemberRequest)
   async createMemberRequest(
+    // TODO: Add MemberRequestInput type to reduce repeated code
     @Args("groupId", { type: () => Int }) groupId: number,
     @Args("userId", { type: () => Int }) userId: number
   ) {

@@ -10,6 +10,10 @@ export class MemberRequestsService {
     private repository: Repository<MemberRequest>
   ) {}
 
+  async getMemberRequest(where?: FindOptionsWhere<MemberRequest>) {
+    return this.repository.findOne({ where });
+  }
+
   async getMemberRequests(where?: FindOptionsWhere<MemberRequest>) {
     return this.repository.find({ where, order: { createdAt: "DESC" } });
   }
