@@ -13,4 +13,11 @@ export class GroupMembersService {
   async getGroupMembers(where?: FindOptionsWhere<GroupMember>) {
     return this.repository.find({ where, order: { createdAt: "DESC" } });
   }
+
+  async createGroupMember(
+    groupId: number,
+    userId: number
+  ): Promise<GroupMember> {
+    return this.repository.save({ groupId, userId });
+  }
 }
