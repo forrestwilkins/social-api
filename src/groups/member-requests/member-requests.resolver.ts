@@ -9,7 +9,7 @@ import { MemberRequest } from "./models/member-request.model";
 export class MemberRequestsResolver {
   constructor(private service: MemberRequestsService) {}
 
-  @Query(() => MemberRequest)
+  @Query(() => MemberRequest, { nullable: true })
   async memberRequest(
     @Args("groupId", { type: () => Int }) groupId: number,
     @Args("userId", { type: () => Int }) userId: number
