@@ -68,8 +68,11 @@ export class PostsResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Post)
-  async updatePost(@Args("postData") { id, ...data }: PostInput) {
-    return this.postsService.updatePost(id, data);
+  async updatePost(
+    @Args("id", { type: () => Int }) id: number,
+    @Args("postData") postData: PostInput
+  ) {
+    return this.postsService.updatePost(id, postData);
   }
 
   @UseGuards(GqlAuthGuard)
