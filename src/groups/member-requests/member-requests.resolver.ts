@@ -25,10 +25,9 @@ export class MemberRequestsResolver {
 
   @Mutation(() => MemberRequest)
   async createMemberRequest(
-    @Args("groupId", { type: () => Int }) groupId: number,
-    @Args("userId", { type: () => Int }) userId: number
+    @Args("memberRequestData") memberRequestData: MemberRequestInput
   ) {
-    return this.service.createMemberRequest(groupId, userId);
+    return this.service.createMemberRequest(memberRequestData);
   }
 
   @Mutation(() => MemberRequest)

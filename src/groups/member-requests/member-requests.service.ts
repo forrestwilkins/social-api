@@ -24,10 +24,10 @@ export class MemberRequestsService {
     return this.repository.find({ where, order: { createdAt: "DESC" } });
   }
 
-  async createMemberRequest(
-    groupId: number,
-    userId: number
-  ): Promise<MemberRequest> {
+  async createMemberRequest({
+    groupId,
+    userId,
+  }: MemberRequestInput): Promise<MemberRequest> {
     return this.repository.save({ groupId, userId });
   }
 
