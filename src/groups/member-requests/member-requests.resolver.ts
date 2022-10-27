@@ -11,7 +11,6 @@ export class MemberRequestsResolver {
 
   @Query(() => MemberRequest)
   async memberRequest(
-    // TODO: Add MemberRequestInput type to reduce repeated code
     @Args("groupId", { type: () => Int }) groupId: number,
     @Args("userId", { type: () => Int }) userId: number
   ) {
@@ -25,7 +24,6 @@ export class MemberRequestsResolver {
 
   @Mutation(() => MemberRequest)
   async createMemberRequest(
-    // TODO: Add MemberRequestInput type to reduce repeated code
     @Args("groupId", { type: () => Int }) groupId: number,
     @Args("userId", { type: () => Int }) userId: number
   ) {
