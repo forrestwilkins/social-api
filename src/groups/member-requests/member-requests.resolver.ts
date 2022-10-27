@@ -17,9 +17,6 @@ export class MemberRequestsResolver {
     return this.service.getMemberRequest({ groupId, userId });
   }
 
-  /**
-   * TODO: Ensure that users without role only get back their own member request
-   */
   @Query(() => [MemberRequest])
   async memberRequests(@Args("groupId", { type: () => Int }) groupId: number) {
     return this.service.getMemberRequests({ groupId });
@@ -31,5 +28,10 @@ export class MemberRequestsResolver {
     @Args("userId", { type: () => Int }) userId: number
   ) {
     return this.service.createMemberRequest(groupId, userId);
+  }
+
+  @Mutation(() => Boolean)
+  async deleteMemberRequest(@Args("id", { type: () => Int }) id: number) {
+    return this.service.deleteMemberRequest(id);
   }
 }

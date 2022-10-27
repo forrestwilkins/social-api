@@ -24,4 +24,9 @@ export class MemberRequestsService {
   ): Promise<MemberRequest> {
     return this.repository.save({ groupId, userId });
   }
+
+  async deleteMemberRequest(id: number) {
+    await this.repository.delete(id);
+    return true;
+  }
 }
