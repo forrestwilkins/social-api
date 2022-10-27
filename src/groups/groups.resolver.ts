@@ -1,7 +1,7 @@
 import { UseGuards } from "@nestjs/common";
 import {
   Args,
-  ID,
+  Int,
   Mutation,
   Parent,
   Query,
@@ -63,7 +63,7 @@ export class GroupsResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean)
-  async deleteGroup(@Args("id", { type: () => ID }) id: number) {
+  async deleteGroup(@Args("id", { type: () => Int }) id: number) {
     return this.groupsService.deleteGroup(id);
   }
 }

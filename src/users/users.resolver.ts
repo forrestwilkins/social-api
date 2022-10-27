@@ -2,7 +2,7 @@ import { UseGuards } from "@nestjs/common";
 import {
   Args,
   Context,
-  ID,
+  Int,
   Mutation,
   Parent,
   Query,
@@ -34,7 +34,7 @@ export class UsersResolver {
 
   @Query(() => User)
   async user(
-    @Args("id", { type: () => ID, nullable: true }) id?: number,
+    @Args("id", { type: () => Int, nullable: true }) id?: number,
     @Args("name", { type: () => String, nullable: true }) name?: string
   ) {
     return this.usersService.getUser({ id, name });
@@ -71,7 +71,7 @@ export class UsersResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
-  async deleteUser(@Args("id", { type: () => ID }) id: number) {
+  async deleteUser(@Args("id", { type: () => Int }) id: number) {
     return this.usersService.deleteUser(id);
   }
 }

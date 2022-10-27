@@ -14,7 +14,7 @@ import { User } from "../../users/models/user.model";
 @ObjectType()
 @Entity()
 export class Image {
-  @Field((_type) => Int)
+  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -26,7 +26,7 @@ export class Image {
   @Column({ nullable: true })
   imageType: string;
 
-  @Field((_type) => Post)
+  @Field(() => Post)
   @ManyToOne(() => Post, (post) => post.images, {
     onDelete: "CASCADE",
   })
@@ -36,7 +36,7 @@ export class Image {
   @Column({ nullable: true })
   postId: number;
 
-  @Field((_type) => User)
+  @Field(() => User)
   @ManyToOne(() => User, (user) => user.images, {
     onDelete: "CASCADE",
   })
@@ -46,7 +46,7 @@ export class Image {
   @Column({ nullable: true })
   userId: number;
 
-  @Field((_type) => Group)
+  @Field(() => Group)
   @ManyToOne(() => Group, (group) => group.images, {
     onDelete: "CASCADE",
   })
