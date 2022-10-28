@@ -13,6 +13,7 @@ import { PostsService } from "../posts/posts.service";
 import { GroupMembersService } from "./group-members/group-members.service";
 import { GroupMember } from "./group-members/models/group-member.model";
 import { GroupsService } from "./groups.service";
+import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { GroupInput } from "./models/group-input.model";
 import { Group } from "./models/group.model";
 
@@ -21,6 +22,7 @@ export class GroupsResolver {
   constructor(
     private groupsService: GroupsService,
     private groupMembersService: GroupMembersService,
+    private memberRequestsService: MemberRequestsService,
     private postsService: PostsService
   ) {}
 
@@ -47,6 +49,16 @@ export class GroupsResolver {
   @ResolveField(() => GroupMember)
   async members(@Parent() { id }: Group) {
     return this.groupMembersService.getGroupMembers({ groupId: id });
+  }
+
+  @ResolveField(() => Int)
+  async memberCount(@Parent() { id }: Group) {
+    return this.groupMembersService.getGroupMemberCount(id);
+  }
+
+  @ResolveField(() => Int)
+  async memberRequestCount(@Parent() { id }: Group) {
+    return this.memberRequestsService.getMemberRequestCount(id);
   }
 
   @UseGuards(GqlAuthGuard)

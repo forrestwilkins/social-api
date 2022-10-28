@@ -14,6 +14,10 @@ export class GroupMembersService {
     return this.repository.find({ where, order: { createdAt: "DESC" } });
   }
 
+  async getGroupMemberCount(groupId: number) {
+    return this.repository.count({ where: { groupId } });
+  }
+
   async createGroupMember(
     groupId: number,
     userId: number

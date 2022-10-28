@@ -8,5 +8,6 @@ import { MemberRequest } from "./models/member-request.model";
 @Module({
   imports: [TypeOrmModule.forFeature([MemberRequest]), GroupMembersModule],
   providers: [MemberRequestsResolver, MemberRequestsService],
+  exports: [MemberRequestsService],
 })
 export class MemberRequestsModule {}
