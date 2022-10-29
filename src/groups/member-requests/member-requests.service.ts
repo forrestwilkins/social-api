@@ -41,7 +41,7 @@ export class MemberRequestsService {
         "group.memberRequestCount",
         "group.memberRequests"
       )
-      .select(["group.id", "memberRequest.id"])
+      .select(["group.id"])
       .whereInIds(groupIds)
       .getMany()) as GroupWithMemberRequestCount[];
 
