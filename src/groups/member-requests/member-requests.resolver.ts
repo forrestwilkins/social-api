@@ -32,10 +32,10 @@ export class MemberRequestsResolver {
     return this.service.getMemberRequest({ groupId, userId });
   }
 
-  // TODO: Ensure only users with permissions can access member requests
+  // TODO: Ensure only users with permission can access member requests
   @Query(() => [MemberRequest])
   async memberRequests(@Args("groupId", { type: () => Int }) groupId: number) {
-    return this.service.getMemberRequests({ groupId });
+    return this.service.getMemberRequests(groupId);
   }
 
   @ResolveField(() => User)

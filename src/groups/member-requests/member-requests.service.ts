@@ -25,8 +25,11 @@ export class MemberRequestsService {
     return this.repository.findOne({ where });
   }
 
-  async getMemberRequests(where?: FindOptionsWhere<MemberRequest>) {
-    return this.repository.find({ where, order: { createdAt: "DESC" } });
+  async getMemberRequests(groupId: number) {
+    return this.repository.find({
+      where: { groupId, status: MemberRequestStatus.Pending },
+      order: { createdAt: "DESC" },
+    });
   }
 
   async getMemberRequestCountsByBatch(groupIds: number[]) {
