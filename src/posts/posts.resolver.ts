@@ -1,3 +1,5 @@
+// TODO: Remove async keyword from resolver functions
+
 import { UseGuards } from "@nestjs/common";
 import {
   Args,

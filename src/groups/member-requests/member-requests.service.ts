@@ -57,29 +57,22 @@ export class MemberRequestsService {
     return this.repository.save({ groupId, userId });
   }
 
-  async approveMemberRequest(
-    id: number,
-    memberRequestData: MemberRequestInput
-  ): Promise<MemberRequest> {
+  async approveMemberRequest(id: number) {
     const memberRequest = await this.updateMemberRequest(id, {
-      ...memberRequestData,
       status: MemberRequestStatus.Approved,
     });
-    await this.groupMembersService.createGroupMember(
-      memberRequestData.groupId,
-      memberRequestData.userId
+    const groupMember = await this.groupMembersService.createGroupMember(
+      memberRequest.groupId,
+      memberRequest.userId
     );
-    return memberRequest;
+    return groupMember;
   }
 
-  async denyMemberRequest(
-    id: number,
-    memberRequestData: MemberRequestInput
-  ): Promise<MemberRequest> {
-    return this.updateMemberRequest(id, {
-      ...memberRequestData,
+  async denyMemberRequest(id: number) {
+    await this.updateMemberRequest(id, {
       status: MemberRequestStatus.Denied,
     });
+    return true;
   }
 
   async updateMemberRequest(

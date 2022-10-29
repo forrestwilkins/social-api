@@ -1,3 +1,5 @@
+// TODO: Remove async keyword from resolver functions
+
 import { UseGuards } from "@nestjs/common";
 import {
   Args,
@@ -12,6 +14,7 @@ import {
 import { GqlAuthGuard } from "../../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../../dataloader/dataloader.service";
 import { User } from "../../users/models/user.model";
+import { GroupMember } from "../group-members/models/group-member.model";
 import { MemberRequestsService } from "./member-requests.service";
 import { MemberRequestInput } from "./models/member-request-input.model";
 import { MemberRequest } from "./models/member-request.model";
@@ -50,20 +53,14 @@ export class MemberRequestsResolver {
     return this.service.createMemberRequest(memberRequestData);
   }
 
-  @Mutation(() => MemberRequest)
-  async approveMemberRequest(
-    @Args("id", { type: () => Int }) id: number,
-    @Args("memberRequestData") memberRequestData: MemberRequestInput
-  ) {
-    return this.service.approveMemberRequest(id, memberRequestData);
+  @Mutation(() => GroupMember)
+  async approveMemberRequest(@Args("id", { type: () => Int }) id: number) {
+    return this.service.approveMemberRequest(id);
   }
 
-  @Mutation(() => MemberRequest)
-  async denyMemberRequest(
-    @Args("id", { type: () => Int }) id: number,
-    @Args("memberRequestData") memberRequestData: MemberRequestInput
-  ) {
-    return this.service.denyMemberRequest(id, memberRequestData);
+  @Mutation(() => Boolean)
+  async denyMemberRequest(@Args("id", { type: () => Int }) id: number) {
+    return this.service.denyMemberRequest(id);
   }
 
   @Mutation(() => Boolean)
