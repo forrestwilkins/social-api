@@ -65,6 +65,6 @@ export class MemberRequestsResolver {
 
   @Mutation(() => Boolean)
   async deleteMemberRequest(@Args("id", { type: () => Int }) id: number) {
-    return this.service.deleteMemberRequest(id);
+    return this.service.deleteMemberRequest({ id });
   }
 }

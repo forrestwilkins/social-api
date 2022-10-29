@@ -86,8 +86,8 @@ export class MemberRequestsService {
     return this.getMemberRequest({ id });
   }
 
-  async deleteMemberRequest(id: number) {
-    await this.repository.delete(id);
+  async deleteMemberRequest(where: FindOptionsWhere<MemberRequest>) {
+    await this.repository.delete(where);
     return true;
   }
 }
