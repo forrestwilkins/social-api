@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { GroupMembersService } from "../group-members/group-members.service";
@@ -18,6 +18,7 @@ export class MemberRequestsService {
     private repository: Repository<MemberRequest>,
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
+    @Inject(forwardRef(() => GroupMembersService))
     private groupMembersService: GroupMembersService
   ) {}
 

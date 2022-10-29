@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { GroupMembersModule } from "../group-members/group-members.module";
 import { GroupsModule } from "../groups.module";
@@ -9,7 +9,7 @@ import { MemberRequest } from "./models/member-request.model";
 @Module({
   imports: [
     TypeOrmModule.forFeature([MemberRequest]),
-    GroupMembersModule,
+    forwardRef(() => GroupMembersModule),
     GroupsModule,
   ],
   providers: [MemberRequestsResolver, MemberRequestsService],
