@@ -1,11 +1,22 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import {
+  Args,
+  Context,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from "@nestjs/graphql";
 import { GqlAuthGuard } from "../../auth/guards/gql-auth.guard";
+import { Dataloaders } from "../../dataloader/dataloader.service";
+import { User } from "../../users/models/user.model";
 import { MemberRequestsService } from "./member-requests.service";
 import { MemberRequestInput } from "./models/member-request-input.model";
 import { MemberRequest } from "./models/member-request.model";
 
-@Resolver()
+@Resolver(() => MemberRequest)
 @UseGuards(GqlAuthGuard)
 export class MemberRequestsResolver {
   constructor(private service: MemberRequestsService) {}
@@ -18,9 +29,18 @@ export class MemberRequestsResolver {
     return this.service.getMemberRequest({ groupId, userId });
   }
 
+  // TODO: Ensure only users with permissions can access member requests
   @Query(() => [MemberRequest])
   async memberRequests(@Args("groupId", { type: () => Int }) groupId: number) {
     return this.service.getMemberRequests({ groupId });
+  }
+
+  @ResolveField(() => User)
+  async user(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { userId }: MemberRequest
+  ) {
+    return loaders.usersLoader.load(userId);
   }
 
   @Mutation(() => MemberRequest)
