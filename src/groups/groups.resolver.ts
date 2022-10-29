@@ -52,8 +52,11 @@ export class GroupsResolver {
   }
 
   @ResolveField(() => Int)
-  async memberCount(@Parent() { id }: Group) {
-    return this.groupMembersService.getGroupMemberCount(id);
+  async memberCount(
+    @Parent() { id }: Group,
+    @Context() { loaders }: { loaders: Dataloaders }
+  ) {
+    return loaders.groupMemberCountLoader.load(id);
   }
 
   @ResolveField(() => Int)

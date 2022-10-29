@@ -29,10 +29,6 @@ export class MemberRequestsService {
     return this.repository.find({ where, order: { createdAt: "DESC" } });
   }
 
-  async getMemberRequestCount(groupId: number) {
-    return this.repository.count({ where: { groupId } });
-  }
-
   async getMemberRequestCountsByBatch(groupIds: number[]) {
     const groups = (await this.groupRepository
       .createQueryBuilder("group")
@@ -45,15 +41,13 @@ export class MemberRequestsService {
       .whereInIds(groupIds)
       .getMany()) as GroupWithMemberRequestCount[];
 
-    const mappedMemberRequestCounts = groupIds.map((id) => {
+    return groupIds.map((id) => {
       const group = groups.find((group: Group) => group.id === id);
       if (!group) {
         return new Error(`Could not load member request count: ${id}`);
       }
       return group.memberRequestCount;
     });
-
-    return mappedMemberRequestCounts;
   }
 
   async createMemberRequest({

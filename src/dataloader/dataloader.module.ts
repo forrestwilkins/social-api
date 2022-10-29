@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { GroupMembersModule } from "../groups/group-members/group-members.module";
 import { GroupsModule } from "../groups/groups.module";
 import { MemberRequestsModule } from "../groups/member-requests/member-requests.module";
 import { PostsModule } from "../posts/posts.module";
@@ -6,7 +7,13 @@ import { UsersModule } from "../users/users.module";
 import { DataloaderService } from "./dataloader.service";
 
 @Module({
-  imports: [UsersModule, PostsModule, GroupsModule, MemberRequestsModule],
+  imports: [
+    GroupMembersModule,
+    GroupsModule,
+    MemberRequestsModule,
+    PostsModule,
+    UsersModule,
+  ],
   providers: [DataloaderService],
   exports: [DataloaderService],
 })
