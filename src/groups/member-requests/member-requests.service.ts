@@ -2,17 +2,22 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { GroupMembersService } from "../group-members/group-members.service";
+import { Group } from "../models/group.model";
 import { MemberRequestInput } from "./models/member-request-input.model";
 import {
   MemberRequest,
   MemberRequestStatus,
 } from "./models/member-request.model";
 
+type GroupWithMemberRequestCount = Group & { memberRequestCount: number };
+
 @Injectable()
 export class MemberRequestsService {
   constructor(
     @InjectRepository(MemberRequest)
     private repository: Repository<MemberRequest>,
+    @InjectRepository(Group)
+    private groupRepository: Repository<Group>,
     private groupMembersService: GroupMembersService
   ) {}
 
@@ -26,6 +31,29 @@ export class MemberRequestsService {
 
   async getMemberRequestCount(groupId: number) {
     return this.repository.count({ where: { groupId } });
+  }
+
+  async getMemberRequestCountsByBatch(groupIds: number[]) {
+    const groups = (await this.groupRepository
+      .createQueryBuilder("group")
+      .leftJoinAndSelect("group.memberRequests", "memberRequest")
+      .loadRelationCountAndMap(
+        "group.memberRequestCount",
+        "group.memberRequests"
+      )
+      .select(["group.id", "memberRequest.id"])
+      .whereInIds(groupIds)
+      .getMany()) as GroupWithMemberRequestCount[];
+
+    const mappedMemberRequestCounts = groupIds.map((id) => {
+      const group = groups.find((group: Group) => group.id === id);
+      if (!group) {
+        return new Error(`Could not load member request count: ${id}`);
+      }
+      return group.memberRequestCount;
+    });
+
+    return mappedMemberRequestCounts;
   }
 
   async createMemberRequest({
