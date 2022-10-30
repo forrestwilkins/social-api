@@ -72,8 +72,9 @@ export class MemberRequestsResolver {
     return this.service.denyMemberRequest(id);
   }
 
-  @Mutation(() => Boolean)
-  async deleteMemberRequest(@Args("id", { type: () => Int }) id: number) {
-    return this.service.deleteMemberRequest({ id });
+  // TODO: Replace Group return type with CancelMemberRequestPayload type that contains group
+  @Mutation(() => Group)
+  async cancelMemberRequest(@Args("id", { type: () => Int }) id: number) {
+    return this.service.cancelMemberRequest(id);
   }
 }
