@@ -15,6 +15,7 @@ import { GqlAuthGuard } from "../../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../../dataloader/dataloader.service";
 import { User } from "../../users/models/user.model";
 import { GroupMember } from "../group-members/models/group-member.model";
+import { Group } from "../models/group.model";
 import { MemberRequestsService } from "./member-requests.service";
 import { MemberRequestInput } from "./models/member-request-input.model";
 import { MemberRequest } from "./models/member-request.model";
@@ -36,6 +37,14 @@ export class MemberRequestsResolver {
   @Query(() => [MemberRequest])
   async memberRequests(@Args("groupId", { type: () => Int }) groupId: number) {
     return this.service.getMemberRequests(groupId);
+  }
+
+  @ResolveField(() => Group)
+  async group(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { groupId }: MemberRequest
+  ) {
+    return loaders.groupsLoader.load(groupId);
   }
 
   @ResolveField(() => User)
