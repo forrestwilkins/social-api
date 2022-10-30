@@ -39,7 +39,12 @@ export class MemberRequestsService {
       .leftJoinAndSelect("group.memberRequests", "memberRequest")
       .loadRelationCountAndMap(
         "group.memberRequestCount",
-        "group.memberRequests"
+        "group.memberRequests",
+        "memberRequest",
+        (qb) =>
+          qb.andWhere("memberRequest.status = :status", {
+            status: MemberRequestStatus.Pending,
+          })
       )
       .select(["group.id"])
       .whereInIds(groupIds)
