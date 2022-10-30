@@ -13,6 +13,7 @@ import { CurrentUser } from "../../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../../dataloader/dataloader.service";
 import { User } from "../../users/models/user.model";
+import { Group } from "../models/group.model";
 import { GroupMembersService } from "./group-members.service";
 import { GroupMember } from "./models/group-member.model";
 
@@ -31,6 +32,14 @@ export class GroupMembersResolver {
     @Parent() { userId }: GroupMember
   ) {
     return loaders.usersLoader.load(userId);
+  }
+
+  @ResolveField(() => Group)
+  async group(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { groupId }: GroupMember
+  ) {
+    return loaders.groupsLoader.load(groupId);
   }
 
   @UseGuards(GqlAuthGuard)
