@@ -11,6 +11,7 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { CurrentUser } from "../../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../../dataloader/dataloader.service";
 import { User } from "../../users/models/user.model";
@@ -28,7 +29,7 @@ export class MemberRequestsResolver {
   @Query(() => MemberRequest, { nullable: true })
   async memberRequest(
     @Args("groupId", { type: () => Int }) groupId: number,
-    @Args("userId", { type: () => Int }) userId: number
+    @CurrentUser() { id: userId }: User
   ) {
     return this.service.getMemberRequest({ groupId, userId });
   }
