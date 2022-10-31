@@ -18,7 +18,6 @@ import { User } from "../../users/models/user.model";
 import { GroupMember } from "../group-members/models/group-member.model";
 import { Group } from "../models/group.model";
 import { MemberRequestsService } from "./member-requests.service";
-import { MemberRequestInput } from "./models/member-request-input.model";
 import { MemberRequest } from "./models/member-request.model";
 
 @Resolver(() => MemberRequest)
@@ -58,9 +57,10 @@ export class MemberRequestsResolver {
 
   @Mutation(() => MemberRequest)
   async createMemberRequest(
-    @Args("memberRequestData") memberRequestData: MemberRequestInput
+    @Args("groupId", { type: () => Int }) groupId: number,
+    @CurrentUser() { id: userId }: User
   ) {
-    return this.service.createMemberRequest(memberRequestData);
+    return this.service.createMemberRequest(groupId, userId);
   }
 
   @Mutation(() => GroupMember)

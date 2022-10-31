@@ -1,10 +1,9 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
-import { GroupMembersService } from "../group-members/group-members.service";
 import { GroupsService } from "../../groups/groups.service";
+import { GroupMembersService } from "../group-members/group-members.service";
 import { Group } from "../models/group.model";
-import { MemberRequestInput } from "./models/member-request-input.model";
 import {
   MemberRequest,
   MemberRequestStatus,
@@ -61,10 +60,10 @@ export class MemberRequestsService {
     });
   }
 
-  async createMemberRequest({
-    groupId,
-    userId,
-  }: MemberRequestInput): Promise<MemberRequest> {
+  async createMemberRequest(
+    groupId: number,
+    userId: number
+  ): Promise<MemberRequest> {
     return this.repository.save({ groupId, userId });
   }
 
