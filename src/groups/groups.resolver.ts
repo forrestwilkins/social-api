@@ -9,9 +9,11 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { PostsService } from "../posts/posts.service";
+import { User } from "../users/models/user.model";
 import { GroupMembersService } from "./group-members/group-members.service";
 import { GroupMember } from "./group-members/models/group-member.model";
 import { GroupsService } from "./groups.service";
@@ -83,5 +85,14 @@ export class GroupsResolver {
   @Mutation(() => Boolean)
   async deleteGroup(@Args("id", { type: () => Int }) id: number) {
     return this.groupsService.deleteGroup(id);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Boolean)
+  async leaveGroup(
+    @Args("id", { type: () => Int }) id: number,
+    @CurrentUser() { id: userId }: User
+  ) {
+    return this.groupsService.leaveGroup(id, userId);
   }
 }

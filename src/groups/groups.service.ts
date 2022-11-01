@@ -1,7 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { ImagesService, ImageTypes } from "../images/images.service";
+import { GroupMembersService } from "./group-members/group-members.service";
+import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { GroupInput } from "./models/group-input.model";
 import { Group } from "./models/group.model";
 
@@ -10,6 +12,9 @@ export class GroupsService {
   constructor(
     @InjectRepository(Group)
     private repository: Repository<Group>,
+    @Inject(forwardRef(() => MemberRequestsService))
+    private memberRequestsService: MemberRequestsService,
+    private groupMembersService: GroupMembersService,
     private imagesService: ImagesService
   ) {}
 
@@ -69,5 +74,12 @@ export class GroupsService {
       imageType: ImageTypes.CoverPhoto,
       groupId,
     });
+  }
+
+  async leaveGroup(id: number, userId: number) {
+    const where = { group: { id }, userId };
+    await this.groupMembersService.deleteGroupMember(where);
+    await this.memberRequestsService.deleteMemberRequest(where);
+    return true;
   }
 }

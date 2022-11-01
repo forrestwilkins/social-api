@@ -1,16 +1,10 @@
-import { UseGuards } from "@nestjs/common";
 import {
-  Args,
   Context,
-  Int,
-  Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { CurrentUser } from "../../auth/decorators/current-user.decorator";
-import { GqlAuthGuard } from "../../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../../dataloader/dataloader.service";
 import { User } from "../../users/models/user.model";
 import { Group } from "../models/group.model";
@@ -40,14 +34,5 @@ export class GroupMembersResolver {
     @Parent() { groupId }: GroupMember
   ) {
     return loaders.groupsLoader.load(groupId);
-  }
-
-  @UseGuards(GqlAuthGuard)
-  @Mutation(() => Boolean)
-  async leaveGroup(
-    @Args("groupId", { type: () => Int }) groupId: number,
-    @CurrentUser() { id: userId }: User
-  ) {
-    return this.service.leaveGroup({ groupId, userId });
   }
 }

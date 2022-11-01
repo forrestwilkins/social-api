@@ -20,6 +20,7 @@ export class MemberRequestsService {
     private groupRepository: Repository<Group>,
     @Inject(forwardRef(() => GroupMembersService))
     private groupMembersService: GroupMembersService,
+    @Inject(forwardRef(() => GroupsService))
     private groupsService: GroupsService
   ) {}
 

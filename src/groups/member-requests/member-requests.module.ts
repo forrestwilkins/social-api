@@ -10,7 +10,7 @@ import { MemberRequest } from "./models/member-request.model";
   imports: [
     TypeOrmModule.forFeature([MemberRequest]),
     forwardRef(() => GroupMembersModule),
-    GroupsModule,
+    forwardRef(() => GroupsModule),
   ],
   providers: [MemberRequestsResolver, MemberRequestsService],
   exports: [MemberRequestsService],

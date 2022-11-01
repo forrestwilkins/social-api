@@ -1,7 +1,6 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
-import { MemberRequestsService } from "../member-requests/member-requests.service";
 import { Group } from "../models/group.model";
 import { GroupMember } from "./models/group-member.model";
 
@@ -13,9 +12,7 @@ export class GroupMembersService {
     @InjectRepository(GroupMember)
     private repository: Repository<GroupMember>,
     @InjectRepository(Group)
-    private groupRepository: Repository<Group>,
-    @Inject(forwardRef(() => MemberRequestsService))
-    private memberRequestsService: MemberRequestsService
+    private groupRepository: Repository<Group>
   ) {}
 
   async getGroupMembers(where?: FindOptionsWhere<GroupMember>) {
@@ -47,9 +44,8 @@ export class GroupMembersService {
     return this.repository.save({ groupId, userId });
   }
 
-  async leaveGroup(where: FindOptionsWhere<GroupMember>) {
+  async deleteGroupMember(where: FindOptionsWhere<GroupMember>) {
     await this.repository.delete(where);
-    await this.memberRequestsService.deleteMemberRequest(where);
     return true;
   }
 }
