@@ -47,7 +47,7 @@ export class GroupMembersService {
     return this.repository.save({ groupId, userId });
   }
 
-  async deleteGroupMember(where: FindOptionsWhere<GroupMember>) {
+  async leaveGroup(where: FindOptionsWhere<GroupMember>) {
     await this.repository.delete(where);
     await this.memberRequestsService.deleteMemberRequest(where);
     return true;

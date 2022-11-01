@@ -48,6 +48,6 @@ export class GroupMembersResolver {
     @Args("groupId", { type: () => Int }) groupId: number,
     @CurrentUser() { id: userId }: User
   ) {
-    return this.service.deleteGroupMember({ groupId, userId });
+    return this.service.leaveGroup({ groupId, userId });
   }
 }
