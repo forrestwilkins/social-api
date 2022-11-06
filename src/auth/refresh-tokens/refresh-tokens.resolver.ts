@@ -2,8 +2,8 @@ import { UseGuards, UseInterceptors } from "@nestjs/common";
 import { Mutation, Resolver } from "@nestjs/graphql";
 import { User } from "../../users/models/user.model";
 import { CurrentUser } from "../decorators/current-user.decorator";
-import { SetAuthCookieInterceptor } from "../interceptors/set-auth-cookie.interceptor";
 import { JwtRefreshAuthGuard } from "./guards/jwt-refresh-auth.guard";
+import { RefreshAuthCookieInterceptor } from "./interceptors/refresh-auth-cookie.interceptor";
 import { RefreshToken } from "./models/refresh-token.model";
 import { RefreshTokensService } from "./refresh-tokens.service";
 
@@ -13,7 +13,7 @@ export class RefreshTokensResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(JwtRefreshAuthGuard)
-  @UseInterceptors(SetAuthCookieInterceptor)
+  @UseInterceptors(RefreshAuthCookieInterceptor)
   async refreshToken(@CurrentUser() user: User) {
     return this.refreshTokensService.refreshToken(user.id);
   }

@@ -9,8 +9,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { TokenExpiredError } from "jsonwebtoken";
 import { Not, Repository } from "typeorm";
 import { UsersService } from "../../users/users.service";
-import { AuthService } from "../auth.service";
-import { SetAuthCookieInput } from "../interceptors/set-auth-cookie.interceptor";
+import { AuthService, AuthTokens } from "../auth.service";
 import { RefreshToken } from "./models/refresh-token.model";
 import { RefreshTokenPayload } from "./strategies/jwt-refresh.strategy";
 
@@ -29,7 +28,7 @@ export class RefreshTokensService {
     private jwtService: JwtService
   ) {}
 
-  async refreshToken(userId: number): Promise<SetAuthCookieInput> {
+  async refreshToken(userId: number): Promise<AuthTokens> {
     const access_token = await this.authService.generateAccessToken(userId);
 
     // Implements refresh token rotation - a new refresh token is issed on every refresh
@@ -38,9 +37,7 @@ export class RefreshTokensService {
     // Revokes all refresh tokens for the user, other than the one just created
     await this.revokeAllOtherRefreshTokensForUser(id, userId);
 
-    // Returns shape expected by auth cookie interceptor
-    const authTokens = { access_token, refresh_token };
-    return { authTokens };
+    return { access_token, refresh_token };
   }
 
   async validateRefreshToken(id: number, userId: number) {
