@@ -5,19 +5,20 @@ import { GqlAuthGuard } from "./guards/gql-auth.guard";
 import { ClearAuthCookieInterceptor } from "./interceptors/clear-auth-cookie.interceptor";
 import { SetAuthCookieInterceptor } from "./interceptors/set-auth-cookie.interceptor";
 import { LoginInput } from "./models/login.input";
+import { AuthPayload } from "./models/auth.payload";
 import { SignUpInput } from "./models/sign-up.input";
 
 @Resolver()
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
-  @Mutation(() => Boolean)
+  @Mutation(() => AuthPayload)
   @UseInterceptors(SetAuthCookieInterceptor)
   async login(@Args("input") input: LoginInput) {
     return this.authService.login(input);
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => AuthPayload)
   @UseInterceptors(SetAuthCookieInterceptor)
   async signUp(@Args("input") input: SignUpInput) {
     return this.authService.signUp(input);
