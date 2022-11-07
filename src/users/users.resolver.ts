@@ -15,7 +15,7 @@ import { Dataloaders } from "../dataloader/dataloader.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
-import { UserInput } from "./models/user-input.model";
+import { UpdateUserInput } from "./models/update-user-input.model";
 import { User } from "./models/user.model";
 import { UsersService } from "./users.service";
 
@@ -65,8 +65,8 @@ export class UsersResolver {
 
   @Mutation(() => User)
   @UseGuards(GqlAuthGuard)
-  async updateUser(@Args("userData") { id, ...data }: UserInput) {
-    return this.usersService.updateUser(id, data);
+  async updateUser(@Args("userData") userData: UpdateUserInput) {
+    return this.usersService.updateUser(userData);
   }
 
   @Mutation(() => Boolean)
