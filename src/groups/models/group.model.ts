@@ -36,7 +36,6 @@ export class Group {
   @OneToMany(() => Image, (image) => image.group, {
     cascade: true,
   })
-  @Field(() => [Image])
   images: Image[];
 
   @OneToMany(() => GroupMember, (member) => member.group, {
