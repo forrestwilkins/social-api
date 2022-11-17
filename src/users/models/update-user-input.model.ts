@@ -5,7 +5,7 @@ import { Matches } from "class-validator";
 import { VALID_NAME_CHARACTERS } from "../../shared/constants";
 
 @InputType()
-export class UserInput {
+export class UpdateUserInput {
   @Field(() => Int)
   id: number;
 
@@ -14,9 +14,6 @@ export class UserInput {
     message: "Usernames cannot contain special characters",
   })
   name: string;
-
-  @Field()
-  email: string;
 
   @Field()
   bio: string;

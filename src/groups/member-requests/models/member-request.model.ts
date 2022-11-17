@@ -32,15 +32,13 @@ export class MemberRequest {
   user: User;
 
   @Column()
-  @Field()
   userId: number;
 
   @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
-  @Field(() => Group, { nullable: true })
+  @Field(() => Group)
   group: Group;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
+  @Column()
   groupId: number;
 
   @CreateDateColumn()

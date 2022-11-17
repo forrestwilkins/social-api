@@ -42,7 +42,6 @@ export class User {
   @OneToMany(() => Image, (image) => image.user, {
     cascade: true,
   })
-  @Field(() => [Image])
   images?: Image[];
 
   @Field(() => Image)
