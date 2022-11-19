@@ -35,8 +35,10 @@ export class MemberRequestsResolver {
 
   // TODO: Ensure only users with permission can access member requests
   @Query(() => [MemberRequest])
-  async memberRequests(@Args("groupId", { type: () => Int }) groupId: number) {
-    return this.service.getMemberRequests(groupId);
+  async memberRequests(
+    @Args("groupName", { type: () => String }) groupName: string
+  ) {
+    return this.service.getMemberRequests(groupName);
   }
 
   @ResolveField(() => Group)
