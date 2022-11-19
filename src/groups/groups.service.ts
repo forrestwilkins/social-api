@@ -23,7 +23,7 @@ export class GroupsService {
   }
 
   async getGroups(where?: FindOptionsWhere<Group>) {
-    return this.repository.find({ where, order: { createdAt: "DESC" } });
+    return this.repository.find({ where, order: { updatedAt: "DESC" } });
   }
 
   async getCoverPhoto(groupId: number) {
