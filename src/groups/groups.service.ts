@@ -7,8 +7,9 @@ import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { GroupMembersService } from "./group-members/group-members.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
-import { GroupInput } from "./models/group-input.model";
+import { CreateGroupInput } from "./models/create-group-input.model";
 import { Group } from "./models/group.model";
+import { UpdateGroupInput } from "./models/update-group-input.model";
 
 @Injectable()
 export class GroupsService {
@@ -60,14 +61,14 @@ export class GroupsService {
     return mappedGroups;
   }
 
-  async createGroup(groupData: GroupInput, userId: number) {
+  async createGroup(groupData: CreateGroupInput, userId: number) {
     const group = await this.repository.save(groupData);
     await this.groupMembersService.createGroupMember(group.id, userId);
     await this.saveDefaultCoverPhoto(group.id);
     return { group };
   }
 
-  async updateGroup({ id, ...groupData }: GroupInput) {
+  async updateGroup({ id, ...groupData }: UpdateGroupInput) {
     await this.repository.update(id, groupData);
     const group = await this.getGroup({ id });
     return { group };
