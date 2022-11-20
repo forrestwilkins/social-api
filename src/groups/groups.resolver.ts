@@ -16,6 +16,7 @@ import { PostsService } from "../posts/posts.service";
 import { User } from "../users/models/user.model";
 import { GroupMember } from "./group-members/models/group-member.model";
 import { GroupsService } from "./groups.service";
+import { CreateGroupInput } from "./models/create-group-input.model";
 import { CreateGroupPayload } from "./models/create-group-payload.model";
 import { GroupInput } from "./models/group-input.model";
 import { Group } from "./models/group.model";
@@ -78,7 +79,7 @@ export class GroupsResolver {
   @UseGuards(GqlAuthGuard)
   @Mutation(() => CreateGroupPayload)
   async createGroup(
-    @Args("groupData") groupData: GroupInput,
+    @Args("groupData") groupData: CreateGroupInput,
     @CurrentUser() { id: userId }: User
   ) {
     return this.groupsService.createGroup(groupData, userId);
