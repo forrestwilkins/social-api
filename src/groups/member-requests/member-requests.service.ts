@@ -101,7 +101,7 @@ export class MemberRequestsService {
       id: memberRequest.groupId,
     });
     await this.deleteMemberRequest({ id });
-    return group;
+    return { group };
   }
 
   async deleteMemberRequest(where: FindOptionsWhere<MemberRequest>) {
