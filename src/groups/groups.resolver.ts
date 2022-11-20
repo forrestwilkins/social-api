@@ -19,6 +19,7 @@ import { GroupsService } from "./groups.service";
 import { CreateGroupPayload } from "./models/create-group-payload.model";
 import { GroupInput } from "./models/group-input.model";
 import { Group } from "./models/group.model";
+import { UpdateGroupPayload } from "./models/update-group-payload.model";
 
 @Resolver(() => Group)
 export class GroupsResolver {
@@ -84,7 +85,7 @@ export class GroupsResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => Group)
+  @Mutation(() => UpdateGroupPayload)
   async updateGroup(@Args("groupData") groupData: GroupInput) {
     return this.groupsService.updateGroup(groupData);
   }

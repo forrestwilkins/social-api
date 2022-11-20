@@ -68,9 +68,10 @@ export class GroupsService {
     return { group };
   }
 
-  async updateGroup({ id, ...groupData }: GroupInput): Promise<Group> {
+  async updateGroup({ id, ...groupData }: GroupInput) {
     await this.repository.update(id, groupData);
-    return this.getGroup({ id });
+    const group = await this.getGroup({ id });
+    return { group };
   }
 
   async saveCoverPhoto(groupId: number, { filename }: Express.Multer.File) {
