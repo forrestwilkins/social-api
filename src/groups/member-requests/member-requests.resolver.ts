@@ -1,6 +1,6 @@
 // TODO: Remove async keyword from resolver functions
 
-import { UseGuards } from "@nestjs/common";
+import { UnauthorizedException, UseGuards } from "@nestjs/common";
 import {
   Args,
   Context,
@@ -15,6 +15,7 @@ import { CurrentUser } from "../../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../../dataloader/dataloader.service";
 import { User } from "../../users/models/user.model";
+import { GroupMembersService } from "../group-members/group-members.service";
 import { GroupMember } from "../group-members/models/group-member.model";
 import { Group } from "../models/group.model";
 import { MemberRequestsService } from "./member-requests.service";
@@ -23,22 +24,36 @@ import { MemberRequest } from "./models/member-request.model";
 @Resolver(() => MemberRequest)
 @UseGuards(GqlAuthGuard)
 export class MemberRequestsResolver {
-  constructor(private service: MemberRequestsService) {}
+  constructor(
+    private memberRequestsService: MemberRequestsService,
+    private groupMembersService: GroupMembersService
+  ) {}
 
   @Query(() => MemberRequest, { nullable: true })
   async memberRequest(
     @Args("groupId", { type: () => Int }) groupId: number,
     @CurrentUser() { id: userId }: User
   ) {
-    return this.service.getMemberRequest({ groupId, userId });
+    return this.memberRequestsService.getMemberRequest({ groupId, userId });
   }
 
-  // TODO: Ensure only users with permission can access member requests
+  /**
+   * TODO: Use RBAC with CASL to protect memberRequests
+   * Checking for group membership is only temporary
+   */
   @Query(() => [MemberRequest])
   async memberRequests(
-    @Args("groupName", { type: () => String }) groupName: string
+    @Args("groupName", { type: () => String }) groupName: string,
+    @CurrentUser() { id: userId }: User
   ) {
-    return this.service.getMemberRequests(groupName);
+    const member = await this.groupMembersService.getGroupMember({
+      group: { name: groupName },
+      userId,
+    });
+    if (!member) {
+      throw new UnauthorizedException();
+    }
+    return this.memberRequestsService.getMemberRequests(groupName);
   }
 
   @ResolveField(() => Group)
@@ -62,22 +77,22 @@ export class MemberRequestsResolver {
     @Args("groupId", { type: () => Int }) groupId: number,
     @CurrentUser() { id: userId }: User
   ) {
-    return this.service.createMemberRequest(groupId, userId);
+    return this.memberRequestsService.createMemberRequest(groupId, userId);
   }
 
   @Mutation(() => GroupMember)
   async approveMemberRequest(@Args("id", { type: () => Int }) id: number) {
-    return this.service.approveMemberRequest(id);
+    return this.memberRequestsService.approveMemberRequest(id);
   }
 
   @Mutation(() => Boolean)
   async denyMemberRequest(@Args("id", { type: () => Int }) id: number) {
-    return this.service.denyMemberRequest(id);
+    return this.memberRequestsService.denyMemberRequest(id);
   }
 
   // TODO: Replace Group return type with CancelMemberRequestPayload type that contains group
   @Mutation(() => Group)
   async cancelMemberRequest(@Args("id", { type: () => Int }) id: number) {
-    return this.service.cancelMemberRequest(id);
+    return this.memberRequestsService.cancelMemberRequest(id);
   }
 }

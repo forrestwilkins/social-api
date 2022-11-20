@@ -15,6 +15,10 @@ export class GroupMembersService {
     private groupRepository: Repository<Group>
   ) {}
 
+  async getGroupMember(where?: FindOptionsWhere<GroupMember>) {
+    return this.repository.findOne({ where });
+  }
+
   async getGroupMembers(where?: FindOptionsWhere<GroupMember>) {
     return this.repository.find({ where, order: { createdAt: "DESC" } });
   }
