@@ -1,6 +1,8 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import * as fs from "fs";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { GroupMembersService } from "./group-members/group-members.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
@@ -48,6 +50,7 @@ export class GroupsService {
   async createGroup(groupData: GroupInput, userId: number): Promise<Group> {
     const group = await this.repository.save(groupData);
     await this.groupMembersService.createGroupMember(group.id, userId);
+    await this.saveDefaultCoverPhoto(group.id);
     return group;
   }
 
@@ -63,6 +66,24 @@ export class GroupsService {
       filename,
       groupId,
     });
+  }
+
+  async saveDefaultCoverPhoto(groupId: number) {
+    const sourcePath = randomDefaultImagePath();
+    const filename = `${Date.now()}.jpeg`;
+    const copyPath = `./uploads/${filename}`;
+
+    fs.copyFile(sourcePath, copyPath, (err) => {
+      if (err) {
+        throw new Error(`Failed to save default cover photo: ${err}`);
+      }
+    });
+    const image = await this.imagesService.createImage({
+      imageType: ImageTypes.CoverPhoto,
+      filename,
+      groupId,
+    });
+    return image;
   }
 
   async deleteGroup(groupId: number) {
