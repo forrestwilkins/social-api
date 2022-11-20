@@ -16,9 +16,9 @@ import { GqlAuthGuard } from "../../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../../dataloader/dataloader.service";
 import { User } from "../../users/models/user.model";
 import { GroupMembersService } from "../group-members/group-members.service";
-import { GroupMember } from "../group-members/models/group-member.model";
 import { Group } from "../models/group.model";
 import { MemberRequestsService } from "./member-requests.service";
+import { ApproveMemberRequestPayload } from "./models/approve-member-request-payload.type";
 import { CreateMemberRequestPayload } from "./models/create-member-request-payload.model";
 import { MemberRequest } from "./models/member-request.model";
 
@@ -81,7 +81,7 @@ export class MemberRequestsResolver {
     return this.memberRequestsService.createMemberRequest(groupId, userId);
   }
 
-  @Mutation(() => GroupMember)
+  @Mutation(() => ApproveMemberRequestPayload)
   async approveMemberRequest(@Args("id", { type: () => Int }) id: number) {
     return this.memberRequestsService.approveMemberRequest(id);
   }

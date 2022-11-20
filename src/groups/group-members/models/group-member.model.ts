@@ -26,7 +26,7 @@ export class GroupMember {
   userId: number;
 
   @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
-  @Field(() => Group, { nullable: true })
+  @Field(() => Group)
   group: Group;
 
   @Column({ nullable: true })

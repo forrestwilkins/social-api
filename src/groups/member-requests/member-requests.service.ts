@@ -77,7 +77,7 @@ export class MemberRequestsService {
       memberRequest.groupId,
       memberRequest.userId
     );
-    return groupMember;
+    return { groupMember };
   }
 
   async denyMemberRequest(id: number) {
