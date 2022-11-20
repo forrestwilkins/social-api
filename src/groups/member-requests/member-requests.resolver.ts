@@ -19,6 +19,7 @@ import { GroupMembersService } from "../group-members/group-members.service";
 import { Group } from "../models/group.model";
 import { MemberRequestsService } from "./member-requests.service";
 import { ApproveMemberRequestPayload } from "./models/approve-member-request-payload.type";
+import { CancelMemberRequestPayload } from "./models/cancel-member-request-payload.mode";
 import { CreateMemberRequestPayload } from "./models/create-member-request-payload.model";
 import { MemberRequest } from "./models/member-request.model";
 
@@ -81,6 +82,11 @@ export class MemberRequestsResolver {
     return this.memberRequestsService.createMemberRequest(groupId, userId);
   }
 
+  @Mutation(() => CancelMemberRequestPayload)
+  async cancelMemberRequest(@Args("id", { type: () => Int }) id: number) {
+    return this.memberRequestsService.cancelMemberRequest(id);
+  }
+
   @Mutation(() => ApproveMemberRequestPayload)
   async approveMemberRequest(@Args("id", { type: () => Int }) id: number) {
     return this.memberRequestsService.approveMemberRequest(id);
@@ -89,11 +95,5 @@ export class MemberRequestsResolver {
   @Mutation(() => Boolean)
   async denyMemberRequest(@Args("id", { type: () => Int }) id: number) {
     return this.memberRequestsService.denyMemberRequest(id);
-  }
-
-  // TODO: Replace Group return type with CancelMemberRequestPayload type that contains group
-  @Mutation(() => Group)
-  async cancelMemberRequest(@Args("id", { type: () => Int }) id: number) {
-    return this.memberRequestsService.cancelMemberRequest(id);
   }
 }
