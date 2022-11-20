@@ -64,11 +64,9 @@ export class MemberRequestsService {
     });
   }
 
-  async createMemberRequest(
-    groupId: number,
-    userId: number
-  ): Promise<MemberRequest> {
-    return this.repository.save({ groupId, userId });
+  async createMemberRequest(groupId: number, userId: number) {
+    const memberRequest = await this.repository.save({ groupId, userId });
+    return { memberRequest };
   }
 
   async approveMemberRequest(id: number) {

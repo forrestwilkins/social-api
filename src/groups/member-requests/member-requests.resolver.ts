@@ -19,6 +19,7 @@ import { GroupMembersService } from "../group-members/group-members.service";
 import { GroupMember } from "../group-members/models/group-member.model";
 import { Group } from "../models/group.model";
 import { MemberRequestsService } from "./member-requests.service";
+import { CreateMemberRequestPayload } from "./models/create-member-request-payload.model";
 import { MemberRequest } from "./models/member-request.model";
 
 @Resolver(() => MemberRequest)
@@ -72,7 +73,7 @@ export class MemberRequestsResolver {
     return loaders.usersLoader.load(userId);
   }
 
-  @Mutation(() => MemberRequest)
+  @Mutation(() => CreateMemberRequestPayload)
   async createMemberRequest(
     @Args("groupId", { type: () => Int }) groupId: number,
     @CurrentUser() { id: userId }: User
