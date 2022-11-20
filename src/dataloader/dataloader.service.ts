@@ -6,6 +6,7 @@
 import { Injectable } from "@nestjs/common";
 import * as DataLoader from "dataloader";
 import { GroupMembersService } from "../groups/group-members/group-members.service";
+import { GroupMember } from "../groups/group-members/models/group-member.model";
 import { GroupsService } from "../groups/groups.service";
 import { MemberRequestsService } from "../groups/member-requests/member-requests.service";
 import { Group } from "../groups/models/group.model";
@@ -16,6 +17,7 @@ import { UsersService } from "../users/users.service";
 
 export interface Dataloaders {
   groupMemberCountLoader: DataLoader<number, number>;
+  groupMembersLoader: DataLoader<number, GroupMember[]>;
   groupsLoader: DataLoader<number, Group>;
   memberRequestCountLoader: DataLoader<number, number>;
   postImagesLoader: DataLoader<number, Image[]>;
@@ -36,6 +38,7 @@ export class DataloaderService {
   getLoaders(): Dataloaders {
     return {
       groupMemberCountLoader: this._createGroupMemberCountLoader(),
+      groupMembersLoader: this._createGroupMembersLoader(),
       groupsLoader: this._createGroupsLoader(),
       memberRequestCountLoader: this._createMemberRequestCountLoader(),
       postImagesLoader: this._createPostImagesLoader(),
@@ -79,6 +82,12 @@ export class DataloaderService {
   private _createGroupMemberCountLoader() {
     return new DataLoader<number, number>(async (groupIds) =>
       this.groupMembersService.getGroupMemberCountsByBatch(groupIds as number[])
+    );
+  }
+
+  private _createGroupMembersLoader() {
+    return new DataLoader<number, GroupMember[]>(async (groupIds) =>
+      this.groupMembersService.getGroupMembersByBatch(groupIds as number[])
     );
   }
 }

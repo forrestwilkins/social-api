@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { FindOptionsWhere, In, Repository } from "typeorm";
 import { Group } from "../models/group.model";
 import { GroupMember } from "./models/group-member.model";
 
@@ -21,6 +21,18 @@ export class GroupMembersService {
 
   async getGroupMembers(where?: FindOptionsWhere<GroupMember>) {
     return this.repository.find({ where, order: { createdAt: "DESC" } });
+  }
+
+  async getGroupMembersByBatch(groupIds: number[]) {
+    const groupMembers = await this.getGroupMembers({
+      groupId: In(groupIds),
+    });
+    const mappedGroupMembers = groupIds.map(
+      (id) =>
+        groupMembers.filter((member: GroupMember) => member.groupId === id) ||
+        new Error(`Could not load group members: ${id}`)
+    );
+    return mappedGroupMembers;
   }
 
   async getGroupMemberCountsByBatch(groupIds: number[]) {
