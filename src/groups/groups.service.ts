@@ -45,8 +45,10 @@ export class GroupsService {
     return mappedGroups;
   }
 
-  async createGroup(groupData: GroupInput): Promise<Group> {
-    return this.repository.save(groupData);
+  async createGroup(groupData: GroupInput, userId: number): Promise<Group> {
+    const group = await this.repository.save(groupData);
+    await this.groupMembersService.createGroupMember(group.id, userId);
+    return group;
   }
 
   async updateGroup({ id, ...groupData }: GroupInput): Promise<Group> {

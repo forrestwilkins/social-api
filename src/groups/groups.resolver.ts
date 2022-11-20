@@ -73,8 +73,11 @@ export class GroupsResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Group)
-  async createGroup(@Args("groupData") groupData: GroupInput) {
-    return this.groupsService.createGroup(groupData);
+  async createGroup(
+    @Args("groupData") groupData: GroupInput,
+    @CurrentUser() { id: userId }: User
+  ) {
+    return this.groupsService.createGroup(groupData, userId);
   }
 
   @UseGuards(GqlAuthGuard)
