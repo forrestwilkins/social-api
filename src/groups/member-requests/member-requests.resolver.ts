@@ -19,7 +19,6 @@ import { GroupMembersService } from "../group-members/group-members.service";
 import { Group } from "../models/group.model";
 import { MemberRequestsService } from "./member-requests.service";
 import { ApproveMemberRequestPayload } from "./models/approve-member-request-payload.type";
-import { CancelMemberRequestPayload } from "./models/cancel-member-request-payload.mode";
 import { CreateMemberRequestPayload } from "./models/create-member-request-payload.model";
 import { MemberRequest } from "./models/member-request.model";
 
@@ -82,14 +81,14 @@ export class MemberRequestsResolver {
     return this.memberRequestsService.createMemberRequest(groupId, userId);
   }
 
-  @Mutation(() => CancelMemberRequestPayload)
-  async cancelMemberRequest(@Args("id", { type: () => Int }) id: number) {
-    return this.memberRequestsService.cancelMemberRequest(id);
-  }
-
   @Mutation(() => ApproveMemberRequestPayload)
   async approveMemberRequest(@Args("id", { type: () => Int }) id: number) {
     return this.memberRequestsService.approveMemberRequest(id);
+  }
+
+  @Mutation(() => Boolean)
+  async cancelMemberRequest(@Args("id", { type: () => Int }) id: number) {
+    return this.memberRequestsService.cancelMemberRequest(id);
   }
 
   @Mutation(() => Boolean)
