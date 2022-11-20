@@ -16,6 +16,7 @@ import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 
 export interface Dataloaders {
+  groupCoverPhotosLoader: DataLoader<number, Image>;
   groupMemberCountLoader: DataLoader<number, number>;
   groupMembersLoader: DataLoader<number, GroupMember[]>;
   groupsLoader: DataLoader<number, Group>;
@@ -37,6 +38,7 @@ export class DataloaderService {
 
   getLoaders(): Dataloaders {
     return {
+      groupCoverPhotosLoader: this._createGroupCoverPhotosLoader(),
       groupMemberCountLoader: this._createGroupMemberCountLoader(),
       groupMembersLoader: this._createGroupMembersLoader(),
       groupsLoader: this._createGroupsLoader(),
@@ -68,6 +70,12 @@ export class DataloaderService {
   private _createGroupsLoader() {
     return new DataLoader<number, Group>(async (groupIds) =>
       this.groupsService.getGroupsByBatch(groupIds as number[])
+    );
+  }
+
+  private _createGroupCoverPhotosLoader() {
+    return new DataLoader<number, Image>(async (groupIds) =>
+      this.groupsService.getCoverPhotosByBatch(groupIds as number[])
     );
   }
 

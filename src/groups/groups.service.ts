@@ -4,6 +4,7 @@ import * as fs from "fs";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
+import { Image } from "../images/models/image.model";
 import { GroupMembersService } from "./group-members/group-members.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { GroupInput } from "./models/group-input.model";
@@ -33,6 +34,19 @@ export class GroupsService {
       imageType: ImageTypes.CoverPhoto,
       groupId,
     });
+  }
+
+  async getCoverPhotosByBatch(groupIds: number[]) {
+    const coverPhotos = await this.imagesService.getImages({
+      groupId: In(groupIds),
+      imageType: ImageTypes.CoverPhoto,
+    });
+    const mappedCoverPhotos = groupIds.map(
+      (id) =>
+        coverPhotos.find((coverPhoto: Image) => coverPhoto.groupId === id) ||
+        null
+    );
+    return mappedCoverPhotos;
   }
 
   async getGroupsByBatch(groupIds: number[]) {

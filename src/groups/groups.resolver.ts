@@ -41,10 +41,12 @@ export class GroupsResolver {
     return this.postsService.getPosts({ groupId: id });
   }
 
-  // TODO: Add data loader for cover photos
   @ResolveField(() => Image)
-  async coverPhoto(@Parent() { id }: Group) {
-    return this.groupsService.getCoverPhoto(id);
+  async coverPhoto(
+    @Parent() { id }: Group,
+    @Context() { loaders }: { loaders: Dataloaders }
+  ) {
+    return loaders.groupCoverPhotosLoader.load(id);
   }
 
   @ResolveField(() => GroupMember)
