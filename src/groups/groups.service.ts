@@ -61,11 +61,11 @@ export class GroupsService {
     return mappedGroups;
   }
 
-  async createGroup(groupData: GroupInput, userId: number): Promise<Group> {
+  async createGroup(groupData: GroupInput, userId: number) {
     const group = await this.repository.save(groupData);
     await this.groupMembersService.createGroupMember(group.id, userId);
     await this.saveDefaultCoverPhoto(group.id);
-    return group;
+    return { group };
   }
 
   async updateGroup({ id, ...groupData }: GroupInput): Promise<Group> {
