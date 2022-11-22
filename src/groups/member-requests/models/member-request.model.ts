@@ -24,7 +24,6 @@ export class MemberRequest {
   id: number;
 
   @Column({ default: MemberRequestStatus.Pending })
-  @Field()
   status: string;
 
   @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
