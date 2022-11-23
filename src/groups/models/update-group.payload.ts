@@ -3,6 +3,6 @@ import { Group } from "./group.model";
 
 @ObjectType()
 export class UpdateGroupPayload {
-  @Field(() => Group)
+  @Field()
   group: Group;
 }

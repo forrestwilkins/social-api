@@ -3,6 +3,6 @@ import { GroupMember } from "../../group-members/models/group-member.model";
 
 @ObjectType()
 export class ApproveMemberRequestPayload {
-  @Field(() => GroupMember)
+  @Field()
   groupMember: GroupMember;
 }

@@ -3,6 +3,6 @@ import { MemberRequest } from "./member-request.model";
 
 @ObjectType()
 export class CreateMemberRequestPayload {
-  @Field(() => MemberRequest)
+  @Field()
   memberRequest: MemberRequest;
 }
