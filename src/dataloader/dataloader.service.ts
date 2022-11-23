@@ -1,3 +1,8 @@
+/**
+ * TODO: Determine whether data loaders should be renamed to more
+ * clearly indicate whether IDs are being mapped to one or many
+ */
+
 import { Injectable } from "@nestjs/common";
 import * as DataLoader from "dataloader";
 import { GroupMembersService } from "../groups/group-members/group-members.service";
