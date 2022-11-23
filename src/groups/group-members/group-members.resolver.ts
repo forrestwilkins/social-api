@@ -11,7 +11,7 @@ export class GroupMembersResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { userId }: GroupMember
   ) {
-    return loaders.userLoader.load(userId);
+    return loaders.usersLoader.load(userId);
   }
 
   @ResolveField(() => Group)
@@ -19,6 +19,6 @@ export class GroupMembersResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { groupId }: GroupMember
   ) {
-    return loaders.groupLoader.load(groupId);
+    return loaders.groupsLoader.load(groupId);
   }
 }

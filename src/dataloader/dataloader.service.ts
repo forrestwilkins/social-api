@@ -11,14 +11,14 @@ import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 
 export interface Dataloaders {
-  groupCoverPhotoLoader: DataLoader<number, Image>;
+  groupCoverPhotosLoader: DataLoader<number, Image>;
   groupMemberCountLoader: DataLoader<number, number>;
   groupMembersLoader: DataLoader<number, GroupMember[]>;
-  groupLoader: DataLoader<number, Group>;
+  groupsLoader: DataLoader<number, Group>;
   memberRequestCountLoader: DataLoader<number, number>;
   postImagesLoader: DataLoader<number, Image[]>;
-  profilePictureLoader: DataLoader<number, Image>;
-  userLoader: DataLoader<number, User>;
+  profilePicturesLoader: DataLoader<number, Image>;
+  usersLoader: DataLoader<number, User>;
 }
 
 @Injectable()
@@ -33,24 +33,24 @@ export class DataloaderService {
 
   getLoaders(): Dataloaders {
     return {
-      groupCoverPhotoLoader: this._createGroupCoverPhotoLoader(),
-      groupLoader: this._createGroupLoader(),
+      groupCoverPhotosLoader: this._createGroupCoverPhotosLoader(),
+      groupsLoader: this._createGroupsLoader(),
       groupMemberCountLoader: this._createGroupMemberCountLoader(),
       groupMembersLoader: this._createGroupMembersLoader(),
       memberRequestCountLoader: this._createMemberRequestCountLoader(),
       postImagesLoader: this._createPostImagesLoader(),
-      profilePictureLoader: this._createProfilePictureLoader(),
-      userLoader: this._createUserLoader(),
+      profilePicturesLoader: this._createProfilePicturesLoader(),
+      usersLoader: this._createUsersLoader(),
     };
   }
 
-  private _createUserLoader() {
+  private _createUsersLoader() {
     return new DataLoader<number, User>(async (userIds) =>
       this.usersService.getUsersByBatch(userIds as number[])
     );
   }
 
-  private _createProfilePictureLoader() {
+  private _createProfilePicturesLoader() {
     return new DataLoader<number, Image>(async (userIds) =>
       this.usersService.getProfilePicturesByBatch(userIds as number[])
     );
@@ -62,13 +62,13 @@ export class DataloaderService {
     );
   }
 
-  private _createGroupLoader() {
+  private _createGroupsLoader() {
     return new DataLoader<number, Group>(async (groupIds) =>
       this.groupsService.getGroupsByBatch(groupIds as number[])
     );
   }
 
-  private _createGroupCoverPhotoLoader() {
+  private _createGroupCoverPhotosLoader() {
     return new DataLoader<number, Image>(async (groupIds) =>
       this.groupsService.getCoverPhotosByBatch(groupIds as number[])
     );

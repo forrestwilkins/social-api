@@ -62,7 +62,7 @@ export class MemberRequestsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { groupId }: MemberRequest
   ) {
-    return loaders.groupLoader.load(groupId);
+    return loaders.groupsLoader.load(groupId);
   }
 
   @ResolveField(() => User)
@@ -70,7 +70,7 @@ export class MemberRequestsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { userId }: MemberRequest
   ) {
-    return loaders.userLoader.load(userId);
+    return loaders.usersLoader.load(userId);
   }
 
   @Mutation(() => CreateMemberRequestPayload)

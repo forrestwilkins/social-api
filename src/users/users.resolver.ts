@@ -55,7 +55,7 @@ export class UsersResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { id }: User
   ) {
-    return loaders.profilePictureLoader.load(id);
+    return loaders.profilePicturesLoader.load(id);
   }
 
   @ResolveField(() => Image)
