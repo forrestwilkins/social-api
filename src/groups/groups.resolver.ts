@@ -49,7 +49,7 @@ export class GroupsResolver {
     @Parent() { id }: Group,
     @Context() { loaders }: { loaders: Dataloaders }
   ) {
-    return loaders.groupCoverPhotosLoader.load(id);
+    return loaders.groupCoverPhotoLoader.load(id);
   }
 
   @ResolveField(() => GroupMember)

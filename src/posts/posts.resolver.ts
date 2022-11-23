@@ -48,7 +48,7 @@ export class PostsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { userId }: Post
   ) {
-    return loaders.usersLoader.load(userId);
+    return loaders.userLoader.load(userId);
   }
 
   @ResolveField(() => Group)
@@ -56,7 +56,7 @@ export class PostsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { groupId }: Post
   ) {
-    return groupId ? loaders.groupsLoader.load(groupId) : null;
+    return groupId ? loaders.groupLoader.load(groupId) : null;
   }
 
   @UseGuards(GqlAuthGuard)
