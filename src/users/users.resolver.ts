@@ -15,7 +15,7 @@ import { Dataloaders } from "../dataloader/dataloader.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
-import { UpdateUserInput } from "./models/update-user-input.model";
+import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
 import { UsersService } from "./users.service";
 

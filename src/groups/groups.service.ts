@@ -7,9 +7,9 @@ import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { GroupMembersService } from "./group-members/group-members.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
-import { CreateGroupInput } from "./models/create-group-input.model";
+import { CreateGroupInput } from "./models/create-group.input";
 import { Group } from "./models/group.model";
-import { UpdateGroupInput } from "./models/update-group-input.model";
+import { UpdateGroupInput } from "./models/update-group.input";
 
 @Injectable()
 export class GroupsService {

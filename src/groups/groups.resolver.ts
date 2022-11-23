@@ -16,11 +16,11 @@ import { PostsService } from "../posts/posts.service";
 import { User } from "../users/models/user.model";
 import { GroupMember } from "./group-members/models/group-member.model";
 import { GroupsService } from "./groups.service";
-import { CreateGroupInput } from "./models/create-group-input.model";
-import { CreateGroupPayload } from "./models/create-group-payload.model";
+import { CreateGroupInput } from "./models/create-group.input";
+import { CreateGroupPayload } from "./models/create-group.payload";
 import { Group } from "./models/group.model";
-import { UpdateGroupInput } from "./models/update-group-input.model";
-import { UpdateGroupPayload } from "./models/update-group-payload.model";
+import { UpdateGroupInput } from "./models/update-group.input";
+import { UpdateGroupPayload } from "./models/update-group.payload";
 
 @Resolver(() => Group)
 export class GroupsResolver {

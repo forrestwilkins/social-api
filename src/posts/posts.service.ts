@@ -5,7 +5,7 @@ import { deleteImageFile } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
-import { PostInput } from "./models/post-input.model";
+import { PostInput } from "./models/post.input";
 import { Post } from "./models/post.model";
 
 @Injectable()

@@ -18,8 +18,8 @@ import { User } from "../../users/models/user.model";
 import { GroupMembersService } from "../group-members/group-members.service";
 import { Group } from "../models/group.model";
 import { MemberRequestsService } from "./member-requests.service";
-import { ApproveMemberRequestPayload } from "./models/approve-member-request-payload.type";
-import { CreateMemberRequestPayload } from "./models/create-member-request-payload.model";
+import { ApproveMemberRequestPayload } from "./models/approve-member-request.payload";
+import { CreateMemberRequestPayload } from "./models/create-member-request.payload";
 import { MemberRequest } from "./models/member-request.model";
 
 @Resolver(() => MemberRequest)

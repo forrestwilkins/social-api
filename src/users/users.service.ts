@@ -5,7 +5,7 @@ import { FindOptionsWhere, In, Repository } from "typeorm";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
-import { UpdateUserInput } from "./models/update-user-input.model";
+import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
 
 @Injectable()
