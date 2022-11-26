@@ -22,7 +22,6 @@ export class GroupMember {
   user: User;
 
   @Column()
-  @Field()
   userId: number;
 
   @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
@@ -30,7 +29,6 @@ export class GroupMember {
   group: Group;
 
   @Column({ nullable: true })
-  @Field({ nullable: true })
   groupId: number;
 
   @CreateDateColumn()
