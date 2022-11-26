@@ -1,18 +1,26 @@
 import { UseGuards } from "@nestjs/common";
 import {
   Args,
-  ID,
+  Context,
+  Int,
   Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
+import { Dataloaders } from "../dataloader/dataloader.service";
 import { PostsService } from "../posts/posts.service";
+import { User } from "../users/models/user.model";
+import { GroupMember } from "./group-members/models/group-member.model";
 import { GroupsService } from "./groups.service";
-import { GroupInput } from "./models/group-input.model";
+import { CreateGroupInput } from "./models/create-group.input";
+import { CreateGroupPayload } from "./models/create-group.payload";
 import { Group } from "./models/group.model";
+import { UpdateGroupInput } from "./models/update-group.input";
+import { UpdateGroupPayload } from "./models/update-group.payload";
 
 @Resolver(() => Group)
 export class GroupsResolver {
@@ -37,25 +45,64 @@ export class GroupsResolver {
   }
 
   @ResolveField(() => Image)
-  async coverPhoto(@Parent() { id }: Group) {
-    return this.groupsService.getCoverPhoto(id);
+  async coverPhoto(
+    @Parent() { id }: Group,
+    @Context() { loaders }: { loaders: Dataloaders }
+  ) {
+    return loaders.groupCoverPhotosLoader.load(id);
+  }
+
+  @ResolveField(() => GroupMember)
+  async members(
+    @Parent() { id }: Group,
+    @Context() { loaders }: { loaders: Dataloaders }
+  ) {
+    return loaders.groupMembersLoader.load(id);
+  }
+
+  @ResolveField(() => Int)
+  async memberCount(
+    @Parent() { id }: Group,
+    @Context() { loaders }: { loaders: Dataloaders }
+  ) {
+    return loaders.groupMemberCountLoader.load(id);
+  }
+
+  @ResolveField(() => Int)
+  async memberRequestCount(
+    @Parent() { id }: Group,
+    @Context() { loaders }: { loaders: Dataloaders }
+  ) {
+    return loaders.memberRequestCountLoader.load(id);
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => Group)
-  async createGroup(@Args("groupData") groupData: GroupInput) {
-    return this.groupsService.createGroup(groupData);
+  @Mutation(() => CreateGroupPayload)
+  async createGroup(
+    @Args("groupData") groupData: CreateGroupInput,
+    @CurrentUser() { id: userId }: User
+  ) {
+    return this.groupsService.createGroup(groupData, userId);
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => Group)
-  async updateGroup(@Args("groupData") groupData: GroupInput) {
+  @Mutation(() => UpdateGroupPayload)
+  async updateGroup(@Args("groupData") groupData: UpdateGroupInput) {
     return this.groupsService.updateGroup(groupData);
   }
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean)
-  async deleteGroup(@Args("id", { type: () => ID }) id: number) {
+  async deleteGroup(@Args("id", { type: () => Int }) id: number) {
     return this.groupsService.deleteGroup(id);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Boolean)
+  async leaveGroup(
+    @Args("id", { type: () => Int }) id: number,
+    @CurrentUser() { id: userId }: User
+  ) {
+    return this.groupsService.leaveGroup(id, userId);
   }
 }

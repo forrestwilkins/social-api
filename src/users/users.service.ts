@@ -5,6 +5,7 @@ import { FindOptionsWhere, In, Repository } from "typeorm";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
 
 @Injectable()
@@ -45,8 +46,8 @@ export class UsersService {
     return user;
   }
 
-  async updateUser(id: number, data: Partial<User>) {
-    await this.repository.update(id, data);
+  async updateUser({ id, ...userData }: UpdateUserInput) {
+    await this.repository.update(id, userData);
     return this.getUser({ id });
   }
 

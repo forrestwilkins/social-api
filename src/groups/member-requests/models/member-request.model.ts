@@ -8,29 +8,37 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { User } from "../../../users/models/user.model";
+import { Group } from "../../models/group.model";
+
+export enum MemberRequestStatus {
+  Approved = "approved",
+  Denied = "denied",
+  Pending = "pending",
+}
 
 @Entity()
 @ObjectType()
-export class RefreshToken {
+export class MemberRequest {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number;
 
-  @Column({ default: false })
-  @Field()
-  revoked: boolean;
+  @Column({ default: MemberRequestStatus.Pending })
+  status: string;
 
-  @ManyToOne(() => User, (user) => user.refreshTokens, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
   @Field(() => User)
   user: User;
 
   @Column()
-  @Field()
   userId: number;
 
+  @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
+  @Field(() => Group)
+  group: Group;
+
   @Column()
-  @Field()
-  expiresAt: Date;
+  groupId: number;
 
   @CreateDateColumn()
   @Field()

@@ -1,13 +1,11 @@
-// TODO: Add error handling for field validation
-
-import { Field, ID, InputType } from "@nestjs/graphql";
+import { Field, InputType, Int } from "@nestjs/graphql";
 import { Matches } from "class-validator";
 import { VALID_NAME_CHARACTERS } from "../../shared/constants";
 
 @InputType()
-export class GroupInput {
-  @Field((_type) => ID, { nullable: true })
-  id?: number;
+export class UpdateGroupInput {
+  @Field(() => Int)
+  id: number;
 
   @Field()
   @Matches(VALID_NAME_CHARACTERS, {

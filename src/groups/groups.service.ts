@@ -1,15 +1,23 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import * as fs from "fs";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
-import { GroupInput } from "./models/group-input.model";
+import { Image } from "../images/models/image.model";
+import { GroupMembersService } from "./group-members/group-members.service";
+import { MemberRequestsService } from "./member-requests/member-requests.service";
+import { CreateGroupInput } from "./models/create-group.input";
 import { Group } from "./models/group.model";
+import { UpdateGroupInput } from "./models/update-group.input";
 
 @Injectable()
 export class GroupsService {
   constructor(
     @InjectRepository(Group)
     private repository: Repository<Group>,
+    private memberRequestsService: MemberRequestsService,
+    private groupMembersService: GroupMembersService,
     private imagesService: ImagesService
   ) {}
 
@@ -18,7 +26,7 @@ export class GroupsService {
   }
 
   async getGroups(where?: FindOptionsWhere<Group>) {
-    return this.repository.find({ where, order: { createdAt: "DESC" } });
+    return this.repository.find({ where, order: { updatedAt: "DESC" } });
   }
 
   async getCoverPhoto(groupId: number) {
@@ -26,6 +34,19 @@ export class GroupsService {
       imageType: ImageTypes.CoverPhoto,
       groupId,
     });
+  }
+
+  async getCoverPhotosByBatch(groupIds: number[]) {
+    const coverPhotos = await this.imagesService.getImages({
+      groupId: In(groupIds),
+      imageType: ImageTypes.CoverPhoto,
+    });
+    const mappedCoverPhotos = groupIds.map(
+      (id) =>
+        coverPhotos.find((coverPhoto: Image) => coverPhoto.groupId === id) ||
+        null
+    );
+    return mappedCoverPhotos;
   }
 
   async getGroupsByBatch(groupIds: number[]) {
@@ -40,13 +61,17 @@ export class GroupsService {
     return mappedGroups;
   }
 
-  async createGroup(groupData: GroupInput): Promise<Group> {
-    return this.repository.save(groupData);
+  async createGroup(groupData: CreateGroupInput, userId: number) {
+    const group = await this.repository.save(groupData);
+    await this.groupMembersService.createGroupMember(group.id, userId);
+    await this.saveDefaultCoverPhoto(group.id);
+    return { group };
   }
 
-  async updateGroup({ id, ...groupData }: GroupInput): Promise<Group> {
+  async updateGroup({ id, ...groupData }: UpdateGroupInput) {
     await this.repository.update(id, groupData);
-    return this.getGroup({ id });
+    const group = await this.getGroup({ id });
+    return { group };
   }
 
   async saveCoverPhoto(groupId: number, { filename }: Express.Multer.File) {
@@ -56,6 +81,24 @@ export class GroupsService {
       filename,
       groupId,
     });
+  }
+
+  async saveDefaultCoverPhoto(groupId: number) {
+    const sourcePath = randomDefaultImagePath();
+    const filename = `${Date.now()}.jpeg`;
+    const copyPath = `./uploads/${filename}`;
+
+    fs.copyFile(sourcePath, copyPath, (err) => {
+      if (err) {
+        throw new Error(`Failed to save default cover photo: ${err}`);
+      }
+    });
+    const image = await this.imagesService.createImage({
+      imageType: ImageTypes.CoverPhoto,
+      filename,
+      groupId,
+    });
+    return image;
   }
 
   async deleteGroup(groupId: number) {
@@ -69,5 +112,12 @@ export class GroupsService {
       imageType: ImageTypes.CoverPhoto,
       groupId,
     });
+  }
+
+  async leaveGroup(id: number, userId: number) {
+    const where = { group: { id }, userId };
+    await this.groupMembersService.deleteGroupMember(where);
+    await this.memberRequestsService.deleteMemberRequest(where);
+    return true;
   }
 }
