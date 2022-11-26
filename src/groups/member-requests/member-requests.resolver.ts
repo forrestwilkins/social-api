@@ -40,7 +40,7 @@ export class MemberRequestsResolver {
 
   /**
    * TODO: Use RBAC with CASL to protect memberRequests
-   * Checking for group membership is only temporary
+   * Manually checking for group membership is only intended to be temporary
    */
   @Query(() => [MemberRequest])
   async memberRequests(
