@@ -17,8 +17,9 @@ import { Dataloaders } from "../dataloader/dataloader.service";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
-import { PostInput } from "./models/post.input";
+import { CreatePostInput } from "./models/create-post.input";
 import { Post } from "./models/post.model";
+import { UpdatePostInput } from "./models/update-post.input";
 import { PostsService } from "./posts.service";
 
 @Resolver(() => Post)
@@ -62,7 +63,7 @@ export class PostsResolver {
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Post)
   async createPost(
-    @Args("postData") postData: PostInput,
+    @Args("postData") postData: CreatePostInput,
     @CurrentUser() user: User
   ) {
     return this.postsService.createPost(user, postData);
@@ -70,11 +71,8 @@ export class PostsResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Post)
-  async updatePost(
-    @Args("id", { type: () => Int }) id: number,
-    @Args("postData") postData: PostInput
-  ) {
-    return this.postsService.updatePost(id, postData);
+  async updatePost(@Args("postData") postData: UpdatePostInput) {
+    return this.postsService.updatePost(postData);
   }
 
   @UseGuards(GqlAuthGuard)

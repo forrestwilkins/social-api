@@ -5,8 +5,9 @@ import { deleteImageFile } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
-import { PostInput } from "./models/post.input";
+import { CreatePostInput } from "./models/create-post.input";
 import { Post } from "./models/post.model";
+import { UpdatePostInput } from "./models/update-post.input";
 
 @Injectable()
 export class PostsService {
@@ -36,11 +37,11 @@ export class PostsService {
     return mappedImages;
   }
 
-  async createPost(user: User, postData: PostInput): Promise<Post> {
+  async createPost(user: User, postData: CreatePostInput): Promise<Post> {
     return this.repository.save({ ...postData, userId: user.id });
   }
 
-  async updatePost(id: number, data: PostInput) {
+  async updatePost({ id, ...data }: UpdatePostInput) {
     await this.repository.update(id, data);
     return this.getPost(id);
   }
