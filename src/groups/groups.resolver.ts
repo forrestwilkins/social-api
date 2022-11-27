@@ -12,6 +12,7 @@ import {
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../dataloader/dataloader.service";
+import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { User } from "../users/models/user.model";
 import { GroupMember } from "./group-members/models/group-member.model";
@@ -39,7 +40,7 @@ export class GroupsResolver {
     return this.groupsService.getGroups();
   }
 
-  @ResolveField(() => Image)
+  @ResolveField(() => [Post])
   async posts(@Parent() { id }: Group) {
     return this.postsService.getPosts({ groupId: id });
   }
