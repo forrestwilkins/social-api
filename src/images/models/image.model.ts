@@ -18,12 +18,12 @@ export class Image {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
   @Column()
+  @Field()
   filename: string;
 
-  @Field()
   @Column({ nullable: true })
+  @Field()
   imageType: string;
 
   @Field(() => Post)
@@ -32,7 +32,6 @@ export class Image {
   })
   post: Post;
 
-  @Field()
   @Column({ nullable: true })
   postId: number;
 
@@ -42,7 +41,6 @@ export class Image {
   })
   user: User;
 
-  @Field()
   @Column({ nullable: true })
   userId: number;
 
@@ -52,12 +50,11 @@ export class Image {
   })
   group: Group;
 
-  @Field()
   @Column({ nullable: true })
   groupId: number;
 
-  @Field()
   @CreateDateColumn()
+  @Field()
   createdAt: Date;
 
   @Field()
