@@ -53,7 +53,7 @@ export class GroupsResolver {
     return loaders.groupCoverPhotosLoader.load(id);
   }
 
-  @ResolveField(() => GroupMember)
+  @ResolveField(() => [GroupMember])
   async members(
     @Parent() { id }: Group,
     @Context() { loaders }: { loaders: Dataloaders }
