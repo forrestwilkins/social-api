@@ -1,6 +1,8 @@
 ## Social API
 
-Social networking platform API built with NestJS and TypeORM
+Social networking platform API built with NestJS, GraphQL, and TypeORM
+
+Social UI: https://github.com/forrestwilkins/social-ui
 
 ## WIP
 
