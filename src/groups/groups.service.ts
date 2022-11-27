@@ -29,13 +29,6 @@ export class GroupsService {
     return this.repository.find({ where, order: { updatedAt: "DESC" } });
   }
 
-  async getCoverPhoto(groupId: number) {
-    return this.imagesService.getImage({
-      imageType: ImageTypes.CoverPhoto,
-      groupId,
-    });
-  }
-
   async getCoverPhotosByBatch(groupIds: number[]) {
     const coverPhotos = await this.imagesService.getImages({
       groupId: In(groupIds),
@@ -101,16 +94,16 @@ export class GroupsService {
     return image;
   }
 
-  async deleteGroup(groupId: number) {
-    await this.deleteCoverPhoto(groupId);
-    await this.repository.delete(groupId);
+  async deleteGroup(id: number) {
+    await this.deleteCoverPhoto(id);
+    await this.repository.delete(id);
     return true;
   }
 
-  async deleteCoverPhoto(groupId: number) {
+  async deleteCoverPhoto(id: number) {
     await this.imagesService.deleteImage({
       imageType: ImageTypes.CoverPhoto,
-      groupId,
+      group: { id },
     });
   }
 
