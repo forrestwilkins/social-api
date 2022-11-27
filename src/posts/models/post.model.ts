@@ -21,32 +21,30 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
   @Column()
+  @Field()
   body: string;
 
   @Field(() => [Image])
   @OneToMany(() => Image, (image) => image.post)
   images: Image[];
 
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
   @Field(() => User)
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
   user: User;
 
   @Column()
-  @Field()
   userId: number;
 
-  @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
   @Field(() => Group, { nullable: true })
+  @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
   group: Group;
 
   @Column({ nullable: true })
-  @Field({ nullable: true })
   groupId: number;
 
-  @Field()
   @CreateDateColumn()
+  @Field()
   createdAt: Date;
 
   @Field()
