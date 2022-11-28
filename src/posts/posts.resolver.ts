@@ -18,8 +18,10 @@ import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
 import { CreatePostInput } from "./models/create-post.input";
+import { CreatePostPayload } from "./models/create-post.payload";
 import { Post } from "./models/post.model";
 import { UpdatePostInput } from "./models/update-post.input";
+import { UpdatePostPayload } from "./models/update-post.payload";
 import { PostsService } from "./posts.service";
 
 @Resolver(() => Post)
@@ -61,7 +63,7 @@ export class PostsResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => Post)
+  @Mutation(() => CreatePostPayload)
   async createPost(
     @Args("postData") postData: CreatePostInput,
     @CurrentUser() user: User
@@ -70,7 +72,7 @@ export class PostsResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => Post)
+  @Mutation(() => UpdatePostPayload)
   async updatePost(@Args("postData") postData: UpdatePostInput) {
     return this.postsService.updatePost(postData);
   }
