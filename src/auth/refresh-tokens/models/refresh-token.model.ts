@@ -13,7 +13,7 @@ import { User } from "../../../users/models/user.model";
 @ObjectType()
 export class RefreshToken {
   @PrimaryGeneratedColumn()
-  @Field((_type) => Int)
+  @Field(() => Int)
   id: number;
 
   @Column({ default: false })
@@ -21,7 +21,7 @@ export class RefreshToken {
   revoked: boolean;
 
   @ManyToOne(() => User, (user) => user.refreshTokens, { onDelete: "CASCADE" })
-  @Field((_type) => User)
+  @Field(() => User)
   user: User;
 
   @Column()

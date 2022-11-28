@@ -29,8 +29,11 @@ export class ImagesService {
   }
 
   async deleteImage(where: FindOptionsWhere<Image>) {
-    const { filename } = await this.getImage(where);
-    await deleteImageFile(filename);
+    const image = await this.getImage(where);
+    if (!image) {
+      return;
+    }
+    await deleteImageFile(image.filename);
     this.repository.delete(where);
     return true;
   }

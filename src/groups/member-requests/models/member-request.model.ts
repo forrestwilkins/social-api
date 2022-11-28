@@ -1,53 +1,50 @@
-// TODO: Determine whether GraphQL models should be separate from TypeORM entities
-
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Group } from "../../groups/models/group.model";
-import { Image } from "../../images/models/image.model";
-import { User } from "../../users/models/user.model";
+import { User } from "../../../users/models/user.model";
+import { Group } from "../../models/group.model";
 
-@ObjectType()
+export enum MemberRequestStatus {
+  Approved = "approved",
+  Denied = "denied",
+  Pending = "pending",
+}
+
 @Entity()
-export class Post {
-  @Field(() => Int)
+@ObjectType()
+export class MemberRequest {
   @PrimaryGeneratedColumn()
+  @Field(() => Int)
   id: number;
 
-  @Column()
-  @Field()
-  body: string;
+  @Column({ default: MemberRequestStatus.Pending })
+  status: string;
 
-  @Field(() => [Image])
-  @OneToMany(() => Image, (image) => image.post)
-  images: Image[];
-
-  @Field(() => User)
   @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
+  @Field(() => User)
   user: User;
 
   @Column()
   userId: number;
 
-  @Field(() => Group, { nullable: true })
   @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
+  @Field(() => Group)
   group: Group;
 
-  @Column({ nullable: true })
+  @Column()
   groupId: number;
 
   @CreateDateColumn()
   @Field()
   createdAt: Date;
 
-  @Field()
   @UpdateDateColumn()
+  @Field()
   updatedAt: Date;
 }

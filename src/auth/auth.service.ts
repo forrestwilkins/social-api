@@ -4,6 +4,7 @@ import { ValidationError } from "apollo-server-express";
 import { compare, hash } from "bcrypt";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
+import { SetAuthCookieInput } from "./interceptors/set-auth-cookie.interceptor";
 import { LoginInput } from "./models/login.input";
 import { SignUpInput } from "./models/sign-up.input";
 import { RefreshTokensService } from "./refresh-tokens/refresh-tokens.service";
@@ -12,7 +13,7 @@ import { AccessTokenPayload } from "./strategies/jwt.strategy";
 const ACCESS_TOKEN_EXPIRES_IN = 60 * 60;
 const SALT_ROUNDS = 10;
 
-export interface AuthCookiePayload {
+export interface AuthTokens {
   access_token: string;
   refresh_token: string;
 }
@@ -22,36 +23,40 @@ export class AuthService {
   constructor(
     @Inject(forwardRef(() => RefreshTokensService))
     private refreshTokensService: RefreshTokensService,
-
     private usersService: UsersService,
     private jwtService: JwtService
   ) {}
 
-  async login({ email, password }: LoginInput) {
+  async login({ email, password }: LoginInput): Promise<SetAuthCookieInput> {
     const user = await this.validateUser(email, password);
-    return this.generateTokens(user.id);
+    const authTokens = await this.generateAuthTokens(user.id);
+    return { user, authTokens };
   }
 
-  async signUp({ password, ...rest }: SignUpInput) {
+  async signUp({
+    password,
+    ...rest
+  }: SignUpInput): Promise<SetAuthCookieInput> {
     const passwordHash = await hash(password, SALT_ROUNDS);
     const user = await this.usersService.createUser({
       password: passwordHash,
       ...rest,
     });
-    return this.generateTokens(user.id);
+    const authTokens = await this.generateAuthTokens(user.id);
+    return { user, authTokens };
   }
 
-  async generateTokens(userId: number): Promise<AuthCookiePayload> {
+  async generateAuthTokens(userId: number): Promise<AuthTokens> {
     const access_token = await this.generateAccessToken(userId);
     const { refresh_token } =
       await this.refreshTokensService.generateRefreshToken(userId);
-    return {
-      access_token,
-      refresh_token,
-    };
+    return { access_token, refresh_token };
   }
 
-  async validateUser(email: string, password: string): Promise<Partial<User>> {
+  async validateUser(
+    email: string,
+    password: string
+  ): Promise<Omit<User, "password">> {
     try {
       const user = await this.usersService.getUser({ email });
       const passwordMatch = await compare(password, user.password);
