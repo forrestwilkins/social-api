@@ -48,7 +48,8 @@ export class UsersService {
 
   async updateUser({ id, ...userData }: UpdateUserInput) {
     await this.repository.update(id, userData);
-    return this.getUser({ id });
+    const user = await this.getUser({ id });
+    return { user };
   }
 
   async getProfilePicturesByBatch(userIds: number[]) {

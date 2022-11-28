@@ -37,13 +37,15 @@ export class PostsService {
     return mappedImages;
   }
 
-  async createPost(user: User, postData: CreatePostInput): Promise<Post> {
-    return this.repository.save({ ...postData, userId: user.id });
+  async createPost(user: User, postData: CreatePostInput) {
+    const post = await this.repository.save({ ...postData, userId: user.id });
+    return { post };
   }
 
   async updatePost({ id, ...data }: UpdatePostInput) {
     await this.repository.update(id, data);
-    return this.getPost(id);
+    const post = await this.getPost(id);
+    return { post };
   }
 
   async savePostImages(postId: number, images: Express.Multer.File[]) {

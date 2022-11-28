@@ -16,6 +16,7 @@ import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { UpdateUserInput } from "./models/update-user.input";
+import { UpdateUserPayload } from "./models/update-user.payload";
 import { User } from "./models/user.model";
 import { UsersService } from "./users.service";
 
@@ -63,7 +64,7 @@ export class UsersResolver {
     return this.usersService.getCoverPhoto(id);
   }
 
-  @Mutation(() => User)
+  @Mutation(() => UpdateUserPayload)
   @UseGuards(GqlAuthGuard)
   async updateUser(@Args("userData") userData: UpdateUserInput) {
     return this.usersService.updateUser(userData);
