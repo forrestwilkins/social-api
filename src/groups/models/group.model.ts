@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
+import { Role } from "../../roles/models/role.model";
 import { GroupMember } from "../group-members/models/group-member.model";
 import { MemberRequest } from "../member-requests/models/member-request.model";
 
@@ -48,6 +49,11 @@ export class Group {
     cascade: true,
   })
   memberRequests: MemberRequest[];
+
+  @OneToMany(() => Role, (role) => role.group, {
+    cascade: true,
+  })
+  roles: Role[];
 
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;
