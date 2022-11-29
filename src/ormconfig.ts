@@ -1,4 +1,5 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { Environments } from "./shared/shared.constants";
 
 require("dotenv").config();
 
@@ -11,7 +12,7 @@ const ormconfig: TypeOrmModuleOptions = {
   database: process.env.DB_SCHEMA,
   entities: ["dist/**/*{.entity,.model}{.ts,.js}"],
   migrations: ["migrations/*.js"],
-  synchronize: process.env.NODE_ENV === "development",
+  synchronize: process.env.NODE_ENV === Environments.Development,
 };
 
 export default ormconfig;
