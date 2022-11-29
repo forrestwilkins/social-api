@@ -11,7 +11,7 @@ import { GroupsModule } from "./groups/groups.module";
 import { ImagesModule } from "./images/images.module";
 import ormconfig from "./ormconfig";
 import { PostsModule } from "./posts/posts.module";
-import permissions from "./roles/permissions/rules";
+import permissions from "./auth/shield";
 import { RolesModule } from "./roles/roles.module";
 import { Environments } from "./shared/shared.constants";
 import { UsersModule } from "./users/users.module";
