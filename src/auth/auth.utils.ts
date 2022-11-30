@@ -1,7 +1,11 @@
 import { verify } from "jsonwebtoken";
 
 interface RequestWithCookies extends Request {
-  cookies?: { auth: { access_token: string } };
+  cookies?: {
+    auth: {
+      access_token: string;
+    };
+  };
 }
 
 export const getClaims = (req: RequestWithCookies) => {
