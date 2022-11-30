@@ -15,18 +15,20 @@ import permissions from "./auth/shield";
 import { RolesModule } from "./roles/roles.module";
 import { Environments } from "./shared/shared.constants";
 import { UsersModule } from "./users/users.module";
+import { getClaims } from "./auth/auth.utils";
 
 const useFactory = (dataloaderService: DataloaderService) => ({
-  autoSchemaFile: true,
-  cors: { origin: true, credentials: true },
-  csrfPrevention: process.env.NODE_ENV !== Environments.Development,
-  context: () => ({
+  context: ({ req }: { req: Request }) => ({
     loaders: dataloaderService.getLoaders(),
+    claims: getClaims(req),
   }),
   transformSchema: (schema: GraphQLSchema) => {
     schema = applyMiddleware(schema, permissions);
     return schema;
   },
+  autoSchemaFile: true,
+  cors: { origin: true, credentials: true },
+  csrfPrevention: process.env.NODE_ENV !== Environments.Development,
 });
 
 @Module({

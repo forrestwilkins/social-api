@@ -4,7 +4,7 @@ import { rule, shield } from "graphql-shield";
 
 const isAuthenticated = rule()(async (_parent, _args, ctx) => {
   // TODO: Remove when no longer needed for testing
-  console.log(ctx);
+  console.log(ctx.claims);
 
   return true;
 });
