@@ -22,11 +22,7 @@ export class MemberRequestsService {
   ) {}
 
   async getMemberRequest(where?: FindOptionsWhere<MemberRequest>) {
-    const memberRequest = await this.repository.findOne({ where });
-    if (!memberRequest) {
-      throw new Error("Request not found");
-    }
-    return memberRequest;
+    return this.repository.findOne({ where });
   }
 
   async getMemberRequests(groupName: string) {
@@ -91,9 +87,9 @@ export class MemberRequestsService {
   async updateMemberRequest(
     id: number,
     memberRequestData: Partial<MemberRequest>
-  ): Promise<MemberRequest> {
+  ) {
     await this.repository.update(id, memberRequestData);
-    return this.getMemberRequest({ id });
+    return this.repository.findOneOrFail({ where: { id } });
   }
 
   async cancelMemberRequest(id: number) {
