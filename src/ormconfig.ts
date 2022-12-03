@@ -1,11 +1,11 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { Environments, PortDefaults } from "./shared/shared.constants";
+import { Environments } from "./shared/shared.constants";
 require("dotenv").config();
 
 const ormconfig: TypeOrmModuleOptions = {
   type: "postgres",
   host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT) || PortDefaults.DB_PORT,
+  port: parseInt(process.env.DB_PORT as string),
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_SCHEMA,

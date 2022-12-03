@@ -3,7 +3,6 @@ import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
-import { PortDefaults } from "./shared/shared.constants";
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -20,7 +19,7 @@ const bootstrap = async () => {
 
   SwaggerModule.setup("api", app, document);
 
-  await app.listen(process.env.SERVER_PORT || PortDefaults.SERVER_PORT);
+  await app.listen(process.env.SERVER_PORT as string);
 };
 
 bootstrap();
