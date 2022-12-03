@@ -1,4 +1,4 @@
-import { verify } from "jsonwebtoken";
+import { Secret, verify } from "jsonwebtoken";
 
 interface RequestWithCookies extends Request {
   cookies?: {
@@ -14,7 +14,7 @@ export const getClaims = (req: RequestWithCookies) => {
   }
   try {
     const { access_token } = req.cookies.auth;
-    return verify(access_token, process.env.JWT_KEY);
+    return verify(access_token, process.env.JWT_KEY as Secret);
   } catch {
     return null;
   }

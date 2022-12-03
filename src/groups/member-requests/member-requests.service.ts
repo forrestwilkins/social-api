@@ -22,7 +22,11 @@ export class MemberRequestsService {
   ) {}
 
   async getMemberRequest(where?: FindOptionsWhere<MemberRequest>) {
-    return this.repository.findOne({ where });
+    const memberRequest = await this.repository.findOne({ where });
+    if (!memberRequest) {
+      throw new Error("Request not found");
+    }
+    return memberRequest;
   }
 
   async getMemberRequests(groupName: string) {
