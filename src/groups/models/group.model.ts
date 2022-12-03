@@ -16,8 +16,8 @@ import { MemberRequest } from "../member-requests/models/member-request.model";
 @Entity()
 @ObjectType()
 export class Group {
-  @PrimaryGeneratedColumn()
   @Field(() => Int)
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ unique: true })
@@ -28,10 +28,10 @@ export class Group {
   @Field()
   description: string;
 
+  @Field(() => [Post])
   @OneToMany(() => Post, (post) => post.group, {
     cascade: true,
   })
-  @Field(() => [Post])
   posts: Post[];
 
   @OneToMany(() => Image, (image) => image.group, {
@@ -39,10 +39,10 @@ export class Group {
   })
   images: Image[];
 
+  @Field(() => [GroupMember])
   @OneToMany(() => GroupMember, (member) => member.group, {
     cascade: true,
   })
-  @Field(() => [GroupMember])
   members: GroupMember[];
 
   @OneToMany(() => MemberRequest, (memberRequest) => memberRequest.group, {
@@ -50,6 +50,7 @@ export class Group {
   })
   memberRequests: MemberRequest[];
 
+  @Field(() => [Role])
   @OneToMany(() => Role, (role) => role.group, {
     cascade: true,
   })
@@ -62,7 +63,7 @@ export class Group {
   @Field()
   createdAt: Date;
 
-  @UpdateDateColumn()
   @Field()
+  @UpdateDateColumn()
   updatedAt: Date;
 }
