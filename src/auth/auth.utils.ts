@@ -12,7 +12,10 @@ export const getClaims = (req: RequestWithCookies) => {
   if (!req.cookies?.auth) {
     return null;
   }
-  const { access_token } = req.cookies.auth;
-  const decoded = verify(access_token, process.env.JWT_KEY);
-  return decoded;
+  try {
+    const { access_token } = req.cookies.auth;
+    return verify(access_token, process.env.JWT_KEY);
+  } catch {
+    return null;
+  }
 };
