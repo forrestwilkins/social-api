@@ -14,6 +14,9 @@ export class ImagesController {
     @Res() res: Response
   ) {
     const image = await this.service.getImage({ id });
+    if (!image) {
+      throw new Error("Image not found");
+    }
     return res.sendFile(image.filename, { root: "./uploads" });
   }
 }
