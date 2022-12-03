@@ -10,6 +10,7 @@ import {
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
 import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
+import { RoleMember } from "../../roles/role-members/models/role-member.model";
 
 @Entity()
 @ObjectType()
@@ -49,6 +50,11 @@ export class User {
 
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;
+
+  @OneToMany(() => RoleMember, (roleMember) => roleMember.user, {
+    cascade: true,
+  })
+  roleMemberships: RoleMember[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     cascade: true,
