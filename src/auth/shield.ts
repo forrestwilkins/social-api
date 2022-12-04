@@ -1,23 +1,27 @@
 // TODO: Add remaining permissions and logic for checking auth state
 
+import { Context } from "apollo-server-core";
 import { rule, shield } from "graphql-shield";
+import { UNAUTHORIZED } from "../shared/shared.constants";
+import { UserPermissions } from "../users/users.service";
 
-const hasPermission = rule()(async (_parent, _args, ctx) => {
-  // TODO: Remove when no longer needed for testing
-  console.log(ctx.permissions);
+interface ContextWithPermissions extends Context {
+  permissions?: UserPermissions;
+}
 
-  return true;
-});
+const isAuthenticated = rule()(
+  async (_, __, ctx: ContextWithPermissions) => !!ctx.permissions
+);
 
-const permissions = shield(
+const shieldPermissions = shield(
   {
     Query: {
-      posts: hasPermission,
+      users: isAuthenticated,
     },
   },
   {
-    fallbackError: "Unauthorized",
+    fallbackError: UNAUTHORIZED,
   }
 );
 
-export default permissions;
+export default shieldPermissions;

@@ -5,7 +5,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { AuthModule } from "./auth/auth.module";
-import permissions from "./auth/shield";
+import shieldPermissions from "./auth/shield";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
@@ -26,7 +26,7 @@ const useFactory = (
     permissions: await usersService.getUserPermissions(req),
   }),
   transformSchema: (schema: GraphQLSchema) => {
-    schema = applyMiddleware(schema, permissions);
+    schema = applyMiddleware(schema, shieldPermissions);
     return schema;
   },
   autoSchemaFile: true,
