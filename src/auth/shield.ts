@@ -1,7 +1,7 @@
 // TODO: Add remaining permissions and logic for checking auth state
 
 import { rule, shield } from "graphql-shield";
-import { Context } from "../app.module";
+import { Context } from "../shared/shared.types";
 import { UNAUTHORIZED } from "../shared/shared.constants";
 
 const isAuthenticated = rule()(
@@ -19,6 +19,7 @@ const hasPermission = rule()(async (_, __, ctx: Context) => {
 const shieldPermissions = shield(
   {
     Query: {
+      me: isAuthenticated,
       posts: hasPermission,
       users: isAuthenticated,
     },

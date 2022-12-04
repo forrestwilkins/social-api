@@ -2,32 +2,22 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Context as ApolloContext } from "apollo-server-core";
 import { GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { AuthModule } from "./auth/auth.module";
 import { getClaims } from "./auth/auth.utils";
 import shieldPermissions from "./auth/shield";
 import { DataloaderModule } from "./dataloader/dataloader.module";
-import {
-  Dataloaders,
-  DataloaderService,
-} from "./dataloader/dataloader.service";
+import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
 import { ImagesModule } from "./images/images.module";
 import ormconfig from "./ormconfig";
 import { PostsModule } from "./posts/posts.module";
 import { RolesModule } from "./roles/roles.module";
+import { Context } from "./shared/shared.types";
 import { Environments } from "./shared/shared.constants";
-import { User } from "./users/models/user.model";
 import { UsersModule } from "./users/users.module";
-import { UserPermissions, UsersService } from "./users/users.service";
-
-export interface Context extends ApolloContext {
-  loaders: Dataloaders;
-  permissions?: UserPermissions;
-  user?: User;
-}
+import { UsersService } from "./users/users.service";
 
 const useFactory = (
   dataloaderService: DataloaderService,

@@ -9,7 +9,6 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Image } from "../images/models/image.model";
@@ -28,8 +27,8 @@ export class UsersResolver {
   ) {}
 
   @Query(() => User)
-  @UseGuards(GqlAuthGuard)
-  me(@CurrentUser() { id }: User) {
+  // TODO: Update CurrentUser decorator to be used here
+  me(@Context() { user: { id } }: { user: User }) {
     return this.usersService.getUser({ id });
   }
 
