@@ -1,4 +1,3 @@
-import { UseGuards } from "@nestjs/common";
 import {
   Args,
   Context,
@@ -10,7 +9,6 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
-import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
@@ -77,7 +75,6 @@ export class GroupsResolver {
     return loaders.memberRequestCountLoader.load(id);
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => CreateGroupPayload)
   async createGroup(
     @Args("groupData") groupData: CreateGroupInput,
@@ -86,19 +83,16 @@ export class GroupsResolver {
     return this.groupsService.createGroup(groupData, userId);
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => UpdateGroupPayload)
   async updateGroup(@Args("groupData") groupData: UpdateGroupInput) {
     return this.groupsService.updateGroup(groupData);
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean)
   async deleteGroup(@Args("id", { type: () => Int }) id: number) {
     return this.groupsService.deleteGroup(id);
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean)
   async leaveGroup(
     @Args("id", { type: () => Int }) id: number,
