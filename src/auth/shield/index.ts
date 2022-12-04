@@ -2,9 +2,9 @@
 
 import { rule, shield } from "graphql-shield";
 
-const isAuthenticated = rule()(async (_parent, _args, ctx) => {
+const hasPermission = rule()(async (_parent, _args, ctx) => {
   // TODO: Remove when no longer needed for testing
-  console.log(ctx.claims);
+  console.log(ctx.permissions);
 
   return true;
 });
@@ -12,7 +12,7 @@ const isAuthenticated = rule()(async (_parent, _args, ctx) => {
 const permissions = shield(
   {
     Query: {
-      posts: isAuthenticated,
+      posts: hasPermission,
     },
   },
   {

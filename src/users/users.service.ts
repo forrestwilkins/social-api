@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { getClaims } from "../auth/auth.utils";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -23,10 +24,6 @@ export class UsersService {
     if (!user) {
       throw new Error("User not found");
     }
-
-    // TODO: Remove when no longer needed for testing
-    const permissions = await this.getUserPermissions(user.id);
-    console.log(permissions);
 
     return user;
   }
@@ -69,9 +66,14 @@ export class UsersService {
   }
 
   // TODO: Test thoroughly
-  async getUserPermissions(id: number) {
+  async getUserPermissions(req: Request) {
+    const claims = getClaims(req);
+    if (!claims?.sub) {
+      return null;
+    }
+    const userId = parseInt(claims.sub);
     const roleMembers = await this.roleMembersService.getRoleMembers({
-      where: { user: { id } },
+      where: { userId },
       relations: ["role.permissions"],
     });
     return roleMembers.reduce<{
