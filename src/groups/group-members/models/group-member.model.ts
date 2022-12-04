@@ -17,14 +17,16 @@ export class GroupMember {
   @Field(() => Int)
   id: number;
 
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.roleMemberships, {
+    onDelete: "CASCADE",
+  })
   @Field(() => User)
   user: User;
 
   @Column()
   userId: number;
 
-  @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
+  @ManyToOne(() => Group, (group) => group.members, { onDelete: "CASCADE" })
   @Field(() => Group)
   group: Group;
 
