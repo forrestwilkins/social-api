@@ -5,6 +5,7 @@ import { FindOptionsWhere, In, Repository } from "typeorm";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
 
@@ -13,7 +14,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private repository: Repository<User>,
-    private imagesService: ImagesService
+    private imagesService: ImagesService,
+    private roleMembersService: RoleMembersService
   ) {}
 
   async getUser(where: FindOptionsWhere<User>) {
@@ -59,6 +61,17 @@ export class UsersService {
       imageType: ImageTypes.CoverPhoto,
       userId,
     });
+  }
+
+  // TODO: Add remaining logic for getting user permissions
+  async getUserPermissions(id: number) {
+    const roleMembers = await this.roleMembersService.getRoleMembers({
+      where: { user: { id } },
+      relations: ["role.permissions"],
+    });
+
+    // TODO: Remove when no longer needed for testing
+    console.log(roleMembers);
   }
 
   async createUser(data: Partial<User>) {
