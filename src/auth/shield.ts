@@ -1,6 +1,6 @@
 // TODO: Add remaining permissions and logic for checking auth state
 
-import { rule, shield } from "graphql-shield";
+import { allow, rule, shield } from "graphql-shield";
 import { Context } from "../shared/shared.types";
 import { UNAUTHORIZED } from "../shared/shared.constants";
 
@@ -27,11 +27,11 @@ const shieldPermissions = shield(
       users: isAuthenticated,
     },
     Mutation: {
-      createPost: isAuthenticated,
-      deletePost: isAuthenticated,
-      deleteUser: isAuthenticated,
-      updatePost: isAuthenticated,
-      updateUser: isAuthenticated,
+      "*": isAuthenticated,
+      login: allow,
+      logOut: allow,
+      refreshToken: allow,
+      signUp: allow,
     },
   },
   {
