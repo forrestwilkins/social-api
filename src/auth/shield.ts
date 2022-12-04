@@ -19,13 +19,14 @@ const hasPermission = rule()(async (_, __, ctx: Context) => {
 const shieldPermissions = shield(
   {
     Query: {
+      authCheck: isAuthenticated,
       me: isAuthenticated,
       posts: hasPermission,
       users: isAuthenticated,
     },
     Mutation: {
-      updateUser: isAuthenticated,
       deleteUser: isAuthenticated,
+      updateUser: isAuthenticated,
     },
   },
   {
