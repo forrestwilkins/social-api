@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
 import { FindOptionsWhere, In, Repository } from "typeorm";
-import { getClaims } from "../auth/auth.utils";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -69,15 +68,10 @@ export class UsersService {
     });
   }
 
-  // TODO: Test thoroughly
-  async getUserPermissions(req: Request) {
-    const claims = getClaims(req);
-    if (!claims?.sub) {
-      return;
-    }
-    const userId = parseInt(claims.sub);
+  // TODO: Test thoroughly before merging
+  async getUserPermissions(id: number) {
     const roleMembers = await this.roleMembersService.getRoleMembers({
-      where: { userId },
+      where: { user: { id } },
       relations: ["role.permissions"],
     });
     return roleMembers.reduce<UserPermissions>(

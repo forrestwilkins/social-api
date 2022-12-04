@@ -2,29 +2,55 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { Context as ApolloContext } from "apollo-server-core";
 import { GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { AuthModule } from "./auth/auth.module";
+import { getClaims } from "./auth/auth.utils";
 import shieldPermissions from "./auth/shield";
 import { DataloaderModule } from "./dataloader/dataloader.module";
-import { DataloaderService } from "./dataloader/dataloader.service";
+import {
+  Dataloaders,
+  DataloaderService,
+} from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
 import { ImagesModule } from "./images/images.module";
 import ormconfig from "./ormconfig";
 import { PostsModule } from "./posts/posts.module";
 import { RolesModule } from "./roles/roles.module";
 import { Environments } from "./shared/shared.constants";
+import { User } from "./users/models/user.model";
 import { UsersModule } from "./users/users.module";
-import { UsersService } from "./users/users.service";
+import { UserPermissions, UsersService } from "./users/users.service";
+
+export interface Context extends ApolloContext {
+  loaders: Dataloaders;
+  permissions?: UserPermissions;
+  user?: User;
+}
 
 const useFactory = (
   dataloaderService: DataloaderService,
   usersService: UsersService
 ) => ({
-  context: async ({ req }: { req: Request }) => ({
-    loaders: dataloaderService.getLoaders(),
-    permissions: await usersService.getUserPermissions(req),
-  }),
+  context: async ({ req }: { req: Request }): Promise<Context> => {
+    const claims = getClaims(req);
+    const userId = claims?.sub ? parseInt(claims.sub) : undefined;
+
+    const loaders = dataloaderService.getLoaders();
+    const permissions = userId
+      ? await usersService.getUserPermissions(userId)
+      : undefined;
+    const user = userId
+      ? await usersService.getUser({ id: userId })
+      : undefined;
+
+    return {
+      loaders,
+      permissions,
+      user,
+    };
+  },
   transformSchema: (schema: GraphQLSchema) => {
     schema = applyMiddleware(schema, shieldPermissions);
     return schema;
