@@ -1,3 +1,8 @@
+/**
+ * TODO: Determine whether RefreshTokensResolver should also use
+ * GraphQL Shield instead of NestJS auth guards
+ */
+
 import { UseGuards, UseInterceptors } from "@nestjs/common";
 import { Mutation, Resolver } from "@nestjs/graphql";
 import { User } from "../../users/models/user.model";
