@@ -23,6 +23,11 @@ export class UsersService {
     if (!user) {
       throw new Error("User not found");
     }
+
+    // TODO: Remove when no longer needed for testing
+    const permissions = await this.getUserPermissions(user.id);
+    console.log(permissions);
+
     return user;
   }
 
@@ -63,15 +68,28 @@ export class UsersService {
     });
   }
 
-  // TODO: Add remaining logic for getting user permissions
+  // TODO: Test thoroughly
   async getUserPermissions(id: number) {
     const roleMembers = await this.roleMembersService.getRoleMembers({
       where: { user: { id } },
       relations: ["role.permissions"],
     });
-
-    // TODO: Remove when no longer needed for testing
-    console.log(roleMembers);
+    return roleMembers.reduce<{
+      serverPermissions: Set<string>;
+      groupPermissions: Record<number, Set<string>>;
+    }>(
+      (result, { role: { groupId, permissions } }) => {
+        for (const { name } of permissions) {
+          if (groupId) {
+            result.groupPermissions[groupId].add(name);
+            continue;
+          }
+          result.serverPermissions.add(name);
+        }
+        return result;
+      },
+      { serverPermissions: new Set(), groupPermissions: {} }
+    );
   }
 
   async createUser(data: Partial<User>) {
