@@ -1,5 +1,5 @@
 /**
- * TODO: Determine whether RefreshTokensResolver should also use
+ * TODO: Decide whether RefreshTokensResolver should also use
  * GraphQL Shield instead of NestJS auth guards
  */
 
