@@ -23,6 +23,10 @@ const shieldPermissions = shield(
       posts: hasPermission,
       users: isAuthenticated,
     },
+    Mutation: {
+      updateUser: isAuthenticated,
+      deleteUser: isAuthenticated,
+    },
   },
   {
     fallbackError: UNAUTHORIZED,

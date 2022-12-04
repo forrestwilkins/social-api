@@ -1,4 +1,3 @@
-import { UseGuards } from "@nestjs/common";
 import {
   Args,
   Context,
@@ -9,7 +8,6 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
@@ -64,13 +62,11 @@ export class UsersResolver {
   }
 
   @Mutation(() => UpdateUserPayload)
-  @UseGuards(GqlAuthGuard)
   async updateUser(@Args("userData") userData: UpdateUserInput) {
     return this.usersService.updateUser(userData);
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(GqlAuthGuard)
   async deleteUser(@Args("id", { type: () => Int }) id: number) {
     return this.usersService.deleteUser(id);
   }
