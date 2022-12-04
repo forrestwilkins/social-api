@@ -10,13 +10,13 @@ interface RequestWithCookies extends Request {
 
 export const getClaims = (req: RequestWithCookies) => {
   if (!req.cookies?.auth) {
-    return null;
+    return;
   }
   try {
     const { access_token } = req.cookies.auth;
     const jwtKey = process.env.JWT_KEY as string;
     return verify(access_token, jwtKey) as JwtPayload;
   } catch {
-    return null;
+    return;
   }
 };

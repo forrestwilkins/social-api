@@ -69,7 +69,7 @@ export class UsersService {
   async getUserPermissions(req: Request) {
     const claims = getClaims(req);
     if (!claims?.sub) {
-      return null;
+      return;
     }
     const userId = parseInt(claims.sub);
     const roleMembers = await this.roleMembersService.getRoleMembers({
