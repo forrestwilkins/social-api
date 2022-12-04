@@ -25,7 +25,10 @@ const shieldPermissions = shield(
       users: isAuthenticated,
     },
     Mutation: {
+      createPost: isAuthenticated,
+      deletePost: isAuthenticated,
       deleteUser: isAuthenticated,
+      updatePost: isAuthenticated,
       updateUser: isAuthenticated,
     },
   },
