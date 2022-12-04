@@ -10,6 +10,11 @@ import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
 
+export interface UserPermissions {
+  serverPermissions: Set<string>;
+  groupPermissions: Record<number, Set<string>>;
+}
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -24,7 +29,6 @@ export class UsersService {
     if (!user) {
       throw new Error("User not found");
     }
-
     return user;
   }
 
@@ -76,10 +80,7 @@ export class UsersService {
       where: { userId },
       relations: ["role.permissions"],
     });
-    return roleMembers.reduce<{
-      serverPermissions: Set<string>;
-      groupPermissions: Record<number, Set<string>>;
-    }>(
+    return roleMembers.reduce<UserPermissions>(
       (result, { role: { groupId, permissions } }) => {
         for (const { name } of permissions) {
           if (groupId) {
