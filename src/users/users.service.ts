@@ -40,18 +40,6 @@ export class UsersService {
     return mappedUsers;
   }
 
-  async createUser(data: Partial<User>) {
-    const user = await this.repository.save(data);
-    await this.saveDefaultProfilePicture(user.id);
-    return user;
-  }
-
-  async updateUser({ id, ...userData }: UpdateUserInput) {
-    await this.repository.update(id, userData);
-    const user = await this.getUser({ id });
-    return { user };
-  }
-
   async getProfilePicturesByBatch(userIds: number[]) {
     const profilePictures = await this.imagesService.getImages({
       imageType: ImageTypes.ProfilePicture,
@@ -71,6 +59,18 @@ export class UsersService {
       imageType: ImageTypes.CoverPhoto,
       userId,
     });
+  }
+
+  async createUser(data: Partial<User>) {
+    const user = await this.repository.save(data);
+    await this.saveDefaultProfilePicture(user.id);
+    return user;
+  }
+
+  async updateUser({ id, ...userData }: UpdateUserInput) {
+    await this.repository.update(id, userData);
+    const user = await this.getUser({ id });
+    return { user };
   }
 
   async saveProfilePicture(userId: number, { filename }: Express.Multer.File) {
