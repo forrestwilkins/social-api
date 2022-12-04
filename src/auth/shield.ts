@@ -33,6 +33,7 @@ const shieldPermissions = shield(
       refreshToken: allow,
       signUp: allow,
     },
+    MemberRequest: isAuthenticated,
   },
   {
     fallbackError: UNAUTHORIZED,
