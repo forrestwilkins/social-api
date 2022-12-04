@@ -4,17 +4,19 @@ import { rule, shield } from "graphql-shield";
 import { Context } from "../shared/shared.types";
 import { UNAUTHORIZED } from "../shared/shared.constants";
 
-const isAuthenticated = rule()(
+const isAuthenticated = rule({ cache: "contextual" })(
   async (_, __, ctx: Context) => !!ctx.permissions
 );
 
-const hasPermission = rule()(async (_, __, ctx: Context) => {
-  // TODO: Remove when no longer needed for testing
-  console.log(ctx.permissions);
-  console.log(ctx.user);
+const hasPermission = rule({ cache: "contextual" })(
+  async (_, __, ctx: Context) => {
+    // TODO: Remove when no longer needed for testing
+    console.log(ctx.permissions);
+    console.log(ctx.user);
 
-  return true;
-});
+    return true;
+  }
+);
 
 const shieldPermissions = shield(
   {
