@@ -10,7 +10,6 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
@@ -63,7 +62,7 @@ export class PostsResolver {
   @Mutation(() => CreatePostPayload)
   async createPost(
     @Args("postData") postData: CreatePostInput,
-    @CurrentUser() user: User
+    @Context() { user }: { user: User }
   ) {
     return this.postsService.createPost(user, postData);
   }

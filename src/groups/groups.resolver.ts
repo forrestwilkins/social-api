@@ -8,7 +8,6 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
@@ -78,9 +77,9 @@ export class GroupsResolver {
   @Mutation(() => CreateGroupPayload)
   async createGroup(
     @Args("groupData") groupData: CreateGroupInput,
-    @CurrentUser() { id: userId }: User
+    @Context() { user: { id } }: { user: User }
   ) {
-    return this.groupsService.createGroup(groupData, userId);
+    return this.groupsService.createGroup(groupData, id);
   }
 
   @Mutation(() => UpdateGroupPayload)
@@ -96,7 +95,7 @@ export class GroupsResolver {
   @Mutation(() => Boolean)
   async leaveGroup(
     @Args("id", { type: () => Int }) id: number,
-    @CurrentUser() { id: userId }: User
+    @Context() { user: { id: userId } }: { user: User }
   ) {
     return this.groupsService.leaveGroup(id, userId);
   }
