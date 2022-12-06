@@ -2,15 +2,26 @@ import { JwtPayload, verify } from "jsonwebtoken";
 import { AuthTokens } from "./auth.service";
 
 interface RequestWithCookies extends Request {
-  cookies?: { auth: AuthTokens };
+  cookies?: { auth?: AuthTokens };
 }
+
+export const getSub = (req: RequestWithCookies) => {
+  const { accessTokenClaims, refreshTokenClaims } = getClaims(req);
+  if (accessTokenClaims?.sub) {
+    return parseInt(accessTokenClaims.sub);
+  }
+  if (refreshTokenClaims?.sub) {
+    return parseInt(refreshTokenClaims.sub);
+  }
+  return null;
+};
 
 export const getClaims = (req: RequestWithCookies) => {
   const { cookies } = req;
-  const accessTokenClaims = cookies
+  const accessTokenClaims = cookies?.auth
     ? decodeToken(cookies.auth.access_token)
     : null;
-  const refreshTokenClaims = cookies
+  const refreshTokenClaims = cookies?.auth
     ? decodeToken(cookies.auth.refresh_token)
     : null;
   return { accessTokenClaims, refreshTokenClaims };

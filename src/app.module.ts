@@ -5,7 +5,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { AuthModule } from "./auth/auth.module";
-import { getClaims } from "./auth/auth.utils";
+import { getClaims, getSub } from "./auth/auth.utils";
 import shieldPermissions from "./auth/shield";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
@@ -18,28 +18,28 @@ import { Context } from "./shared/shared.types";
 import { Environments } from "./shared/shared.constants";
 import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
+import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
+import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
 
 const useFactory = (
   dataloaderService: DataloaderService,
-  usersService: UsersService
+  usersService: UsersService,
+  refreshTokensService: RefreshTokensService
 ) => ({
   context: async ({ req }: { req: Request }): Promise<Context> => {
-    const { accessTokenClaims, refreshTokenClaims } = getClaims(req);
-    const userId = accessTokenClaims?.sub
-      ? parseInt(accessTokenClaims.sub)
-      : null;
+    const claims = getClaims(req);
+    const sub = getSub(req);
 
-    const user = userId ? await usersService.getUser({ id: userId }) : null;
-    const permissions = userId
-      ? await usersService.getUserPermissions(userId)
-      : null;
     const loaders = dataloaderService.getLoaders();
+    const permissions = sub ? await usersService.getUserPermissions(sub) : null;
+    const user = sub ? await usersService.getUser({ id: sub }) : null;
 
     return {
-      user,
-      permissions,
-      refreshTokenClaims,
+      claims,
       loaders,
+      permissions,
+      refreshTokensService,
+      user,
     };
   },
   transformSchema: (schema: GraphQLSchema) => {
@@ -56,8 +56,8 @@ const useFactory = (
     TypeOrmModule.forRoot(ormconfig),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [DataloaderModule, UsersModule],
-      inject: [DataloaderService, UsersService],
+      imports: [DataloaderModule, UsersModule, RefreshTokensModule],
+      inject: [DataloaderService, UsersService, RefreshTokensService],
       useFactory,
     }),
     AuthModule,

@@ -1,11 +1,25 @@
-// TODO: Add remaining permissions and logic for checking auth state
-
-import { allow, rule, shield } from "graphql-shield";
+import { allow, and, not, rule, shield } from "graphql-shield";
 import { UNAUTHORIZED } from "../shared/shared.constants";
 import { Context } from "../shared/shared.types";
 
 const isAuthenticated = rule({ cache: "contextual" })(
-  async (_, __, ctx: Context) => !!ctx.permissions
+  async (_parent, _args, { claims: { accessTokenClaims } }: Context) =>
+    !!accessTokenClaims
+);
+
+const hasValidRefreshToken = rule()(
+  async (
+    _parent,
+    _args,
+    { claims: { refreshTokenClaims }, refreshTokensService }: Context
+  ) => {
+    if (!refreshTokenClaims?.jti || !refreshTokenClaims.sub) {
+      return false;
+    }
+    const jti = parseInt(refreshTokenClaims.jti);
+    const sub = parseInt(refreshTokenClaims.sub);
+    return !!refreshTokensService.validateRefreshToken(jti, sub);
+  }
 );
 
 const shieldPermissions = shield(
@@ -19,8 +33,8 @@ const shieldPermissions = shield(
       "*": isAuthenticated,
       login: allow,
       logOut: allow,
-      refreshToken: allow,
       signUp: allow,
+      refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
     },
     MemberRequest: isAuthenticated,
   },
