@@ -11,9 +11,21 @@ import { Not, Repository } from "typeorm";
 import { UsersService } from "../../users/users.service";
 import { AuthService, AuthTokens } from "../auth.service";
 import { RefreshToken } from "./models/refresh-token.model";
-import { RefreshTokenPayload } from "./strategies/jwt-refresh.strategy";
 
 const REFRESH_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 7;
+
+export interface RefreshTokenPayload {
+  /**
+   * Identifies the user or subject of the JWT
+   * https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2
+   */
+  sub: number;
+  /**
+   * Provides a unique identifier for the JWT
+   * https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7
+   */
+  jti: number;
+}
 
 @Injectable()
 export class RefreshTokensService {
