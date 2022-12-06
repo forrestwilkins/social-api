@@ -6,6 +6,8 @@ import { GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { AuthModule } from "./auth/auth.module";
 import { getClaims, getSub } from "./auth/auth.utils";
+import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
+import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
 import shieldPermissions from "./auth/shield";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
@@ -14,12 +16,10 @@ import { ImagesModule } from "./images/images.module";
 import ormconfig from "./ormconfig";
 import { PostsModule } from "./posts/posts.module";
 import { RolesModule } from "./roles/roles.module";
-import { Context } from "./shared/shared.types";
 import { Environments } from "./shared/shared.constants";
+import { Context } from "./shared/shared.types";
 import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
-import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
-import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
 
 const useFactory = (
   dataloaderService: DataloaderService,
