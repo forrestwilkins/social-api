@@ -14,19 +14,6 @@ import { RefreshToken } from "./models/refresh-token.model";
 
 const REFRESH_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 7;
 
-export interface RefreshTokenPayload {
-  /**
-   * Identifies the user or subject of the JWT
-   * https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2
-   */
-  sub: number;
-  /**
-   * Provides a unique identifier for the JWT
-   * https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7
-   */
-  jti: number;
-}
-
 @Injectable()
 export class RefreshTokensService {
   constructor(
@@ -86,7 +73,7 @@ export class RefreshTokensService {
 
   async generateRefreshToken(userId: number) {
     const { id } = await this.createRefreshToken(userId);
-    const payload: RefreshTokenPayload = { jti: id, sub: userId };
+    const payload = { jti: id, sub: userId };
     const refresh_token = await this.jwtService.signAsync(payload, {
       expiresIn: REFRESH_TOKEN_EXPIRES_IN,
     });
