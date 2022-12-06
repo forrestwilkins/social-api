@@ -24,21 +24,22 @@ const useFactory = (
   usersService: UsersService
 ) => ({
   context: async ({ req }: { req: Request }): Promise<Context> => {
-    const claims = getClaims(req);
-    const userId = claims?.sub ? parseInt(claims.sub) : undefined;
+    const { accessTokenClaims, refreshTokenClaims } = getClaims(req);
+    const userId = accessTokenClaims?.sub
+      ? parseInt(accessTokenClaims.sub)
+      : null;
 
-    const loaders = dataloaderService.getLoaders();
+    const user = userId ? await usersService.getUser({ id: userId }) : null;
     const permissions = userId
       ? await usersService.getUserPermissions(userId)
-      : undefined;
-    const user = userId
-      ? await usersService.getUser({ id: userId })
-      : undefined;
+      : null;
+    const loaders = dataloaderService.getLoaders();
 
     return {
-      loaders,
-      permissions,
       user,
+      permissions,
+      refreshTokenClaims,
+      loaders,
     };
   },
   transformSchema: (schema: GraphQLSchema) => {
