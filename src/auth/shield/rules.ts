@@ -18,6 +18,6 @@ export const hasValidRefreshToken = rule()(
     }
     const jti = parseInt(refreshTokenClaims.jti);
     const sub = parseInt(refreshTokenClaims.sub);
-    return !!refreshTokensService.validateRefreshToken(jti, sub);
+    return refreshTokensService.validateRefreshToken(jti, sub);
   }
 );

@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  UnprocessableEntityException,
-} from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TokenExpiredError } from "jsonwebtoken";
@@ -43,7 +38,7 @@ export class RefreshTokensService {
     try {
       const token = await this.repository.findOne({ where: { id } });
       if (!token) {
-        throw new UnprocessableEntityException("Refresh token not found");
+        return "Refresh token not found";
       }
 
       if (token.revoked) {
@@ -53,20 +48,20 @@ export class RefreshTokensService {
          */
         await this.revokeAllRefreshTokensForUser(userId);
 
-        throw new UnprocessableEntityException("Refresh token revoked");
+        return "Refresh token revoked";
       }
 
       const user = await this.usersService.getUser({ id: userId });
       if (!user) {
-        throw new UnprocessableEntityException("Refresh token malformed");
+        return "Refresh token malformed";
       }
 
-      return user;
-    } catch (e) {
-      if (e instanceof TokenExpiredError) {
-        throw new UnprocessableEntityException("Refresh token expired");
+      return true;
+    } catch (err) {
+      if (err instanceof TokenExpiredError) {
+        return "Refresh token expired";
       } else {
-        throw new UnprocessableEntityException(e.message);
+        return err.message as string;
       }
     }
   }
