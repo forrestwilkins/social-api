@@ -1,5 +1,5 @@
 import { allow, and, not, shield } from "graphql-shield";
-import { UNAUTHORIZED } from "../../shared/shared.constants";
+import { FORBIDDEN } from "../../shared/shared.constants";
 import { hasValidRefreshToken, isAuthenticated } from "./rules";
 
 const shieldPermissions = shield(
@@ -19,7 +19,7 @@ const shieldPermissions = shield(
     MemberRequest: isAuthenticated,
   },
   {
-    fallbackError: UNAUTHORIZED,
+    fallbackError: FORBIDDEN,
   }
 );
 
