@@ -5,7 +5,7 @@ import { Context } from "../../../shared/shared.types";
 import { getSub } from "../../auth.utils";
 
 export const RefreshTokenUser = createParamDecorator<unknown, ExecutionContext>(
-  async (_, context) => {
+  (_, context) => {
     const executionContext = GqlExecutionContext.create(context);
     const {
       claims: { refreshTokenClaims },
