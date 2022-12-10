@@ -11,7 +11,7 @@ interface RequestWithCookies extends Request {
 }
 
 /**
- * Get sub claim, which identifies the user or subject of the JWT
+ * Get sub claim - identifies the user or subject of the JWT
  * https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2
  */
 export const getSub = (claims: JwtPayload | null) => {
