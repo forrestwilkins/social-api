@@ -5,7 +5,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { AuthModule } from "./auth/auth.module";
-import { getClaims, getSub } from "./auth/auth.utils";
+import { getClaims, getSub as getSub } from "./auth/auth.utils";
 import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
 import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
 import shieldPermissions from "./auth/shield/shield.permissions";
@@ -28,7 +28,7 @@ const useFactory = (
 ) => ({
   context: async ({ req }: { req: Request }): Promise<Context> => {
     const claims = getClaims(req);
-    const sub = getSub(claims);
+    const sub = getSub(claims.accessTokenClaims);
 
     const loaders = dataloaderService.getLoaders();
     const permissions = sub ? await usersService.getUserPermissions(sub) : null;
@@ -39,6 +39,7 @@ const useFactory = (
       loaders,
       permissions,
       refreshTokensService,
+      usersService,
       user,
     };
   },

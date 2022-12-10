@@ -2,7 +2,7 @@ import { JwtPayload } from "jsonwebtoken";
 import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { User } from "../users/models/user.model";
-import { UserPermissions } from "../users/users.service";
+import { UserPermissions, UsersService } from "../users/users.service";
 
 export interface Context {
   loaders: Dataloaders;
@@ -12,5 +12,6 @@ export interface Context {
     refreshTokenClaims: JwtPayload | null;
   };
   refreshTokensService: RefreshTokensService;
+  usersService: UsersService;
   user: User | null;
 }
