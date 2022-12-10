@@ -28,7 +28,7 @@ const useFactory = (
 ) => ({
   context: async ({ req }: { req: Request }): Promise<Context> => {
     const claims = getClaims(req);
-    const sub = getSub(req);
+    const sub = getSub(claims);
 
     const loaders = dataloaderService.getLoaders();
     const permissions = sub ? await usersService.getUserPermissions(sub) : null;
