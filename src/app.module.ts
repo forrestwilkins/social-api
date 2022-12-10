@@ -21,8 +21,8 @@ import { UsersService } from "./users/users.service";
     TypeOrmModule.forRoot(typeOrmConfig),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [DataloaderModule, UsersModule, RefreshTokensModule],
-      inject: [DataloaderService, UsersService, RefreshTokensService],
+      imports: [DataloaderModule, RefreshTokensModule, UsersModule],
+      inject: [DataloaderService, RefreshTokensService, UsersService],
       useFactory: graphQLConfig,
     }),
     AuthModule,

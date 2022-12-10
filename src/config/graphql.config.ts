@@ -10,8 +10,8 @@ import { Context } from "../shared/shared.types";
 
 const graphQLConfig = (
   dataloaderService: DataloaderService,
-  usersService: UsersService,
-  refreshTokensService: RefreshTokensService
+  refreshTokensService: RefreshTokensService,
+  usersService: UsersService
 ) => ({
   context: async ({ req }: { req: Request }): Promise<Context> => {
     const claims = getClaims(req);
