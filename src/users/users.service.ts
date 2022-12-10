@@ -68,7 +68,6 @@ export class UsersService {
     });
   }
 
-  // TODO: Test thoroughly before merging
   async getUserPermissions(id: number) {
     const roleMembers = await this.roleMembersService.getRoleMembers({
       where: { user: { id } },
