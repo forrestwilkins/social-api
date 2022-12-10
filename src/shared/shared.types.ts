@@ -5,12 +5,12 @@ import { User } from "../users/models/user.model";
 import { UserPermissions, UsersService } from "../users/users.service";
 
 export interface Context {
-  loaders: Dataloaders;
-  permissions: UserPermissions | null;
   claims: {
     accessTokenClaims: JwtPayload | null;
     refreshTokenClaims: JwtPayload | null;
   };
+  loaders: Dataloaders;
+  permissions: UserPermissions | null;
   refreshTokensService: RefreshTokensService;
   usersService: UsersService;
   user: User | null;
