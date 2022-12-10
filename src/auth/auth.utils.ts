@@ -10,17 +10,6 @@ interface RequestWithCookies extends Request {
   cookies?: { auth?: AuthTokens };
 }
 
-/**
- * Get sub claim - identifies the user or subject of the JWT
- * https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2
- */
-export const getSub = (claims: JwtPayload | null) => {
-  if (!claims?.sub) {
-    return null;
-  }
-  return parseInt(claims.sub);
-};
-
 export const getClaims = (req: RequestWithCookies): Claims => {
   const { cookies } = req;
   const accessTokenClaims = cookies?.auth
@@ -30,6 +19,17 @@ export const getClaims = (req: RequestWithCookies): Claims => {
     ? decodeToken(cookies.auth.refresh_token)
     : null;
   return { accessTokenClaims, refreshTokenClaims };
+};
+
+/**
+ * Get sub claim - identifies the user or subject of the JWT
+ * https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2
+ */
+export const getSub = (claims: JwtPayload | null) => {
+  if (!claims?.sub) {
+    return null;
+  }
+  return parseInt(claims.sub);
 };
 
 export const decodeToken = (token: string) => {
