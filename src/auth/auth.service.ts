@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { ValidationError } from "apollo-server-express";
+import { UserInputError, ValidationError } from "apollo-server-express";
 import { compare, hash } from "bcrypt";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
@@ -35,14 +35,22 @@ export class AuthService {
 
   async signUp({
     password,
-    ...rest
+    ...userData
   }: SignUpInput): Promise<SetAuthCookieInput> {
+    const existingUser = await this.usersService.getUser({
+      email: userData.email,
+    });
+    if (existingUser) {
+      throw new UserInputError("User already exists");
+    }
+
     const passwordHash = await hash(password, SALT_ROUNDS);
     const user = await this.usersService.createUser({
       password: passwordHash,
-      ...rest,
+      ...userData,
     });
     const authTokens = await this.generateAuthTokens(user.id);
+
     return { user, authTokens };
   }
 

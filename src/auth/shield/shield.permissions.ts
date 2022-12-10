@@ -19,6 +19,7 @@ const shieldPermissions = shield(
     MemberRequest: isAuthenticated,
   },
   {
+    allowExternalErrors: true,
     fallbackError: UNAUTHORIZED,
   }
 );
