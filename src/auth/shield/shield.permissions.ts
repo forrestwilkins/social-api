@@ -1,6 +1,6 @@
 import { allow, and, not, shield } from "graphql-shield";
 import { FORBIDDEN } from "../../shared/shared.constants";
-import { hasValidRefreshToken, isAuthenticated } from "./rules";
+import { hasValidRefreshToken, isAuthenticated } from "./shield.rules";
 
 const shieldPermissions = shield(
   {

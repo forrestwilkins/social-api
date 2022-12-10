@@ -8,7 +8,7 @@ import { AuthModule } from "./auth/auth.module";
 import { getClaims, getSub } from "./auth/auth.utils";
 import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
 import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
-import shieldPermissions from "./auth/shield/permissions";
+import shieldPermissions from "./auth/shield/shield.permissions";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
