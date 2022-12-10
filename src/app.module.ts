@@ -5,8 +5,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthModule } from "./auth/auth.module";
 import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
 import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
-import ormconfig from "./config/ormconfig";
-import useFactory from "./config/useFactor";
+import typeOrmConfig from "./config/typeorm.config";
+import graphQLConfig from "./config/graphql.config";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
@@ -18,12 +18,12 @@ import { UsersService } from "./users/users.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(ormconfig),
+    TypeOrmModule.forRoot(typeOrmConfig),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       imports: [DataloaderModule, UsersModule, RefreshTokensModule],
       inject: [DataloaderService, UsersService, RefreshTokensService],
-      useFactory,
+      useFactory: graphQLConfig,
     }),
     AuthModule,
     DataloaderModule,

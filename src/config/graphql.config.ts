@@ -8,7 +8,7 @@ import { UsersService } from "../users/users.service";
 import { Environments } from "../shared/shared.constants";
 import { Context } from "../shared/shared.types";
 
-const useFactory = (
+const graphQLConfig = (
   dataloaderService: DataloaderService,
   usersService: UsersService,
   refreshTokensService: RefreshTokensService
@@ -39,4 +39,4 @@ const useFactory = (
   csrfPrevention: process.env.NODE_ENV !== Environments.Development,
 });
 
-export default useFactory;
+export default graphQLConfig;
