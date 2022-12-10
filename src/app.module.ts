@@ -1,68 +1,20 @@
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
-import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { GraphQLSchema } from "graphql";
-import { applyMiddleware } from "graphql-middleware";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthModule } from "./auth/auth.module";
-import { getClaims, getSub } from "./auth/auth.utils";
 import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
 import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
-import shieldPermissions from "./auth/shield/shield.permissions";
+import ormconfig from "./config/ormconfig";
+import useFactory from "./config/useFactor";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
 import { ImagesModule } from "./images/images.module";
 import { PostsModule } from "./posts/posts.module";
 import { RolesModule } from "./roles/roles.module";
-import { Environments } from "./shared/shared.constants";
-import { Context } from "./shared/shared.types";
 import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
-require("dotenv").config();
-
-const ormconfig: TypeOrmModuleOptions = {
-  type: "postgres",
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT as string),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_SCHEMA,
-  entities: ["dist/**/*{.entity,.model}{.ts,.js}"],
-  migrations: ["migrations/*.js"],
-  synchronize: process.env.NODE_ENV === Environments.Development,
-};
-
-const useFactory = (
-  dataloaderService: DataloaderService,
-  usersService: UsersService,
-  refreshTokensService: RefreshTokensService
-) => ({
-  context: async ({ req }: { req: Request }): Promise<Context> => {
-    const claims = getClaims(req);
-    const sub = getSub(claims.accessTokenClaims);
-
-    const loaders = dataloaderService.getLoaders();
-    const permissions = sub ? await usersService.getUserPermissions(sub) : null;
-    const user = sub ? await usersService.getUser({ id: sub }) : null;
-
-    return {
-      claims,
-      loaders,
-      permissions,
-      refreshTokensService,
-      usersService,
-      user,
-    };
-  },
-  transformSchema: (schema: GraphQLSchema) => {
-    schema = applyMiddleware(schema, shieldPermissions);
-    return schema;
-  },
-  autoSchemaFile: true,
-  cors: { origin: true, credentials: true },
-  csrfPrevention: process.env.NODE_ENV !== Environments.Development,
-});
 
 @Module({
   imports: [
