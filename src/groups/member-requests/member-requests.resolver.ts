@@ -11,6 +11,7 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { CurrentUser } from "../../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../../dataloader/dataloader.service";
 import { User } from "../../users/models/user.model";
 import { GroupMembersService } from "../group-members/group-members.service";
@@ -30,7 +31,7 @@ export class MemberRequestsResolver {
   @Query(() => MemberRequest, { nullable: true })
   async memberRequest(
     @Args("groupId", { type: () => Int }) groupId: number,
-    @Context() { user: { id } }: { user: User }
+    @CurrentUser() { id }: User
   ) {
     return this.memberRequestsService.getMemberRequest({
       user: { id },
@@ -45,7 +46,7 @@ export class MemberRequestsResolver {
   @Query(() => [MemberRequest])
   async memberRequests(
     @Args("groupName", { type: () => String }) groupName: string,
-    @Context() { user: { id } }: { user: User }
+    @CurrentUser() { id }: User
   ) {
     const member = await this.groupMembersService.getGroupMember({
       group: { name: groupName },
@@ -76,9 +77,9 @@ export class MemberRequestsResolver {
   @Mutation(() => CreateMemberRequestPayload)
   async createMemberRequest(
     @Args("groupId", { type: () => Int }) groupId: number,
-    @Context() { user: { id: userId } }: { user: User }
+    @CurrentUser() { id }: User
   ) {
-    return this.memberRequestsService.createMemberRequest(groupId, userId);
+    return this.memberRequestsService.createMemberRequest(groupId, id);
   }
 
   @Mutation(() => ApproveMemberRequestPayload)

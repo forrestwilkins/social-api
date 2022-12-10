@@ -8,6 +8,7 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
@@ -25,8 +26,7 @@ export class UsersResolver {
   ) {}
 
   @Query(() => User)
-  // TODO: Update CurrentUser decorator to be used here
-  me(@Context() { user: { id } }: { user: User }) {
+  me(@CurrentUser() { id }: User) {
     return this.usersService.getUser({ id });
   }
 

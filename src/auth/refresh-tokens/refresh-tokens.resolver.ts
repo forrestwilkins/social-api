@@ -1,6 +1,7 @@
 import { UseInterceptors } from "@nestjs/common";
-import { Context, Mutation, Resolver } from "@nestjs/graphql";
+import { Mutation, Resolver } from "@nestjs/graphql";
 import { User } from "../../users/models/user.model";
+import { CurrentUser } from "../decorators/current-user.decorator";
 import { RefreshAuthCookieInterceptor } from "./interceptors/refresh-auth-cookie.interceptor";
 import { RefreshToken } from "./models/refresh-token.model";
 import { RefreshTokensService } from "./refresh-tokens.service";
@@ -11,7 +12,7 @@ export class RefreshTokensResolver {
 
   @Mutation(() => Boolean)
   @UseInterceptors(RefreshAuthCookieInterceptor)
-  async refreshToken(@Context() { user }: { user: User }) {
+  async refreshToken(@CurrentUser() user: User) {
     return this.refreshTokensService.refreshToken(user.id);
   }
 }
