@@ -18,7 +18,7 @@ export const hasValidRefreshToken = rule()(
     { claims: { refreshTokenClaims }, refreshTokensService }: Context
   ) => {
     if (!refreshTokenClaims?.jti || !refreshTokenClaims.sub) {
-      return false;
+      return UNAUTHORIZED;
     }
     const jti = parseInt(refreshTokenClaims.jti);
     const sub = parseInt(refreshTokenClaims.sub);
