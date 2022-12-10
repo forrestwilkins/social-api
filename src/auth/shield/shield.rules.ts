@@ -2,10 +2,9 @@ import { rule } from "graphql-shield";
 import { UNAUTHORIZED } from "../../shared/shared.constants";
 import { Context } from "../../shared/shared.types";
 
-// TODO: Ensure that user can be found from sub claim on access token
 export const isAuthenticated = rule({ cache: "contextual" })(
-  async (_parent, _args, { claims: { accessTokenClaims } }: Context) => {
-    if (!accessTokenClaims) {
+  async (_parent, _args, { claims: { accessTokenClaims }, user }: Context) => {
+    if (!accessTokenClaims?.sub || !user) {
       return UNAUTHORIZED;
     }
     return true;
