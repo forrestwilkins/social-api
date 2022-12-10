@@ -3,8 +3,8 @@ import { UNAUTHORIZED } from "../../shared/shared.constants";
 import { Context } from "../../shared/shared.types";
 
 export const isAuthenticated = rule({ cache: "contextual" })(
-  async (_parent, _args, { claims: { accessTokenClaims }, user }: Context) => {
-    if (!accessTokenClaims?.sub || !user) {
+  async (_parent, _args, { user }: Context) => {
+    if (!user) {
       return UNAUTHORIZED;
     }
     return true;
