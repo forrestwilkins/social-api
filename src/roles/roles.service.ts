@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { FindOptionsWhere, IsNull, Repository } from "typeorm";
 import { Role } from "./models/role.model";
 import { PermissionsService } from "./permissions/permissions.service";
 import { RoleMembersService } from "./role-members/role-members.service";
@@ -21,6 +21,10 @@ export class RolesService {
 
   async getRoles(where?: FindOptionsWhere<Role>) {
     return this.repository.find({ where });
+  }
+
+  async getServerRoles() {
+    return this.getRoles({ groupId: IsNull() });
   }
 
   async initializeServerAdminRole(userId: number) {
