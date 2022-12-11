@@ -1,5 +1,6 @@
 import { rule } from "graphql-shield";
 import { Context } from "../../shared/shared.types";
+import { getJti, getSub } from "../auth.utils";
 
 export const isAuthenticated = rule({ cache: "contextual" })(
   async (_parent, _args, { user }: Context) => {
@@ -16,11 +17,11 @@ export const hasValidRefreshToken = rule()(
     _args,
     { claims: { refreshTokenClaims }, refreshTokensService }: Context
   ) => {
-    if (!refreshTokenClaims?.jti || !refreshTokenClaims.sub) {
+    const jti = getJti(refreshTokenClaims);
+    const sub = getSub(refreshTokenClaims);
+    if (!jti || !sub) {
       return false;
     }
-    const jti = parseInt(refreshTokenClaims.jti);
-    const sub = parseInt(refreshTokenClaims.sub);
     return refreshTokensService.validateRefreshToken(jti, sub);
   }
 );

@@ -23,13 +23,24 @@ export const getClaims = (req: RequestWithCookies): Claims => {
 
 /**
  * Get sub claim - identifies the user or subject of the JWT
- * https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2
+ * https://www.rfc-editor.org/rfc/rfc7519#section-4.1.2
  */
 export const getSub = (claims: JwtPayload | null) => {
   if (!claims?.sub) {
     return null;
   }
   return parseInt(claims.sub);
+};
+
+/**
+ * Get jti claim - provides a unique identifier for the JWT
+ * https://www.rfc-editor.org/rfc/rfc7519#section-4.1.7
+ */
+export const getJti = (claims: JwtPayload | null) => {
+  if (!claims?.jti) {
+    return null;
+  }
+  return parseInt(claims.jti);
 };
 
 export const decodeToken = (token: string) => {
