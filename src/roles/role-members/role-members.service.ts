@@ -17,4 +17,8 @@ export class RoleMembersService {
   async getRoleMembers(options?: FindManyOptions<RoleMember>) {
     return this.repository.find(options);
   }
+
+  async createRoleMember(roleId: number, userId: number) {
+    return this.repository.save({ roleId, userId });
+  }
 }

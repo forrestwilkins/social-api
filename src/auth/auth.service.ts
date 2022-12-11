@@ -67,10 +67,15 @@ export class AuthService {
   ): Promise<Omit<User, "password">> {
     try {
       const user = await this.usersService.getUser({ email });
+      if (!user) {
+        throw new ValidationError("User not found");
+      }
+
       const passwordMatch = await compare(password, user.password);
       if (!passwordMatch) {
         throw new ValidationError("Incorrect username or password");
       }
+
       const { password: _password, ...result } = user;
       return result;
     } catch (err) {

@@ -7,5 +7,6 @@ import { PermissionsService } from "./permissions.service";
 @Module({
   imports: [TypeOrmModule.forFeature([Permission])],
   providers: [PermissionsService, PermissionsResolver],
+  exports: [PermissionsService],
 })
 export class PermissionsModule {}

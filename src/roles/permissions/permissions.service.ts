@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { Permission } from "./models/permission.model";
+import { ServerPermissions } from "./permissions.constants";
 
 @Injectable()
 export class PermissionsService {
@@ -16,5 +17,15 @@ export class PermissionsService {
 
   async getPermissions(where?: FindOptionsWhere<Permission>) {
     return this.repository.find({ where });
+  }
+
+  async initializeServerPermissions(roleId: number, enabled: boolean) {
+    const permissions = Object.values(ServerPermissions).map((name) => ({
+      enabled,
+      roleId,
+      name,
+    }));
+    const permissionEntities = this.repository.create(permissions);
+    await this.repository.insert(permissionEntities);
   }
 }

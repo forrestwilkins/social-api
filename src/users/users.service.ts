@@ -6,6 +6,7 @@ import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
+import { RolesService } from "../roles/roles.service";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
 
@@ -20,15 +21,12 @@ export class UsersService {
     @InjectRepository(User)
     private repository: Repository<User>,
     private imagesService: ImagesService,
-    private roleMembersService: RoleMembersService
+    private roleMembersService: RoleMembersService,
+    private rolesService: RolesService
   ) {}
 
   async getUser(where: FindOptionsWhere<User>) {
-    const user = await this.repository.findOne({ where });
-    if (!user) {
-      throw new Error("User not found");
-    }
-    return user;
+    return await this.repository.findOne({ where });
   }
 
   async getUsers(where?: FindOptionsWhere<User>) {
@@ -90,7 +88,19 @@ export class UsersService {
 
   async createUser(data: Partial<User>) {
     const user = await this.repository.save(data);
-    await this.saveDefaultProfilePicture(user.id);
+    const users = await this.getUsers();
+
+    // TODO: Determine whether to remove try catch after testing
+    try {
+      if (users.length === 1) {
+        await this.rolesService.initializeServerAdminRole(user.id);
+      }
+      await this.saveDefaultProfilePicture(user.id);
+    } catch {
+      await this.deleteUser(user.id);
+      throw new Error("Could not create user");
+    }
+
     return user;
   }
 
