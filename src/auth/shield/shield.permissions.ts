@@ -15,7 +15,6 @@ const shieldPermissions = shield(
       signUp: allow,
       refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
     },
-    MemberRequest: isAuthenticated,
   },
   {
     allowExternalErrors: true,
