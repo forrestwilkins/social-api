@@ -5,9 +5,8 @@ import { hasValidRefreshToken, isAuthenticated } from "./shield.rules";
 const shieldPermissions = shield(
   {
     Query: {
-      authCheck: isAuthenticated,
-      me: isAuthenticated,
-      users: isAuthenticated,
+      "*": isAuthenticated,
+      posts: allow,
     },
     Mutation: {
       "*": isAuthenticated,
