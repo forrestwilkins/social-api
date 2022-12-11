@@ -8,16 +8,23 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { User } from "../../../users/models/user.model";
-import { Group } from "../../models/group.model";
+import { Role } from "../../models/role.model";
 
 @Entity()
 @ObjectType()
-export class GroupMember {
-  @PrimaryGeneratedColumn()
+export class RoleMember {
   @Field(() => Int)
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.groupMemberships, {
+  @ManyToOne(() => Role, (role) => role.members, { onDelete: "CASCADE" })
+  @Field(() => Role)
+  role: Role;
+
+  @Column()
+  roleId: number;
+
+  @ManyToOne(() => User, (user) => user.roleMemberships, {
     onDelete: "CASCADE",
   })
   @Field(() => User)
@@ -26,18 +33,9 @@ export class GroupMember {
   @Column()
   userId: number;
 
-  @ManyToOne(() => Group, (group) => group.members, { onDelete: "CASCADE" })
-  @Field(() => Group)
-  group: Group;
-
-  @Column({ nullable: true })
-  groupId: number;
-
   @CreateDateColumn()
-  @Field()
   createdAt: Date;
 
   @UpdateDateColumn()
-  @Field()
   updatedAt: Date;
 }

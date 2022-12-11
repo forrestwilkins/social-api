@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  UnprocessableEntityException,
-} from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TokenExpiredError } from "jsonwebtoken";
@@ -11,7 +6,6 @@ import { Not, Repository } from "typeorm";
 import { UsersService } from "../../users/users.service";
 import { AuthService, AuthTokens } from "../auth.service";
 import { RefreshToken } from "./models/refresh-token.model";
-import { RefreshTokenPayload } from "./strategies/jwt-refresh.strategy";
 
 const REFRESH_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 7;
 
@@ -44,7 +38,7 @@ export class RefreshTokensService {
     try {
       const token = await this.repository.findOne({ where: { id } });
       if (!token) {
-        throw new UnprocessableEntityException("Refresh token not found");
+        return "Refresh token not found";
       }
 
       if (token.revoked) {
@@ -54,27 +48,27 @@ export class RefreshTokensService {
          */
         await this.revokeAllRefreshTokensForUser(userId);
 
-        throw new UnprocessableEntityException("Refresh token revoked");
+        return "Refresh token revoked";
       }
 
       const user = await this.usersService.getUser({ id: userId });
       if (!user) {
-        throw new UnprocessableEntityException("Refresh token malformed");
+        return "Refresh token malformed";
       }
 
-      return user;
-    } catch (e) {
-      if (e instanceof TokenExpiredError) {
-        throw new UnprocessableEntityException("Refresh token expired");
+      return true;
+    } catch (err) {
+      if (err instanceof TokenExpiredError) {
+        return "Refresh token expired";
       } else {
-        throw new UnprocessableEntityException(e.message);
+        return err.message as string;
       }
     }
   }
 
   async generateRefreshToken(userId: number) {
     const { id } = await this.createRefreshToken(userId);
-    const payload: RefreshTokenPayload = { jti: id, sub: userId };
+    const payload = { jti: id, sub: userId };
     const refresh_token = await this.jwtService.signAsync(payload, {
       expiresIn: REFRESH_TOKEN_EXPIRES_IN,
     });

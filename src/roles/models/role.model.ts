@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Group } from "../../groups/models/group.model";
 import { Permission } from "../permissions/models/permission.model";
+import { RoleMember } from "../role-members/models/role-member.model";
 
 @Entity()
 @ObjectType()
@@ -31,6 +32,12 @@ export class Role {
     cascade: true,
   })
   permissions: Permission[];
+
+  @Field(() => [RoleMember])
+  @OneToMany(() => RoleMember, (member) => member.role, {
+    cascade: true,
+  })
+  members: RoleMember[];
 
   @Field(() => Group, { nullable: true })
   @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })

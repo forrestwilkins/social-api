@@ -23,7 +23,7 @@ export const imageFileFilter = (
 export const editFileName = (
   _req: Request,
   file: Express.Multer.File,
-  callback: (error: Error, filename: string) => void
+  callback: (error: Error | null, filename: string) => void
 ) => {
   const fileExtName = extname(file.originalname);
   callback(null, `${Date.now()}${fileExtName}`);

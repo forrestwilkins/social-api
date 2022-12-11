@@ -87,9 +87,9 @@ export class MemberRequestsService {
   async updateMemberRequest(
     id: number,
     memberRequestData: Partial<MemberRequest>
-  ): Promise<MemberRequest> {
+  ) {
     await this.repository.update(id, memberRequestData);
-    return this.getMemberRequest({ id });
+    return this.repository.findOneOrFail({ where: { id } });
   }
 
   async cancelMemberRequest(id: number) {

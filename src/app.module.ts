@@ -3,30 +3,27 @@ import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthModule } from "./auth/auth.module";
+import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
+import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
+import typeOrmConfig from "./config/typeorm.config";
+import graphQLConfig from "./config/graphql.config";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
 import { ImagesModule } from "./images/images.module";
-import ormconfig from "./ormconfig";
 import { PostsModule } from "./posts/posts.module";
 import { RolesModule } from "./roles/roles.module";
 import { UsersModule } from "./users/users.module";
+import { UsersService } from "./users/users.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(ormconfig),
+    TypeOrmModule.forRoot(typeOrmConfig),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [DataloaderModule],
-      inject: [DataloaderService],
-      useFactory: (dataloaderService: DataloaderService) => ({
-        autoSchemaFile: true,
-        cors: { origin: true, credentials: true },
-        csrfPrevention: process.env.NODE_ENV !== "development",
-        context: () => ({
-          loaders: dataloaderService.getLoaders(),
-        }),
-      }),
+      imports: [DataloaderModule, RefreshTokensModule, UsersModule],
+      inject: [DataloaderService, RefreshTokensService, UsersService],
+      useFactory: graphQLConfig,
     }),
     AuthModule,
     DataloaderModule,

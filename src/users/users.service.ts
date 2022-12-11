@@ -5,15 +5,22 @@ import { FindOptionsWhere, In, Repository } from "typeorm";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
+
+export interface UserPermissions {
+  serverPermissions: Set<string>;
+  groupPermissions: Record<number, Set<string>>;
+}
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private repository: Repository<User>,
-    private imagesService: ImagesService
+    private imagesService: ImagesService,
+    private roleMembersService: RoleMembersService
   ) {}
 
   async getUser(where: FindOptionsWhere<User>) {
@@ -40,18 +47,6 @@ export class UsersService {
     return mappedUsers;
   }
 
-  async createUser(data: Partial<User>) {
-    const user = await this.repository.save(data);
-    await this.saveDefaultProfilePicture(user.id);
-    return user;
-  }
-
-  async updateUser({ id, ...userData }: UpdateUserInput) {
-    await this.repository.update(id, userData);
-    const user = await this.getUser({ id });
-    return { user };
-  }
-
   async getProfilePicturesByBatch(userIds: number[]) {
     const profilePictures = await this.imagesService.getImages({
       imageType: ImageTypes.ProfilePicture,
@@ -71,6 +66,38 @@ export class UsersService {
       imageType: ImageTypes.CoverPhoto,
       userId,
     });
+  }
+
+  async getUserPermissions(id: number) {
+    const roleMembers = await this.roleMembersService.getRoleMembers({
+      where: { user: { id } },
+      relations: ["role.permissions"],
+    });
+    return roleMembers.reduce<UserPermissions>(
+      (result, { role: { groupId, permissions } }) => {
+        for (const { name } of permissions) {
+          if (groupId) {
+            result.groupPermissions[groupId].add(name);
+            continue;
+          }
+          result.serverPermissions.add(name);
+        }
+        return result;
+      },
+      { serverPermissions: new Set(), groupPermissions: {} }
+    );
+  }
+
+  async createUser(data: Partial<User>) {
+    const user = await this.repository.save(data);
+    await this.saveDefaultProfilePicture(user.id);
+    return user;
+  }
+
+  async updateUser({ id, ...userData }: UpdateUserInput) {
+    await this.repository.update(id, userData);
+    const user = await this.getUser({ id });
+    return { user };
   }
 
   async saveProfilePicture(userId: number, { filename }: Express.Multer.File) {

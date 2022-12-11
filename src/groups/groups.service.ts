@@ -37,7 +37,7 @@ export class GroupsService {
     const mappedCoverPhotos = groupIds.map(
       (id) =>
         coverPhotos.find((coverPhoto: Image) => coverPhoto.groupId === id) ||
-        null
+        new Error(`Could not load cover photo for group: ${id}`)
     );
     return mappedCoverPhotos;
   }

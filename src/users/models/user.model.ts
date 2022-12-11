@@ -8,8 +8,10 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
+import { GroupMember } from "../../groups/group-members/models/group-member.model";
 import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
+import { RoleMember } from "../../roles/role-members/models/role-member.model";
 
 @Entity()
 @ObjectType()
@@ -37,18 +39,30 @@ export class User {
     cascade: true,
   })
   @Field(() => [Post])
-  posts?: Post[];
+  posts: Post[];
 
   @OneToMany(() => Image, (image) => image.user, {
     cascade: true,
   })
-  images?: Image[];
+  images: Image[];
 
   @Field(() => Image)
   profilePicture: Image;
 
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;
+
+  @OneToMany(() => GroupMember, (groupMember) => groupMember.user, {
+    cascade: true,
+  })
+  // TODO: Determine whether to rename as groupMembers
+  groupMemberships: GroupMember[];
+
+  @OneToMany(() => RoleMember, (roleMember) => roleMember.user, {
+    cascade: true,
+  })
+  // TODO: Determine whether to rename as roleMembers
+  roleMemberships: RoleMember[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     cascade: true,

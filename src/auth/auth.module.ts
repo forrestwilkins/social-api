@@ -9,12 +9,12 @@ import { JwtStrategy } from "./strategies/jwt.strategy";
 
 @Module({
   imports: [
-    UsersModule,
-    PassportModule,
-    forwardRef(() => RefreshTokensModule),
     JwtModule.register({
       secret: process.env.JWT_KEY,
     }),
+    forwardRef(() => RefreshTokensModule),
+    PassportModule,
+    UsersModule,
   ],
   providers: [AuthResolver, AuthService, JwtStrategy],
   exports: [AuthService, JwtModule],
