@@ -1,10 +1,22 @@
-import { Args, Int, Query, Resolver } from "@nestjs/graphql";
+import {
+  Args,
+  Int,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from "@nestjs/graphql";
 import { Role } from "./models/role.model";
+import { Permission } from "./permissions/models/permission.model";
+import { PermissionsService } from "./permissions/permissions.service";
 import { RolesService } from "./roles.service";
 
 @Resolver(() => Role)
 export class RolesResolver {
-  constructor(private rolesService: RolesService) {}
+  constructor(
+    private rolesService: RolesService,
+    private permissionsService: PermissionsService
+  ) {}
 
   @Query(() => Role)
   async role(@Args("id", { type: () => Int }) id: number) {
@@ -14,5 +26,10 @@ export class RolesResolver {
   @Query(() => [Role])
   async serverRoles() {
     return this.rolesService.getServerRoles();
+  }
+
+  @ResolveField(() => Permission)
+  async permissions(@Parent() { id }: Role) {
+    return this.permissionsService.getPermissions({ roleId: id });
   }
 }
