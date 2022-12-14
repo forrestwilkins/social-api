@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, IsNull, Repository } from "typeorm";
+import { CreateRoleInput } from "./models/create-role.input";
 import { Role } from "./models/role.model";
 import { PermissionsService } from "./permissions/permissions.service";
 import { RoleMembersService } from "./role-members/role-members.service";
@@ -34,5 +35,9 @@ export class RolesService {
     });
     await this.permissionsService.initializeServerPermissions(id, true);
     await this.roleMembersService.createRoleMember(id, userId);
+  }
+
+  async createRole(roleData: CreateRoleInput) {
+    return this.repository.save(roleData);
   }
 }
