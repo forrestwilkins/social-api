@@ -38,6 +38,7 @@ export class RolesService {
   }
 
   async createRole(roleData: CreateRoleInput) {
-    return this.repository.save(roleData);
+    const role = await this.repository.save(roleData);
+    return { role };
   }
 }
