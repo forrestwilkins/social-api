@@ -41,4 +41,9 @@ export class RolesService {
     const role = await this.repository.save(roleData);
     return { role };
   }
+
+  async deleteRole(id: number) {
+    await this.repository.delete(id);
+    return true;
+  }
 }

@@ -40,4 +40,9 @@ export class RolesResolver {
   async createRole(@Args("roleData") roleData: CreateRoleInput) {
     return this.rolesService.createRole(roleData);
   }
+
+  @Mutation(() => Boolean)
+  async deleteRole(@Args("id", { type: () => Int }) id: number) {
+    return this.rolesService.deleteRole(id);
+  }
 }
