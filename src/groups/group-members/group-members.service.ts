@@ -35,7 +35,7 @@ export class GroupMembersService {
     return mappedGroupMembers;
   }
 
-  async getGroupMemberCountsByBatch(groupIds: number[]) {
+  async getGroupMemberCountByBatch(groupIds: number[]) {
     const groups = (await this.groupRepository
       .createQueryBuilder("group")
       .leftJoinAndSelect("group.members", "groupMember")

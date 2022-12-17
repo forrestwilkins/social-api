@@ -1,5 +1,6 @@
 import {
   Args,
+  Context,
   Int,
   Mutation,
   Parent,
@@ -7,6 +8,7 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { Dataloaders } from "../dataloader/dataloader.service";
 import { CreateRoleInput } from "./models/create-role.input";
 import { CreateRolePayload } from "./models/create-role.payload";
 import { Role } from "./models/role.model";
@@ -34,7 +36,7 @@ export class RolesResolver {
     return this.rolesService.getServerRoles();
   }
 
-  @ResolveField(() => Permission)
+  @ResolveField(() => [Permission])
   async permissions(@Parent() { id }: Role) {
     return this.permissionsService.getPermissions({ roleId: id });
   }
@@ -42,6 +44,14 @@ export class RolesResolver {
   @ResolveField(() => [RoleMember])
   async members(@Parent() { id }: Role) {
     return this.roleMembersService.getRoleMembers({ where: { roleId: id } });
+  }
+
+  @ResolveField(() => Number)
+  async memberCount(
+    @Parent() { id }: Role,
+    @Context() { loaders }: { loaders: Dataloaders }
+  ) {
+    return loaders.roleMemberCountLoader.load(id);
   }
 
   @Mutation(() => CreateRolePayload)
