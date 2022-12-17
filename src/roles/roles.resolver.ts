@@ -12,13 +12,16 @@ import { CreateRolePayload } from "./models/create-role.payload";
 import { Role } from "./models/role.model";
 import { Permission } from "./permissions/models/permission.model";
 import { PermissionsService } from "./permissions/permissions.service";
+import { RoleMember } from "./role-members/models/role-member.model";
+import { RoleMembersService } from "./role-members/role-members.service";
 import { RolesService } from "./roles.service";
 
 @Resolver(() => Role)
 export class RolesResolver {
   constructor(
-    private rolesService: RolesService,
-    private permissionsService: PermissionsService
+    private permissionsService: PermissionsService,
+    private roleMembersService: RoleMembersService,
+    private rolesService: RolesService
   ) {}
 
   @Query(() => Role)
@@ -34,6 +37,11 @@ export class RolesResolver {
   @ResolveField(() => Permission)
   async permissions(@Parent() { id }: Role) {
     return this.permissionsService.getPermissions({ roleId: id });
+  }
+
+  @ResolveField(() => [RoleMember])
+  async members(@Parent() { id }: Role) {
+    return this.roleMembersService.getRoleMembers({ where: { roleId: id } });
   }
 
   @Mutation(() => CreateRolePayload)
