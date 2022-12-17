@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, IsNull, Repository } from "typeorm";
 import { CreateRoleInput } from "./models/create-role.input";
 import { Role } from "./models/role.model";
+import { UpdateRoleInput } from "./models/update-role.input";
 import { PermissionsService } from "./permissions/permissions.service";
 import { RoleMembersService } from "./role-members/role-members.service";
 import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from "./roles.constants";
@@ -39,6 +40,12 @@ export class RolesService {
 
   async createRole(roleData: CreateRoleInput) {
     const role = await this.repository.save(roleData);
+    return { role };
+  }
+
+  async updateRole({ id, ...data }: UpdateRoleInput) {
+    await this.repository.update(id, data);
+    const role = await this.getRole(id);
     return { role };
   }
 

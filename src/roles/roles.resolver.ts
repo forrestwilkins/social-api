@@ -12,6 +12,8 @@ import { Dataloaders } from "../dataloader/dataloader.service";
 import { CreateRoleInput } from "./models/create-role.input";
 import { CreateRolePayload } from "./models/create-role.payload";
 import { Role } from "./models/role.model";
+import { UpdateRoleInput } from "./models/update-role.input";
+import { UpdateRolePayload } from "./models/update-role.payload";
 import { Permission } from "./permissions/models/permission.model";
 import { PermissionsService } from "./permissions/permissions.service";
 import { RoleMember } from "./role-members/models/role-member.model";
@@ -46,7 +48,7 @@ export class RolesResolver {
     return this.roleMembersService.getRoleMembers({ where: { roleId: id } });
   }
 
-  @ResolveField(() => Number)
+  @ResolveField(() => Int)
   async memberCount(
     @Parent() { id }: Role,
     @Context() { loaders }: { loaders: Dataloaders }
@@ -57,6 +59,11 @@ export class RolesResolver {
   @Mutation(() => CreateRolePayload)
   async createRole(@Args("roleData") roleData: CreateRoleInput) {
     return this.rolesService.createRole(roleData);
+  }
+
+  @Mutation(() => UpdateRolePayload)
+  async updateRole(@Args("roleData") roleData: UpdateRoleInput) {
+    return this.rolesService.updateRole(roleData);
   }
 
   @Mutation(() => Boolean)
