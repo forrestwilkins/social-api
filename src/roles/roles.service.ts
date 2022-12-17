@@ -21,7 +21,7 @@ export class RolesService {
   }
 
   async getRoles(where?: FindOptionsWhere<Role>) {
-    return this.repository.find({ where });
+    return this.repository.find({ where, order: { updatedAt: "DESC" } });
   }
 
   async getServerRoles() {
