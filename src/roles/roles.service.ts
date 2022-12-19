@@ -1,6 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, IsNull, Repository } from "typeorm";
+import { FindOptionsWhere, In, IsNull, Not, Repository } from "typeorm";
+import { UsersService } from "../users/users.service";
 import { CreateRoleInput } from "./models/create-role.input";
 import { Role } from "./models/role.model";
 import { UpdateRoleInput } from "./models/update-role.input";
@@ -13,12 +14,16 @@ export class RolesService {
   constructor(
     @InjectRepository(Role)
     private repository: Repository<Role>,
+
+    @Inject(forwardRef(() => UsersService))
+    private usersService: UsersService,
+
     private roleMembersService: RoleMembersService,
     private permissionsService: PermissionsService
   ) {}
 
-  async getRole(id: number) {
-    return this.repository.findOne({ where: { id } });
+  async getRole(id: number, relations?: string[]) {
+    return this.repository.findOne({ where: { id }, relations });
   }
 
   async getRoles(where?: FindOptionsWhere<Role>) {
@@ -27,6 +32,22 @@ export class RolesService {
 
   async getServerRoles() {
     return this.getRoles({ groupId: IsNull() });
+  }
+
+  async getAvailableUsersToAdd(id: number) {
+    const role = await this.getRole(id, ["members"]);
+    if (!role?.members) {
+      return [];
+    }
+
+    const userIds = role.members.reduce<number[]>((result, { userId }) => {
+      result.push(userId);
+      return result;
+    }, []);
+
+    return this.usersService.getUsers({
+      id: Not(In(userIds)),
+    });
   }
 
   async initializeServerAdminRole(userId: number) {

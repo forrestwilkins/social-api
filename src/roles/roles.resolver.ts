@@ -9,6 +9,7 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { Dataloaders } from "../dataloader/dataloader.service";
+import { User } from "../users/models/user.model";
 import { CreateRoleInput } from "./models/create-role.input";
 import { CreateRolePayload } from "./models/create-role.payload";
 import { Role } from "./models/role.model";
@@ -54,6 +55,11 @@ export class RolesResolver {
     @Context() { loaders }: { loaders: Dataloaders }
   ) {
     return loaders.roleMemberCountLoader.load(id);
+  }
+
+  @ResolveField(() => [User])
+  async availableUsersToAdd(@Parent() { id }: Role) {
+    return this.rolesService.getAvailableUsersToAdd(id);
   }
 
   @Mutation(() => CreateRolePayload)

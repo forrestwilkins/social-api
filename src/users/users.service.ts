@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
 import { FindOptionsWhere, In, Repository } from "typeorm";
@@ -20,9 +20,12 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private repository: Repository<User>,
+
+    @Inject(forwardRef(() => RolesService))
+    private rolesService: RolesService,
+
     private imagesService: ImagesService,
-    private roleMembersService: RoleMembersService,
-    private rolesService: RolesService
+    private roleMembersService: RoleMembersService
   ) {}
 
   async getUser(where: FindOptionsWhere<User>) {
