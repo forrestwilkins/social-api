@@ -5,9 +5,12 @@ export class UpdateRoleInput {
   @Field(() => Int)
   id: number;
 
-  @Field()
-  name: string;
+  @Field({ nullable: true })
+  name?: string;
 
-  @Field()
-  color: string;
+  @Field({ nullable: true })
+  color?: string;
+
+  @Field(() => [Int], { nullable: true })
+  selectedUserIds?: number[];
 }

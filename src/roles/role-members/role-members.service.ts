@@ -44,4 +44,10 @@ export class RoleMembersService {
   async createRoleMember(roleId: number, userId: number) {
     return this.repository.save({ roleId, userId });
   }
+
+  async addRoleMembers(roleId: number, userIds: number[]) {
+    const roleMembers = userIds.map((userId) => ({ roleId, userId }));
+    const roleMemberEntities = this.repository.create(roleMembers);
+    await this.repository.insert(roleMemberEntities);
+  }
 }

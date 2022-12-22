@@ -64,8 +64,12 @@ export class RolesService {
     return { role };
   }
 
-  async updateRole({ id, ...data }: UpdateRoleInput) {
+  async updateRole({ id, selectedUserIds, ...data }: UpdateRoleInput) {
     await this.repository.update(id, data);
+
+    if (selectedUserIds?.length) {
+      await this.roleMembersService.addRoleMembers(id, selectedUserIds);
+    }
     const role = await this.getRole(id);
     return { role };
   }
