@@ -61,6 +61,7 @@ export class RolesService {
 
   async createRole(roleData: CreateRoleInput) {
     const role = await this.repository.save(roleData);
+    await this.permissionsService.initializeServerPermissions(role.id);
     return { role };
   }
 

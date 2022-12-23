@@ -19,7 +19,7 @@ export class PermissionsService {
     return this.repository.find({ where });
   }
 
-  async initializeServerPermissions(roleId: number, enabled: boolean) {
+  async initializeServerPermissions(roleId: number, enabled = false) {
     const permissions = Object.values(ServerPermissions).map((name) => ({
       enabled,
       roleId,
