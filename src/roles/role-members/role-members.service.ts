@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { UserInputError } from "apollo-server-express";
 import { FindManyOptions, Repository } from "typeorm";
 import { Role } from "../models/role.model";
+import { DeleteRoleMemberPayload } from "./models/delete-role-member.payload";
 import { RoleMember } from "./models/role-member.model";
 
 type RoleWithMemberCount = Role & { memberCount: number };
@@ -15,8 +17,8 @@ export class RoleMembersService {
     private roleRepository: Repository<Role>
   ) {}
 
-  async getRoleMember(id: number) {
-    return this.repository.findOne({ where: { id } });
+  async getRoleMember(id: number, relations?: string[]) {
+    return this.repository.findOne({ where: { id }, relations });
   }
 
   async getRoleMembers(options?: FindManyOptions<RoleMember>) {
@@ -51,8 +53,12 @@ export class RoleMembersService {
     await this.repository.insert(roleMemberEntities);
   }
 
-  async deleteRoleMember(id: number) {
+  async deleteRoleMember(id: number): Promise<DeleteRoleMemberPayload> {
+    const roleMember = await this.getRoleMember(id, ["role"]);
+    if (!roleMember?.role) {
+      throw new UserInputError("Role not found for role member");
+    }
     await this.repository.delete(id);
-    return true;
+    return { role: roleMember.role };
   }
 }
