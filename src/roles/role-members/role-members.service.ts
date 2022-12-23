@@ -50,4 +50,9 @@ export class RoleMembersService {
     const roleMemberEntities = this.repository.create(roleMembers);
     await this.repository.insert(roleMemberEntities);
   }
+
+  async deleteRoleMember(id: number) {
+    await this.repository.delete(id);
+    return true;
+  }
 }
