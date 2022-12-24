@@ -1,4 +1,5 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
+import { PermissionInput } from "../permissions/models/permission.input";
 
 @InputType()
 export class UpdateRoleInput {
@@ -13,4 +14,7 @@ export class UpdateRoleInput {
 
   @Field(() => [Int], { nullable: true })
   selectedUserIds?: number[];
+
+  @Field(() => [PermissionInput], { nullable: true })
+  permissions?: PermissionInput[];
 }
