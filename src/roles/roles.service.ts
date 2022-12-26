@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { UserInputError } from "apollo-server-express";
 import { FindOptionsWhere, In, IsNull, Not, Repository } from "typeorm";
 import { UsersService } from "../users/users.service";
 import { CreateRoleInput } from "./models/create-role.input";
@@ -65,13 +66,47 @@ export class RolesService {
     return { role };
   }
 
-  async updateRole({ id, selectedUserIds, ...data }: UpdateRoleInput) {
-    await this.repository.update(id, data);
+  async updateRole({
+    id,
+    selectedUserIds,
+    permissions = [],
+    ...roleData
+  }: UpdateRoleInput) {
+    const roleWithPerms = await this.getRole(id, ["permissions"]);
+    if (!roleWithPerms?.permissions) {
+      throw new UserInputError("Could not update role");
+    }
+
+    const permissionsInputMap = permissions.reduce<Record<number, boolean>>(
+      (result, { id, enabled }) => {
+        result[id] = enabled;
+        return result;
+      },
+      {}
+    );
+    const updatedPermissions = roleWithPerms.permissions.map((permission) => {
+      const enabled = permissionsInputMap[permission.id];
+      if (enabled === undefined) {
+        return permission;
+      }
+      return {
+        ...permission,
+        enabled,
+      };
+    });
+
+    const updatedRole = {
+      ...roleWithPerms,
+      ...roleData,
+      permissions: updatedPermissions,
+    };
+    await this.repository.save(updatedRole);
 
     if (selectedUserIds?.length) {
       await this.roleMembersService.addRoleMembers(id, selectedUserIds);
     }
-    const role = await this.getRole(id);
+
+    const role = this.getRole(id);
     return { role };
   }
 
