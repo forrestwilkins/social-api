@@ -11,6 +11,6 @@ import { RoleMembersService } from "./role-members.service";
     forwardRef(() => RolesModule),
   ],
   providers: [RoleMembersService, RoleMembersResolver],
-  exports: [RoleMembersService],
+  exports: [RoleMembersService, TypeOrmModule],
 })
 export class RoleMembersModule {}

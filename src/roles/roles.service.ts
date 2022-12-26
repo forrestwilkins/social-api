@@ -7,6 +7,7 @@ import { CreateRoleInput } from "./models/create-role.input";
 import { Role } from "./models/role.model";
 import { UpdateRoleInput } from "./models/update-role.input";
 import { PermissionsService } from "./permissions/permissions.service";
+import { RoleMember } from "./role-members/models/role-member.model";
 import { RoleMembersService } from "./role-members/role-members.service";
 import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from "./roles.constants";
 
@@ -14,7 +15,10 @@ import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from "./roles.constants";
 export class RolesService {
   constructor(
     @InjectRepository(Role)
-    private repository: Repository<Role>,
+    private roleRepository: Repository<Role>,
+
+    @InjectRepository(RoleMember)
+    private roleMemberRepository: Repository<RoleMember>,
 
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
@@ -24,11 +28,11 @@ export class RolesService {
   ) {}
 
   async getRole(id: number, relations?: string[]) {
-    return this.repository.findOne({ where: { id }, relations });
+    return this.roleRepository.findOne({ where: { id }, relations });
   }
 
   async getRoles(where?: FindOptionsWhere<Role>) {
-    return this.repository.find({ where, order: { updatedAt: "DESC" } });
+    return this.roleRepository.find({ where, order: { updatedAt: "DESC" } });
   }
 
   async getServerRoles() {
@@ -52,7 +56,7 @@ export class RolesService {
   }
 
   async initializeServerAdminRole(userId: number) {
-    const { id } = await this.repository.save({
+    const { id } = await this.roleRepository.save({
       name: ADMIN_ROLE_NAME,
       color: DEFAULT_ROLE_COLOR,
     });
@@ -61,19 +65,22 @@ export class RolesService {
   }
 
   async createRole(roleData: CreateRoleInput) {
-    const role = await this.repository.save(roleData);
+    const role = await this.roleRepository.save(roleData);
     await this.permissionsService.initializeServerPermissions(role.id);
     return { role };
   }
 
   async updateRole({
     id,
-    selectedUserIds,
+    selectedUserIds = [],
     permissions = [],
     ...roleData
   }: UpdateRoleInput) {
-    const roleWithPerms = await this.getRole(id, ["permissions"]);
-    if (!roleWithPerms?.permissions) {
+    const roleWithRelations = await this.getRole(id, [
+      "permissions",
+      "members",
+    ]);
+    if (!roleWithRelations?.permissions || !roleWithRelations.members) {
       throw new UserInputError("Could not update role");
     }
 
@@ -84,7 +91,7 @@ export class RolesService {
       },
       {}
     );
-    const updatedPermissions = roleWithPerms.permissions.map((permission) => {
+    const newPermissions = roleWithRelations.permissions.map((permission) => {
       const enabled = permissionsInputMap[permission.id];
       if (enabled === undefined) {
         return permission;
@@ -94,24 +101,24 @@ export class RolesService {
         enabled,
       };
     });
+    const newMembers = this.roleMemberRepository.create(
+      selectedUserIds.map((userId) => ({
+        roleId: roleWithRelations.id,
+        userId,
+      }))
+    );
 
-    const updatedRole = {
-      ...roleWithPerms,
+    const role = await this.roleRepository.save({
+      ...roleWithRelations,
       ...roleData,
-      permissions: updatedPermissions,
-    };
-    await this.repository.save(updatedRole);
-
-    if (selectedUserIds?.length) {
-      await this.roleMembersService.addRoleMembers(id, selectedUserIds);
-    }
-
-    const role = this.getRole(id);
+      members: [...roleWithRelations.members, ...newMembers],
+      permissions: newPermissions,
+    });
     return { role };
   }
 
   async deleteRole(id: number) {
-    await this.repository.delete(id);
+    await this.roleRepository.delete(id);
     return true;
   }
 }

@@ -47,12 +47,6 @@ export class RoleMembersService {
     return this.repository.save({ roleId, userId });
   }
 
-  async addRoleMembers(roleId: number, userIds: number[]) {
-    const roleMembers = userIds.map((userId) => ({ roleId, userId }));
-    const roleMemberEntities = this.repository.create(roleMembers);
-    await this.repository.insert(roleMemberEntities);
-  }
-
   async deleteRoleMember(id: number): Promise<DeleteRoleMemberPayload> {
     const roleMember = await this.getRoleMember(id, ["role"]);
     if (!roleMember?.role) {
