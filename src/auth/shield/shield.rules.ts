@@ -1,11 +1,15 @@
 import { rule } from "graphql-shield";
 import { FORBIDDEN } from "../../shared/shared.constants";
 import { Context } from "../../shared/shared.types";
+import { generateRandom } from "../../shared/shared.utils";
 import { getJti, getSub } from "../auth.utils";
 
-// TODO: Verify that rule can be used in multiple locations with same permission name
-export const hasPermission = (name: string, groupId?: number) =>
-  rule(`hasPermission-${name}`)(
+export const hasPermission = (name: string, groupId?: number) => {
+  const token = generateRandom();
+  const group = groupId ? `group-${groupId}-` : "";
+  const uniqueRuleName = `hasPermission-${group}${name}-${token}`;
+
+  return rule(uniqueRuleName)(
     async (_parent, _args, { permissions }: Context) => {
       if (!permissions) {
         return FORBIDDEN;
@@ -26,6 +30,7 @@ export const hasPermission = (name: string, groupId?: number) =>
       return true;
     }
   );
+};
 
 export const isAuthenticated = rule({ cache: "contextual" })(
   async (_parent, _args, { user }: Context) => {
