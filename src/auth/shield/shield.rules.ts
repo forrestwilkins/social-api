@@ -1,4 +1,5 @@
 import { rule } from "graphql-shield";
+import { FORBIDDEN } from "../../shared/shared.constants";
 import { Context } from "../../shared/shared.types";
 import { getJti, getSub } from "../auth.utils";
 
@@ -10,6 +11,29 @@ export const isAuthenticated = rule({ cache: "contextual" })(
     return true;
   }
 );
+
+export const hasPermission = (name: string, groupId?: number) =>
+  rule(`hasPermission-${name}`)(
+    async (_parent, _args, { permissions }: Context) => {
+      if (!permissions) {
+        return FORBIDDEN;
+      }
+      const { serverPermissions, groupPermissions } = permissions;
+
+      if (groupId) {
+        console.log(
+          "TODO: Add logic for checking group permissions here",
+          groupPermissions
+        );
+        return FORBIDDEN;
+      }
+      if (!serverPermissions.has(name)) {
+        return FORBIDDEN;
+      }
+
+      return true;
+    }
+  );
 
 export const hasValidRefreshToken = rule()(
   async (

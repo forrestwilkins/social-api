@@ -76,7 +76,10 @@ export class UsersService {
     });
     return roleMembers.reduce<UserPermissions>(
       (result, { role: { groupId, permissions } }) => {
-        for (const { name } of permissions) {
+        for (const { name, enabled } of permissions) {
+          if (!enabled) {
+            continue;
+          }
           if (groupId) {
             result.groupPermissions[groupId].add(name);
             continue;

@@ -1,12 +1,18 @@
 import { allow, and, not, shield } from "graphql-shield";
+import { ServerPermissions } from "../../roles/permissions/permissions.constants";
 import { UNAUTHORIZED } from "../../shared/shared.constants";
-import { hasValidRefreshToken, isAuthenticated } from "./shield.rules";
+import {
+  hasPermission,
+  hasValidRefreshToken,
+  isAuthenticated,
+} from "./shield.rules";
 
 const shieldPermissions = shield(
   {
     Query: {
       "*": isAuthenticated,
       posts: allow,
+      users: hasPermission(ServerPermissions.ManageUsers),
     },
     Mutation: {
       "*": isAuthenticated,
