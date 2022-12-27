@@ -3,15 +3,7 @@ import { FORBIDDEN } from "../../shared/shared.constants";
 import { Context } from "../../shared/shared.types";
 import { getJti, getSub } from "../auth.utils";
 
-export const isAuthenticated = rule({ cache: "contextual" })(
-  async (_parent, _args, { user }: Context) => {
-    if (!user) {
-      return false;
-    }
-    return true;
-  }
-);
-
+// TODO: Verify that rule can be used in multiple locations with same permission name
 export const hasPermission = (name: string, groupId?: number) =>
   rule(`hasPermission-${name}`)(
     async (_parent, _args, { permissions }: Context) => {
@@ -34,6 +26,15 @@ export const hasPermission = (name: string, groupId?: number) =>
       return true;
     }
   );
+
+export const isAuthenticated = rule({ cache: "contextual" })(
+  async (_parent, _args, { user }: Context) => {
+    if (!user) {
+      return false;
+    }
+    return true;
+  }
+);
 
 export const hasValidRefreshToken = rule()(
   async (
