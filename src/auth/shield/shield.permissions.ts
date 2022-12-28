@@ -21,6 +21,8 @@ const shieldPermissions = shield(
       signUp: allow,
       refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
     },
+    Role: hasPermission(ServerPermissions.ManageRoles),
+    RoleMember: hasPermission(ServerPermissions.ManageRoles),
   },
   {
     allowExternalErrors: true,
