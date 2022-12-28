@@ -8,6 +8,7 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { User } from "../users/models/user.model";
 import { CreateRoleInput } from "./models/create-role.input";
@@ -68,8 +69,11 @@ export class RolesResolver {
   }
 
   @Mutation(() => UpdateRolePayload)
-  async updateRole(@Args("roleData") roleData: UpdateRoleInput) {
-    return this.rolesService.updateRole(roleData);
+  async updateRole(
+    @Args("roleData") roleData: UpdateRoleInput,
+    @CurrentUser() user: User
+  ) {
+    return this.rolesService.updateRole(roleData, user);
   }
 
   @Mutation(() => Boolean)

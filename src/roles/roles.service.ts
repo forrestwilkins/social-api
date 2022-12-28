@@ -2,6 +2,7 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
 import { FindOptionsWhere, In, IsNull, Not, Repository } from "typeorm";
+import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 import { CreateRoleInput } from "./models/create-role.input";
 import { Role } from "./models/role.model";
@@ -70,12 +71,15 @@ export class RolesService {
     return { role };
   }
 
-  async updateRole({
-    id,
-    selectedUserIds = [],
-    permissions = [],
-    ...roleData
-  }: UpdateRoleInput) {
+  async updateRole(
+    {
+      id,
+      selectedUserIds = [],
+      permissions = [],
+      ...roleData
+    }: UpdateRoleInput,
+    user: User
+  ) {
     const roleWithRelations = await this.getRole(id, [
       "permissions",
       "members",
@@ -114,7 +118,7 @@ export class RolesService {
       members: [...roleWithRelations.members, ...newMembers],
       permissions: newPermissions,
     });
-    return { role };
+    return { role, me: user };
   }
 
   async deleteRole(id: number) {
