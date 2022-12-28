@@ -55,14 +55,12 @@ export class User {
   @OneToMany(() => GroupMember, (groupMember) => groupMember.user, {
     cascade: true,
   })
-  // TODO: Determine whether to rename as groupMembers
-  groupMemberships: GroupMember[];
+  groupMembers: GroupMember[];
 
   @OneToMany(() => RoleMember, (roleMember) => roleMember.user, {
     cascade: true,
   })
-  // TODO: Determine whether to rename as roleMembers
-  roleMemberships: RoleMember[];
+  roleMembers: RoleMember[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     cascade: true,

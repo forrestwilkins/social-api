@@ -24,7 +24,7 @@ export class RoleMember {
   @Column()
   roleId: number;
 
-  @ManyToOne(() => User, (user) => user.roleMemberships, {
+  @ManyToOne(() => User, (user) => user.roleMembers, {
     onDelete: "CASCADE",
   })
   @Field(() => User)

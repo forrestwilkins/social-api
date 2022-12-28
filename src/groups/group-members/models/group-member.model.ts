@@ -17,7 +17,7 @@ export class GroupMember {
   @Field(() => Int)
   id: number;
 
-  @ManyToOne(() => User, (user) => user.groupMemberships, {
+  @ManyToOne(() => User, (user) => user.groupMembers, {
     onDelete: "CASCADE",
   })
   @Field(() => User)
