@@ -1,10 +1,12 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { UserInputError } from "apollo-server-express";
 import * as fs from "fs";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { PostsService } from "../posts/posts.service";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { RolesService } from "../roles/roles.service";
 import { UpdateUserInput } from "./models/update-user.input";
@@ -25,6 +27,7 @@ export class UsersService {
     private rolesService: RolesService,
 
     private imagesService: ImagesService,
+    private postsService: PostsService,
     private roleMembersService: RoleMembersService
   ) {}
 
@@ -90,6 +93,14 @@ export class UsersService {
       },
       { serverPermissions: new Set(), groupPermissions: {} }
     );
+  }
+
+  async isUsersPost(userId: number, postId: number) {
+    const post = await this.postsService.getPost(postId);
+    if (!post) {
+      throw new UserInputError("Post not found");
+    }
+    return post.userId === userId;
   }
 
   async createUser(data: Partial<User>) {

@@ -2,6 +2,7 @@ import { allow, and, not, shield } from "graphql-shield";
 import { ServerPermissions } from "../../roles/permissions/permissions.constants";
 import { UNAUTHORIZED } from "../../shared/shared.constants";
 import {
+  canDeletePost,
   hasPermission,
   hasValidRefreshToken,
   isAuthenticated,
@@ -19,6 +20,7 @@ const shieldPermissions = shield(
       login: allow,
       logOut: allow,
       signUp: allow,
+      deletePost: canDeletePost,
       refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
     },
     Role: hasPermission(ServerPermissions.ManageRoles),

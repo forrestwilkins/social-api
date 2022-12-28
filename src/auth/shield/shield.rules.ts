@@ -1,20 +1,28 @@
 import { rule } from "graphql-shield";
-import { FORBIDDEN } from "../../shared/shared.constants";
+import { ServerPermissions } from "../../roles/permissions/permissions.constants";
+import { FORBIDDEN, UNAUTHORIZED } from "../../shared/shared.constants";
 import { Context } from "../../shared/shared.types";
 import { generateRandom } from "../../shared/shared.utils";
 import { getJti, getSub } from "../auth.utils";
 
-// TODO: Add remaining logic - WIP
-// export const canDeletePost = rule()(
-//   async (_parent, args, { user, permissions }: Context) => {
-//     if (permissions?.serverPermissions.has(ServerPermissions.ManagePosts)) {
-//       return true;
-//     }
-//     if (args.id) {
-//     }
-//     return true;
-//   }
-// );
+export const canDeletePost = rule()(
+  async (_parent, args, { user, permissions, usersService }: Context) => {
+    if (!user) {
+      return UNAUTHORIZED;
+    }
+
+    const hasPermission = permissions?.serverPermissions.has(
+      ServerPermissions.ManagePosts
+    );
+    const isOwnPost = await usersService.isUsersPost(user.id, args.id);
+
+    if (!hasPermission && !isOwnPost) {
+      return FORBIDDEN;
+    }
+
+    return true;
+  }
+);
 
 export const hasPermission = (name: string, groupId?: number) => {
   const token = generateRandom();
