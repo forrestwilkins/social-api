@@ -11,22 +11,13 @@ export const hasPermission = (name: string, groupId?: number) => {
 
   return rule(uniqueRuleName)(
     async (_parent, _args, { permissions }: Context) => {
-      if (!permissions) {
+      // TODO: Add logic for checking group permissions
+      if (!permissions || groupId) {
         return FORBIDDEN;
       }
-      const { serverPermissions, groupPermissions } = permissions;
-
-      if (groupId) {
-        console.log(
-          "TODO: Add logic for checking group permissions here",
-          groupPermissions
-        );
+      if (!permissions.serverPermissions.has(name)) {
         return FORBIDDEN;
       }
-      if (!serverPermissions.has(name)) {
-        return FORBIDDEN;
-      }
-
       return true;
     }
   );
