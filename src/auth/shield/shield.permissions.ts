@@ -12,7 +12,7 @@ const shieldPermissions = shield(
     Query: {
       "*": isAuthenticated,
       posts: allow,
-      users: hasPermission(ServerPermissions.ManageUsers),
+      users: hasPermission(ServerPermissions.BanMembers),
     },
     Mutation: {
       "*": isAuthenticated,

@@ -16,7 +16,7 @@ export class PermissionsService {
   }
 
   async getPermissions(where?: FindOptionsWhere<Permission>) {
-    return this.repository.find({ where, order: { id: "ASC" } });
+    return this.repository.find({ where, order: { id: "DESC" } });
   }
 
   async initializeServerPermissions(roleId: number, enabled = false) {
