@@ -1,6 +1,6 @@
 import { allow, and, not, shield } from "graphql-shield";
 import { ServerPermissions } from "../../roles/permissions/permissions.constants";
-import { UNAUTHORIZED } from "../../shared/shared.constants";
+import { FORBIDDEN } from "../../shared/shared.constants";
 import {
   canDeletePost,
   hasPermission,
@@ -28,7 +28,7 @@ const shieldPermissions = shield(
   },
   {
     allowExternalErrors: true,
-    fallbackError: UNAUTHORIZED,
+    fallbackError: FORBIDDEN,
   }
 );
 
