@@ -61,6 +61,14 @@ export class UsersResolver {
     return this.usersService.getCoverPhoto(id);
   }
 
+  @ResolveField(() => [String])
+  async serverPermissions(@Parent() { id }: User) {
+    const { serverPermissions } = await this.usersService.getUserPermissions(
+      id
+    );
+    return serverPermissions;
+  }
+
   @Mutation(() => UpdateUserPayload)
   async updateUser(@Args("userData") userData: UpdateUserInput) {
     return this.usersService.updateUser(userData);
