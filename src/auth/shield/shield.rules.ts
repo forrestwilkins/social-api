@@ -4,6 +4,18 @@ import { Context } from "../../shared/shared.types";
 import { generateRandom } from "../../shared/shared.utils";
 import { getJti, getSub } from "../auth.utils";
 
+// TODO: Add remaining logic - WIP
+// export const canDeletePost = rule()(
+//   async (_parent, args, { user, permissions }: Context) => {
+//     if (permissions?.serverPermissions.has(ServerPermissions.ManagePosts)) {
+//       return true;
+//     }
+//     if (args.id) {
+//     }
+//     return true;
+//   }
+// );
+
 export const hasPermission = (name: string, groupId?: number) => {
   const token = generateRandom();
   const group = groupId ? `group-${groupId}-` : "";
