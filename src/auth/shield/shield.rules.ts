@@ -5,21 +5,28 @@ import { UNAUTHORIZED } from "../../shared/shared.constants";
 import { Context } from "../../shared/shared.types";
 import { getJti, getSub } from "../auth.utils";
 
-export const canDeletePost = rule()(
-  async (_parent, args, { user, permissions, usersService }: Context) => {
-    if (!user) {
-      return UNAUTHORIZED;
-    }
+export const isOwnPost = rule()(
+  async (_parent, args, { user, usersService }: Context) => {
+    const isOwnPost = user
+      ? await usersService.isUsersPost(user.id, args.id)
+      : false;
 
-    const hasPermission = permissions?.serverPermissions.has(
-      ServerPermissions.ManagePosts
-    );
-    const isOwnPost = await usersService.isUsersPost(user.id, args.id);
-
-    if (!hasPermission && !isOwnPost) {
+    if (isOwnPost) {
       return false;
     }
 
+    return true;
+  }
+);
+
+export const canManagePosts = rule()(
+  async (_parent, _args, { permissions }: Context) => {
+    const hasPermission = permissions?.serverPermissions.has(
+      ServerPermissions.ManagePosts
+    );
+    if (!hasPermission) {
+      return false;
+    }
     return true;
   }
 );

@@ -1,11 +1,12 @@
-import { allow, and, not, shield } from "graphql-shield";
+import { allow, and, not, or, shield } from "graphql-shield";
 import { ServerPermissions } from "../../roles/permissions/permissions.constants";
 import { FORBIDDEN } from "../../shared/shared.constants";
 import {
-  canDeletePost,
+  canManagePosts,
   hasPermission,
   hasValidRefreshToken,
   isAuthenticated,
+  isOwnPost,
 } from "./shield.rules";
 
 const shieldPermissions = shield(
@@ -20,7 +21,7 @@ const shieldPermissions = shield(
       login: allow,
       logOut: allow,
       signUp: allow,
-      deletePost: canDeletePost,
+      deletePost: or(canManagePosts, isOwnPost),
       refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
     },
     Role: hasPermission(ServerPermissions.ManageRoles),
