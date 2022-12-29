@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto";
 import { rule } from "graphql-shield";
 import { ServerPermissions } from "../../roles/permissions/permissions.constants";
 import { UNAUTHORIZED } from "../../shared/shared.constants";
@@ -31,22 +30,29 @@ export const canManagePosts = rule()(
   }
 );
 
-export const hasPermission = (permissionName: string, groupId?: number) => {
-  const uuid = randomUUID();
-  const group = groupId ? `group-${groupId}-` : "";
-  const ruleName = `hasPermission-${group}${permissionName}-${uuid}`;
-
-  return rule(ruleName)(async (_parent, _args, { permissions }: Context) => {
-    // TODO: Add logic for checking group permissions
-    if (!permissions || groupId) {
-      return false;
-    }
-    if (!permissions.serverPermissions.has(permissionName)) {
+export const canManageRoles = rule()(
+  async (_parent, _args, { permissions }: Context) => {
+    const hasPermission = permissions?.serverPermissions.has(
+      ServerPermissions.ManageRoles
+    );
+    if (!hasPermission) {
       return false;
     }
     return true;
-  });
-};
+  }
+);
+
+export const canBanMembers = rule()(
+  async (_parent, _args, { permissions }: Context) => {
+    const hasPermission = permissions?.serverPermissions.has(
+      ServerPermissions.BanMembers
+    );
+    if (!hasPermission) {
+      return false;
+    }
+    return true;
+  }
+);
 
 export const isAuthenticated = rule({ cache: "contextual" })(
   async (_parent, _args, { user }: Context) => {

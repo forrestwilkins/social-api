@@ -1,9 +1,9 @@
 import { allow, and, not, or, shield } from "graphql-shield";
-import { ServerPermissions } from "../../roles/permissions/permissions.constants";
 import { FORBIDDEN } from "../../shared/shared.constants";
 import {
+  canBanMembers,
   canManagePosts,
-  hasPermission,
+  canManageRoles,
   hasValidRefreshToken,
   isAuthenticated,
   isOwnPost,
@@ -14,7 +14,7 @@ const shieldPermissions = shield(
     Query: {
       "*": isAuthenticated,
       posts: allow,
-      users: hasPermission(ServerPermissions.BanMembers),
+      users: canBanMembers,
     },
     Mutation: {
       "*": isAuthenticated,
@@ -24,8 +24,8 @@ const shieldPermissions = shield(
       deletePost: or(canManagePosts, isOwnPost),
       refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
     },
-    Role: hasPermission(ServerPermissions.ManageRoles),
-    RoleMember: hasPermission(ServerPermissions.ManageRoles),
+    Role: canManageRoles,
+    RoleMember: canManageRoles,
   },
   {
     allowExternalErrors: true,
