@@ -53,11 +53,14 @@ export class RolesService {
   }
 
   async initializeServerAdminRole(userId: number) {
+    const permissions = initServerPermissions(true);
+    const members = [{ userId }];
+
     await this.roleRepository.save({
       name: ADMIN_ROLE_NAME,
       color: DEFAULT_ROLE_COLOR,
-      permissions: initServerPermissions(true),
-      members: [{ userId }],
+      permissions,
+      members,
     });
   }
 
