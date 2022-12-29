@@ -1,9 +1,9 @@
+import { Context } from "../../shared/shared.types";
+import { getJti, getSub } from "../auth.utils";
 import { rule } from "graphql-shield";
 import { ServerPermissions } from "../../roles/permissions/permissions.constants";
 import { UNAUTHORIZED } from "../../shared/shared.constants";
-import { Context } from "../../shared/shared.types";
-import { generateRandom } from "../../shared/shared.utils";
-import { getJti, getSub } from "../auth.utils";
+import * as crypto from "crypto";
 
 export const canDeletePost = rule()(
   async (_parent, args, { user, permissions, usersService }: Context) => {
@@ -25,7 +25,7 @@ export const canDeletePost = rule()(
 );
 
 export const hasPermission = (permissionName: string, groupId?: number) => {
-  const uniqueToken = generateRandom();
+  const uniqueToken = crypto.randomUUID();
   const group = groupId ? `group-${groupId}-` : "";
   const ruleName = `hasPermission-${group}${permissionName}-${uniqueToken}`;
 
