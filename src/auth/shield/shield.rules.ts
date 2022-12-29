@@ -24,23 +24,21 @@ export const canDeletePost = rule()(
   }
 );
 
-export const hasPermission = (name: string, groupId?: number) => {
-  const token = generateRandom();
+export const hasPermission = (permissionName: string, groupId?: number) => {
+  const uniqueToken = generateRandom();
   const group = groupId ? `group-${groupId}-` : "";
-  const uniqueRuleName = `hasPermission-${group}${name}-${token}`;
+  const ruleName = `hasPermission-${group}${permissionName}-${uniqueToken}`;
 
-  return rule(uniqueRuleName)(
-    async (_parent, _args, { permissions }: Context) => {
-      // TODO: Add logic for checking group permissions
-      if (!permissions || groupId) {
-        return false;
-      }
-      if (!permissions.serverPermissions.has(name)) {
-        return false;
-      }
-      return true;
+  return rule(ruleName)(async (_parent, _args, { permissions }: Context) => {
+    // TODO: Add logic for checking group permissions
+    if (!permissions || groupId) {
+      return false;
     }
-  );
+    if (!permissions.serverPermissions.has(permissionName)) {
+      return false;
+    }
+    return true;
+  });
 };
 
 export const isAuthenticated = rule({ cache: "contextual" })(
