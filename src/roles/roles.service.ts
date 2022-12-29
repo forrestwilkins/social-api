@@ -7,9 +7,8 @@ import { UsersService } from "../users/users.service";
 import { CreateRoleInput } from "./models/create-role.input";
 import { Role } from "./models/role.model";
 import { UpdateRoleInput } from "./models/update-role.input";
-import { PermissionsService } from "./permissions/permissions.service";
+import { initServerPermissions } from "./permissions/permissions.utils";
 import { RoleMember } from "./role-members/models/role-member.model";
-import { RoleMembersService } from "./role-members/role-members.service";
 import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from "./roles.constants";
 
 @Injectable()
@@ -22,10 +21,7 @@ export class RolesService {
     private roleMemberRepository: Repository<RoleMember>,
 
     @Inject(forwardRef(() => UsersService))
-    private usersService: UsersService,
-
-    private roleMembersService: RoleMembersService,
-    private permissionsService: PermissionsService
+    private usersService: UsersService
   ) {}
 
   async getRole(id: number, relations?: string[]) {
@@ -57,17 +53,17 @@ export class RolesService {
   }
 
   async initializeServerAdminRole(userId: number) {
-    const { id } = await this.roleRepository.save({
+    await this.roleRepository.save({
       name: ADMIN_ROLE_NAME,
       color: DEFAULT_ROLE_COLOR,
+      permissions: initServerPermissions(true),
+      members: [{ userId }],
     });
-    await this.permissionsService.initializeServerPermissions(id, true);
-    await this.roleMembersService.createRoleMember(id, userId);
   }
 
   async createRole(roleData: CreateRoleInput) {
-    const role = await this.roleRepository.save(roleData);
-    await this.permissionsService.initializeServerPermissions(role.id);
+    const permissions = initServerPermissions();
+    const role = await this.roleRepository.save({ ...roleData, permissions });
     return { role };
   }
 
