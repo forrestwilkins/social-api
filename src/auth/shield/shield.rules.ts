@@ -1,9 +1,9 @@
-import { Context } from "../../shared/shared.types";
-import { getJti, getSub } from "../auth.utils";
+import { randomUUID } from "crypto";
 import { rule } from "graphql-shield";
 import { ServerPermissions } from "../../roles/permissions/permissions.constants";
 import { UNAUTHORIZED } from "../../shared/shared.constants";
-import * as crypto from "crypto";
+import { Context } from "../../shared/shared.types";
+import { getJti, getSub } from "../auth.utils";
 
 export const canDeletePost = rule()(
   async (_parent, args, { user, permissions, usersService }: Context) => {
@@ -25,9 +25,9 @@ export const canDeletePost = rule()(
 );
 
 export const hasPermission = (permissionName: string, groupId?: number) => {
-  const uniqueToken = crypto.randomUUID();
+  const uuid = randomUUID();
   const group = groupId ? `group-${groupId}-` : "";
-  const ruleName = `hasPermission-${group}${permissionName}-${uniqueToken}`;
+  const ruleName = `hasPermission-${group}${permissionName}-${uuid}`;
 
   return rule(ruleName)(async (_parent, _args, { permissions }: Context) => {
     // TODO: Add logic for checking group permissions
