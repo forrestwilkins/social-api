@@ -3,6 +3,22 @@ import { ServerPermissions } from "../../roles/permissions/permissions.constants
 import { UNAUTHORIZED } from "../../shared/shared.constants";
 import { Context } from "../../shared/shared.types";
 import { getJti, getSub } from "../auth.utils";
+import { hasPermission } from "./shield.utils";
+
+export const canManagePosts = rule()(
+  async (_parent, _args, { permissions }: Context) =>
+    hasPermission(permissions, ServerPermissions.ManagePosts)
+);
+
+export const canManageRoles = rule()(
+  async (_parent, _args, { permissions }: Context) =>
+    hasPermission(permissions, ServerPermissions.ManageRoles)
+);
+
+export const canBanMembers = rule()(
+  async (_parent, _args, { permissions }: Context) =>
+    hasPermission(permissions, ServerPermissions.BanMembers)
+);
 
 export const isOwnPost = rule()(
   async (_parent, args, { user, usersService }: Context) => {
@@ -14,42 +30,6 @@ export const isOwnPost = rule()(
       return false;
     }
 
-    return true;
-  }
-);
-
-export const canManagePosts = rule()(
-  async (_parent, _args, { permissions }: Context) => {
-    const hasPermission = permissions?.serverPermissions.has(
-      ServerPermissions.ManagePosts
-    );
-    if (!hasPermission) {
-      return false;
-    }
-    return true;
-  }
-);
-
-export const canManageRoles = rule()(
-  async (_parent, _args, { permissions }: Context) => {
-    const hasPermission = permissions?.serverPermissions.has(
-      ServerPermissions.ManageRoles
-    );
-    if (!hasPermission) {
-      return false;
-    }
-    return true;
-  }
-);
-
-export const canBanMembers = rule()(
-  async (_parent, _args, { permissions }: Context) => {
-    const hasPermission = permissions?.serverPermissions.has(
-      ServerPermissions.BanMembers
-    );
-    if (!hasPermission) {
-      return false;
-    }
     return true;
   }
 );
