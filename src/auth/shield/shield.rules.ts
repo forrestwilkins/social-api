@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { rule } from "graphql-shield";
 import { ServerPermissions } from "../../roles/permissions/permissions.constants";
 import { UNAUTHORIZED } from "../../shared/shared.constants";
@@ -23,10 +24,14 @@ export const canDeletePost = rule()(
   }
 );
 
-// TODO: Add logic for checking group permissions
-export const hasPermission = (permissionName: string) =>
-  rule()(async (_parent, _args, { permissions }: Context) => {
-    if (!permissions) {
+export const hasPermission = (permissionName: string, groupId?: number) => {
+  const uuid = randomUUID();
+  const group = groupId ? `group-${groupId}-` : "";
+  const ruleName = `hasPermission-${group}${permissionName}-${uuid}`;
+
+  return rule(ruleName)(async (_parent, _args, { permissions }: Context) => {
+    // TODO: Add logic for checking group permissions
+    if (!permissions || groupId) {
       return false;
     }
     if (!permissions.serverPermissions.has(permissionName)) {
@@ -34,6 +39,7 @@ export const hasPermission = (permissionName: string) =>
     }
     return true;
   });
+};
 
 export const isAuthenticated = rule({ cache: "contextual" })(
   async (_parent, _args, { user }: Context) => {
