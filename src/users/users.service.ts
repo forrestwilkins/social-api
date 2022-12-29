@@ -107,7 +107,6 @@ export class UsersService {
     const user = await this.repository.save(data);
     const users = await this.getUsers();
 
-    // TODO: Determine whether to remove try catch after testing
     try {
       if (users.length === 1) {
         await this.rolesService.initializeServerAdminRole(user.id);
