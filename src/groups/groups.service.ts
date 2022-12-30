@@ -64,9 +64,9 @@ export class GroupsService {
     if (coverPhoto) {
       const filename = await saveImage(coverPhoto);
       await this.imagesService.createImage({
-        filename,
         imageType: ImageTypes.CoverPhoto,
         groupId: group.id,
+        filename,
       });
     } else {
       await this.saveDefaultCoverPhoto(group.id);
@@ -75,12 +75,23 @@ export class GroupsService {
     return { group };
   }
 
+  /**
+   * TODO: Ensure that current cover photo isn't deleted
+   * until after successfully creating new one
+   */
   async updateGroup({ id, coverPhoto, ...groupData }: UpdateGroupInput) {
     await this.repository.update(id, groupData);
     const group = await this.getGroup({ id });
 
-    // TODO: Remove when no longer needed for testing
-    console.log(coverPhoto);
+    if (coverPhoto) {
+      await this.deleteCoverPhoto(id);
+      const filename = await saveImage(coverPhoto);
+      await this.imagesService.createImage({
+        imageType: ImageTypes.CoverPhoto,
+        groupId: id,
+        filename,
+      });
+    }
 
     return { group };
   }
