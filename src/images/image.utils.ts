@@ -1,13 +1,19 @@
+import { UnsupportedMediaTypeException } from "@nestjs/common";
 import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import { promisify } from "util";
 
-export const DEFAULT_IMAGES_SIZE = 10;
+const DEFAULT_IMAGES_SIZE = 10;
+const VALID_IMAGE_FORMAT = /(jpe?g|png|gif|webp)$/;
 
-// TODO: Add remaining logic - the following is a WIP
 export const saveImage = async (image: Promise<FileUpload>) => {
   const { createReadStream, mimetype } = await image;
   const extension = mimetype.split("/")[1];
+
+  if (!extension.match(VALID_IMAGE_FORMAT)) {
+    throw new UnsupportedMediaTypeException("Only image files are allowed");
+  }
+
   const filename = `${Date.now()}.${extension}`;
   const path = `./uploads/${filename}`;
 

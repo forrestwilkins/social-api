@@ -40,8 +40,14 @@ export class PostsService {
 
   async createPost(user: User, { images, ...postData }: CreatePostInput) {
     const post = await this.repository.save({ ...postData, userId: user.id });
+
     if (images) {
-      await this.savePostImages(post.id, images);
+      try {
+        await this.savePostImages(post.id, images);
+      } catch (err) {
+        await this.deletePost(post.id);
+        throw new Error(err.message);
+      }
     }
     return { post };
   }
