@@ -8,6 +8,7 @@ import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.servi
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
+import { GraphQLUpload } from "graphql-upload";
 import { ImagesModule } from "./images/images.module";
 import { PostsModule } from "./posts/posts.module";
 import { RolesModule } from "./roles/roles.module";
@@ -61,6 +62,7 @@ const useFactory = (
   autoSchemaFile: true,
   cors: { origin: true, credentials: true },
   csrfPrevention: process.env.NODE_ENV !== Environments.Development,
+  resolvers: { Upload: GraphQLUpload },
 });
 
 @Module({

@@ -37,14 +37,24 @@ export class PostsService {
     return mappedImages;
   }
 
-  async createPost(user: User, postData: CreatePostInput) {
+  // TODO: Handle images passed with input
+  async createPost(user: User, { images, ...postData }: CreatePostInput) {
     const post = await this.repository.save({ ...postData, userId: user.id });
+
+    // TODO: Remove when no longer needed for testing
+    console.log(images);
+
     return { post };
   }
 
-  async updatePost({ id, ...data }: UpdatePostInput) {
+  // TODO: Handle images passed with input
+  async updatePost({ id, images, ...data }: UpdatePostInput) {
     await this.repository.update(id, data);
     const post = await this.getPost(id);
+
+    // TODO: Remove when no longer needed for testing
+    console.log(images);
+
     return { post };
   }
 
