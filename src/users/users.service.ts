@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
 import * as fs from "fs";
 import { FindOptionsWhere, In, Repository } from "typeorm";
-import { randomDefaultImagePath } from "../images/image.utils";
+import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { PostsService } from "../posts/posts.service";
@@ -129,9 +129,35 @@ export class UsersService {
     await this.repository.update(id, userData);
     const user = await this.getUser({ id });
 
-    // TODO: Remove when no longer needed for testing
-    console.log(profilePicture);
-    console.log(coverPhoto);
+    // TODO: Refactor - move to own service method - or include with update transaction
+    if (profilePicture) {
+      const profilePictureData = {
+        imageType: ImageTypes.ProfilePicture,
+        userId: id,
+      };
+      await this.imagesService.deleteImage(profilePictureData);
+
+      const filename = await saveImage(profilePicture);
+      await this.imagesService.createImage({
+        ...profilePictureData,
+        filename,
+      });
+    }
+
+    // TODO: Refactor - move to own service method - or include with update transaction
+    if (coverPhoto) {
+      const coverPhotoData = {
+        imageType: ImageTypes.CoverPhoto,
+        userId: id,
+      };
+      await this.imagesService.deleteImage(coverPhotoData);
+
+      const filename = await saveImage(coverPhoto);
+      await this.imagesService.createImage({
+        ...coverPhotoData,
+        filename,
+      });
+    }
 
     return { user };
   }
