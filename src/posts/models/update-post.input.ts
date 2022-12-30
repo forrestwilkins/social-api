@@ -9,6 +9,6 @@ export class UpdatePostInput {
   @Field({ nullable: true })
   body: string;
 
-  @Field((_type) => [GraphQLUpload], { nullable: true })
+  @Field(() => [GraphQLUpload], { nullable: true })
   images?: Promise<FileUpload>[];
 }

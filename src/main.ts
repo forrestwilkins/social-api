@@ -9,7 +9,7 @@ const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, { cors: true });
 
   app.useGlobalPipes(new ValidationPipe());
-  app.use(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 10 }));
+  app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
   app.use(cookieParser());
 
   const config = new DocumentBuilder()
