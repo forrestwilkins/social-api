@@ -21,17 +21,8 @@ export const canBanMembers = rule()(
 );
 
 export const isOwnPost = rule()(
-  async (_parent, args, { user, usersService }: Context) => {
-    const isOwnPost = user
-      ? await usersService.isUsersPost(user.id, args.id)
-      : false;
-
-    if (isOwnPost) {
-      return false;
-    }
-
-    return true;
-  }
+  async (_parent, args, { user, usersService }: Context) =>
+    usersService.isUsersPost(args.id, user?.id)
 );
 
 export const isAuthenticated = rule({ cache: "contextual" })(
