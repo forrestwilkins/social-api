@@ -1,11 +1,15 @@
 import { ServerPermissions } from "../../roles/permissions/permissions.constants";
+import { UNAUTHORIZED } from "../../shared/shared.constants";
 import { UserPermissions } from "../../users/users.service";
 
 export const hasPermission = (
   permissions: UserPermissions | null,
   permission: ServerPermissions
 ) => {
-  const hasPermission = permissions?.serverPermissions.has(permission);
+  if (!permissions) {
+    return UNAUTHORIZED;
+  }
+  const hasPermission = permissions.serverPermissions.has(permission);
   if (!hasPermission) {
     return false;
   }

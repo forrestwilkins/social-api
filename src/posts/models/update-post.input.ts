@@ -1,4 +1,5 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
 
 @InputType()
 export class UpdatePostInput {
@@ -7,4 +8,7 @@ export class UpdatePostInput {
 
   @Field({ nullable: true })
   body: string;
+
+  @Field(() => [GraphQLUpload], { nullable: true })
+  images?: Promise<FileUpload>[];
 }

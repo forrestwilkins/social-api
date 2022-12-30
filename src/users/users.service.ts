@@ -2,8 +2,9 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
 import * as fs from "fs";
+import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
-import { randomDefaultImagePath } from "../images/image.utils";
+import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { PostsService } from "../posts/posts.service";
@@ -95,7 +96,7 @@ export class UsersService {
     );
   }
 
-  async isUsersPost(postId: number, userId?: number) {
+  async isUsersPost(postId: number, userId: number) {
     const post = await this.postsService.getPost(postId);
     if (!post) {
       throw new UserInputError("Post not found");
@@ -120,13 +121,30 @@ export class UsersService {
     return user;
   }
 
-  async updateUser({ id, ...userData }: UpdateUserInput) {
+  async updateUser({
+    id,
+    coverPhoto,
+    profilePicture,
+    ...userData
+  }: UpdateUserInput) {
     await this.repository.update(id, userData);
     const user = await this.getUser({ id });
+
+    if (profilePicture) {
+      await this.saveProfilePicture(id, profilePicture);
+    }
+    if (coverPhoto) {
+      await this.saveCoverPhoto(id, coverPhoto);
+    }
+
     return { user };
   }
 
-  async saveProfilePicture(userId: number, { filename }: Express.Multer.File) {
+  async saveProfilePicture(
+    userId: number,
+    profilePicture: Promise<FileUpload>
+  ) {
+    const filename = await saveImage(profilePicture);
     const imageData = { imageType: ImageTypes.ProfilePicture, userId };
     await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({
@@ -135,7 +153,8 @@ export class UsersService {
     });
   }
 
-  async saveCoverPhoto(userId: number, { filename }: Express.Multer.File) {
+  async saveCoverPhoto(userId: number, coverPhoto: Promise<FileUpload>) {
+    const filename = await saveImage(coverPhoto);
     const imageData = { imageType: ImageTypes.CoverPhoto, userId };
     await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({

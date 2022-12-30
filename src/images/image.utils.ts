@@ -1,32 +1,35 @@
 import { UnsupportedMediaTypeException } from "@nestjs/common";
-import { Request } from "express";
 import * as fs from "fs";
-import { extname } from "path";
+import { FileUpload } from "graphql-upload";
 import { promisify } from "util";
 
-export const DEFAULT_IMAGES_SIZE = 10;
+const DEFAULT_IMAGES_SIZE = 10;
+const VALID_IMAGE_FORMAT = /(jpe?g|png|gif|webp)$/;
 
-export const imageFileFilter = (
-  _req: Request,
-  file: Express.Multer.File,
-  callback: (error: Error | null, acceptFile: boolean) => void
-) => {
-  if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
-    return callback(
-      new UnsupportedMediaTypeException("Only image files are allowed"),
-      false
-    );
+export const saveImage = async (image: Promise<FileUpload>) => {
+  const { createReadStream, mimetype } = await image;
+  const extension = mimetype.split("/")[1];
+
+  if (!extension.match(VALID_IMAGE_FORMAT)) {
+    throw new UnsupportedMediaTypeException("Only image files are allowed");
   }
-  callback(null, true);
-};
 
-export const editFileName = (
-  _req: Request,
-  file: Express.Multer.File,
-  callback: (error: Error | null, filename: string) => void
-) => {
-  const fileExtName = extname(file.originalname);
-  callback(null, `${Date.now()}${fileExtName}`);
+  const filename = `${Date.now()}.${extension}`;
+  const path = `./uploads/${filename}`;
+
+  await new Promise((resolve, reject) => {
+    const stream = createReadStream();
+    stream
+      .pipe(fs.createWriteStream(path))
+      .on("error", (error: Error) => {
+        fs.unlink(path, () => {
+          reject(error);
+        });
+      })
+      .on("finish", resolve);
+  });
+
+  return filename;
 };
 
 export const randomDefaultImagePath = () =>

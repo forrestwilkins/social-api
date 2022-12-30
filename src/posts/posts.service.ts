@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
-import { deleteImageFile } from "../images/image.utils";
+import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
@@ -37,24 +38,34 @@ export class PostsService {
     return mappedImages;
   }
 
-  async createPost(user: User, postData: CreatePostInput) {
+  async createPost(user: User, { images, ...postData }: CreatePostInput) {
     const post = await this.repository.save({ ...postData, userId: user.id });
+
+    if (images) {
+      try {
+        await this.savePostImages(post.id, images);
+      } catch (err) {
+        await this.deletePost(post.id);
+        throw new Error(err.message);
+      }
+    }
     return { post };
   }
 
-  async updatePost({ id, ...data }: UpdatePostInput) {
+  async updatePost({ id, images, ...data }: UpdatePostInput) {
     await this.repository.update(id, data);
     const post = await this.getPost(id);
+    if (post && images) {
+      await this.savePostImages(post.id, images);
+    }
     return { post };
   }
 
-  async savePostImages(postId: number, images: Express.Multer.File[]) {
-    const savedImages: Image[] = [];
-    for (const { filename } of images) {
-      const image = await this.imagesService.createImage({ filename, postId });
-      savedImages.push(image);
+  async savePostImages(postId: number, images: Promise<FileUpload>[]) {
+    for (const image of images) {
+      const filename = await saveImage(image);
+      await this.imagesService.createImage({ filename, postId });
     }
-    return savedImages;
   }
 
   async deletePost(postId: number) {
