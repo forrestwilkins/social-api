@@ -2,6 +2,7 @@
 
 import { Field, InputType, Int } from "@nestjs/graphql";
 import { Matches } from "class-validator";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { VALID_NAME_CHARACTERS } from "../../shared/shared.constants";
 
 @InputType()
@@ -17,4 +18,10 @@ export class UpdateUserInput {
 
   @Field()
   bio: string;
+
+  @Field(() => GraphQLUpload, { nullable: true })
+  profilePicture?: Promise<FileUpload>;
+
+  @Field(() => GraphQLUpload, { nullable: true })
+  coverPhoto?: Promise<FileUpload>;
 }

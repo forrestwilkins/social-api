@@ -120,9 +120,19 @@ export class UsersService {
     return user;
   }
 
-  async updateUser({ id, ...userData }: UpdateUserInput) {
+  async updateUser({
+    id,
+    coverPhoto,
+    profilePicture,
+    ...userData
+  }: UpdateUserInput) {
     await this.repository.update(id, userData);
     const user = await this.getUser({ id });
+
+    // TODO: Remove when no longer needed for testing
+    console.log(profilePicture);
+    console.log(coverPhoto);
+
     return { user };
   }
 
