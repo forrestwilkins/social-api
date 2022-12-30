@@ -96,7 +96,7 @@ export class UsersService {
     );
   }
 
-  async isUsersPost(postId: number, userId?: number) {
+  async isUsersPost(postId: number, userId: number) {
     const post = await this.postsService.getPost(postId);
     if (!post) {
       throw new UserInputError("Post not found");
