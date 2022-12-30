@@ -1,6 +1,5 @@
 // TODO: Remove async keyword from resolver functions
 
-import { UseGuards } from "@nestjs/common";
 import {
   Args,
   Context,
@@ -12,7 +11,6 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
-import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
@@ -62,7 +60,6 @@ export class PostsResolver {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => CreatePostPayload)
   async createPost(
     @Args("postData") postData: CreatePostInput,
@@ -71,13 +68,11 @@ export class PostsResolver {
     return this.postsService.createPost(user, postData);
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => UpdatePostPayload)
   async updatePost(@Args("postData") postData: UpdatePostInput) {
     return this.postsService.updatePost(postData);
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean)
   async deletePost(@Args("id", { type: () => Int }) id: number) {
     return this.postsService.deletePost(id);

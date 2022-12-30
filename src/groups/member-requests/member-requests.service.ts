@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { GroupMembersService } from "../group-members/group-members.service";
@@ -17,7 +17,6 @@ export class MemberRequestsService {
     private repository: Repository<MemberRequest>,
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
-    @Inject(forwardRef(() => GroupMembersService))
     private groupMembersService: GroupMembersService
   ) {}
 
@@ -35,7 +34,7 @@ export class MemberRequestsService {
     });
   }
 
-  async getMemberRequestCountsByBatch(groupIds: number[]) {
+  async getMemberRequestCountByBatch(groupIds: number[]) {
     const groups = (await this.groupRepository
       .createQueryBuilder("group")
       .leftJoinAndSelect("group.memberRequests", "memberRequest")
@@ -87,9 +86,9 @@ export class MemberRequestsService {
   async updateMemberRequest(
     id: number,
     memberRequestData: Partial<MemberRequest>
-  ): Promise<MemberRequest> {
+  ) {
     await this.repository.update(id, memberRequestData);
-    return this.getMemberRequest({ id });
+    return this.repository.findOneOrFail({ where: { id } });
   }
 
   async cancelMemberRequest(id: number) {

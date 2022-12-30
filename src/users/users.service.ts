@@ -1,27 +1,38 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { UserInputError } from "apollo-server-express";
 import * as fs from "fs";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { randomDefaultImagePath } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { PostsService } from "../posts/posts.service";
+import { RoleMembersService } from "../roles/role-members/role-members.service";
+import { RolesService } from "../roles/roles.service";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
+
+export interface UserPermissions {
+  serverPermissions: Set<string>;
+  groupPermissions: Record<number, Set<string>>;
+}
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private repository: Repository<User>,
-    private imagesService: ImagesService
+
+    @Inject(forwardRef(() => RolesService))
+    private rolesService: RolesService,
+
+    private imagesService: ImagesService,
+    private postsService: PostsService,
+    private roleMembersService: RoleMembersService
   ) {}
 
   async getUser(where: FindOptionsWhere<User>) {
-    const user = await this.repository.findOne({ where });
-    if (!user) {
-      throw new Error("User not found");
-    }
-    return user;
+    return await this.repository.findOne({ where });
   }
 
   async getUsers(where?: FindOptionsWhere<User>) {
@@ -38,18 +49,6 @@ export class UsersService {
         new Error(`Could not load user: ${id}`)
     );
     return mappedUsers;
-  }
-
-  async createUser(data: Partial<User>) {
-    const user = await this.repository.save(data);
-    await this.saveDefaultProfilePicture(user.id);
-    return user;
-  }
-
-  async updateUser({ id, ...userData }: UpdateUserInput) {
-    await this.repository.update(id, userData);
-    const user = await this.getUser({ id });
-    return { user };
   }
 
   async getProfilePicturesByBatch(userIds: number[]) {
@@ -71,6 +70,60 @@ export class UsersService {
       imageType: ImageTypes.CoverPhoto,
       userId,
     });
+  }
+
+  async getUserPermissions(id: number) {
+    const roleMembers = await this.roleMembersService.getRoleMembers({
+      where: { user: { id } },
+      relations: ["role.permissions"],
+    });
+    return roleMembers.reduce<UserPermissions>(
+      (result, { role: { groupId, permissions } }) => {
+        for (const { name, enabled } of permissions) {
+          if (!enabled) {
+            continue;
+          }
+          if (groupId) {
+            result.groupPermissions[groupId].add(name);
+            continue;
+          }
+          result.serverPermissions.add(name);
+        }
+        return result;
+      },
+      { serverPermissions: new Set(), groupPermissions: {} }
+    );
+  }
+
+  async isUsersPost(postId: number, userId?: number) {
+    const post = await this.postsService.getPost(postId);
+    if (!post) {
+      throw new UserInputError("Post not found");
+    }
+    return post.userId === userId;
+  }
+
+  async createUser(data: Partial<User>) {
+    const user = await this.repository.save(data);
+    const users = await this.getUsers();
+
+    try {
+      if (users.length === 1) {
+        await this.rolesService.initializeServerAdminRole(user.id);
+      }
+      await this.saveDefaultProfilePicture(user.id);
+    } catch {
+      await this.deleteUser(user.id);
+      throw new Error("Could not create user");
+    }
+
+    return user;
+  }
+
+  async updateUser({ id, ...userData }: UpdateUserInput) {
+    await this.repository.update(id, userData);
+    const user = await this.getUser({ id });
+    return { user };
   }
 
   async saveProfilePicture(userId: number, { filename }: Express.Multer.File) {

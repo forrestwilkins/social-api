@@ -19,7 +19,7 @@ const bootstrap = async () => {
 
   SwaggerModule.setup("api", app, document);
 
-  await app.listen(process.env.SERVER_PORT);
+  await app.listen(process.env.SERVER_PORT as string);
 };
 
 bootstrap();

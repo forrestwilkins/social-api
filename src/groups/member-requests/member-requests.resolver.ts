@@ -1,6 +1,6 @@
 // TODO: Remove async keyword from resolver functions
 
-import { UnauthorizedException, UseGuards } from "@nestjs/common";
+import { UnauthorizedException } from "@nestjs/common";
 import {
   Args,
   Context,
@@ -12,7 +12,6 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../../auth/decorators/current-user.decorator";
-import { GqlAuthGuard } from "../../auth/guards/gql-auth.guard";
 import { Dataloaders } from "../../dataloader/dataloader.service";
 import { User } from "../../users/models/user.model";
 import { GroupMembersService } from "../group-members/group-members.service";
@@ -23,7 +22,6 @@ import { CreateMemberRequestPayload } from "./models/create-member-request.paylo
 import { MemberRequest } from "./models/member-request.model";
 
 @Resolver(() => MemberRequest)
-@UseGuards(GqlAuthGuard)
 export class MemberRequestsResolver {
   constructor(
     private memberRequestsService: MemberRequestsService,
@@ -33,9 +31,12 @@ export class MemberRequestsResolver {
   @Query(() => MemberRequest, { nullable: true })
   async memberRequest(
     @Args("groupId", { type: () => Int }) groupId: number,
-    @CurrentUser() { id: userId }: User
+    @CurrentUser() { id }: User
   ) {
-    return this.memberRequestsService.getMemberRequest({ groupId, userId });
+    return this.memberRequestsService.getMemberRequest({
+      user: { id },
+      groupId,
+    });
   }
 
   /**
@@ -45,11 +46,11 @@ export class MemberRequestsResolver {
   @Query(() => [MemberRequest])
   async memberRequests(
     @Args("groupName", { type: () => String }) groupName: string,
-    @CurrentUser() { id: userId }: User
+    @CurrentUser() { id }: User
   ) {
     const member = await this.groupMembersService.getGroupMember({
       group: { name: groupName },
-      userId,
+      user: { id },
     });
     if (!member) {
       throw new UnauthorizedException();
@@ -76,9 +77,9 @@ export class MemberRequestsResolver {
   @Mutation(() => CreateMemberRequestPayload)
   async createMemberRequest(
     @Args("groupId", { type: () => Int }) groupId: number,
-    @CurrentUser() { id: userId }: User
+    @CurrentUser() { id }: User
   ) {
-    return this.memberRequestsService.createMemberRequest(groupId, userId);
+    return this.memberRequestsService.createMemberRequest(groupId, id);
   }
 
   @Mutation(() => ApproveMemberRequestPayload)

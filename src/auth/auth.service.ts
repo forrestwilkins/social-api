@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { ValidationError } from "apollo-server-express";
+import { UserInputError, ValidationError } from "apollo-server-express";
 import { compare, hash } from "bcrypt";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
@@ -10,7 +10,7 @@ import { SignUpInput } from "./models/sign-up.input";
 import { RefreshTokensService } from "./refresh-tokens/refresh-tokens.service";
 import { AccessTokenPayload } from "./strategies/jwt.strategy";
 
-const ACCESS_TOKEN_EXPIRES_IN = 60 * 60;
+const ACCESS_TOKEN_EXPIRES_IN = 30;
 const SALT_ROUNDS = 10;
 
 export interface AuthTokens {
@@ -35,14 +35,22 @@ export class AuthService {
 
   async signUp({
     password,
-    ...rest
+    ...userData
   }: SignUpInput): Promise<SetAuthCookieInput> {
+    const existingUser = await this.usersService.getUser({
+      email: userData.email,
+    });
+    if (existingUser) {
+      throw new UserInputError("User already exists");
+    }
+
     const passwordHash = await hash(password, SALT_ROUNDS);
     const user = await this.usersService.createUser({
       password: passwordHash,
-      ...rest,
+      ...userData,
     });
     const authTokens = await this.generateAuthTokens(user.id);
+
     return { user, authTokens };
   }
 
@@ -59,10 +67,15 @@ export class AuthService {
   ): Promise<Omit<User, "password">> {
     try {
       const user = await this.usersService.getUser({ email });
+      if (!user) {
+        throw new ValidationError("User not found");
+      }
+
       const passwordMatch = await compare(password, user.password);
       if (!passwordMatch) {
         throw new ValidationError("Incorrect username or password");
       }
+
       const { password: _password, ...result } = user;
       return result;
     } catch (err) {

@@ -9,14 +9,15 @@ import {
 } from "typeorm";
 import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
+import { Role } from "../../roles/models/role.model";
 import { GroupMember } from "../group-members/models/group-member.model";
 import { MemberRequest } from "../member-requests/models/member-request.model";
 
 @Entity()
 @ObjectType()
 export class Group {
-  @PrimaryGeneratedColumn()
   @Field(() => Int)
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ unique: true })
@@ -27,10 +28,10 @@ export class Group {
   @Field()
   description: string;
 
+  @Field(() => [Post])
   @OneToMany(() => Post, (post) => post.group, {
     cascade: true,
   })
-  @Field(() => [Post])
   posts: Post[];
 
   @OneToMany(() => Image, (image) => image.group, {
@@ -38,16 +39,22 @@ export class Group {
   })
   images: Image[];
 
+  @Field(() => [GroupMember])
   @OneToMany(() => GroupMember, (member) => member.group, {
     cascade: true,
   })
-  @Field(() => [GroupMember])
   members: GroupMember[];
 
   @OneToMany(() => MemberRequest, (memberRequest) => memberRequest.group, {
     cascade: true,
   })
   memberRequests: MemberRequest[];
+
+  @Field(() => [Role])
+  @OneToMany(() => Role, (role) => role.group, {
+    cascade: true,
+  })
+  roles: Role[];
 
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;
@@ -56,7 +63,7 @@ export class Group {
   @Field()
   createdAt: Date;
 
-  @UpdateDateColumn()
   @Field()
+  @UpdateDateColumn()
   updatedAt: Date;
 }
