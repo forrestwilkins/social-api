@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
 import { FindOptionsWhere, In, Repository } from "typeorm";
-import { randomDefaultImagePath } from "../images/image.utils";
+import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { GroupMembersService } from "./group-members/group-members.service";
@@ -60,10 +60,17 @@ export class GroupsService {
   ) {
     const group = await this.repository.save(groupData);
     await this.groupMembersService.createGroupMember(group.id, userId);
-    await this.saveDefaultCoverPhoto(group.id);
 
-    // TODO: Remove when no longer needed for testing
-    console.log(coverPhoto);
+    if (coverPhoto) {
+      const filename = await saveImage(coverPhoto);
+      await this.imagesService.createImage({
+        filename,
+        imageType: ImageTypes.CoverPhoto,
+        groupId: group.id,
+      });
+    } else {
+      await this.saveDefaultCoverPhoto(group.id);
+    }
 
     return { group };
   }
