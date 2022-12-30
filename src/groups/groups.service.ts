@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
+import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
@@ -62,12 +63,7 @@ export class GroupsService {
     await this.groupMembersService.createGroupMember(group.id, userId);
 
     if (coverPhoto) {
-      const filename = await saveImage(coverPhoto);
-      await this.imagesService.createImage({
-        imageType: ImageTypes.CoverPhoto,
-        groupId: group.id,
-        filename,
-      });
+      await this.saveCoverPhoto(group.id, coverPhoto);
     } else {
       await this.saveDefaultCoverPhoto(group.id);
     }
@@ -75,29 +71,21 @@ export class GroupsService {
     return { group };
   }
 
-  /**
-   * TODO: Ensure that current cover photo isn't deleted
-   * until after successfully creating new one
-   */
   async updateGroup({ id, coverPhoto, ...groupData }: UpdateGroupInput) {
     await this.repository.update(id, groupData);
     const group = await this.getGroup({ id });
 
     if (coverPhoto) {
-      await this.deleteCoverPhoto(id);
-      const filename = await saveImage(coverPhoto);
-      await this.imagesService.createImage({
-        imageType: ImageTypes.CoverPhoto,
-        groupId: id,
-        filename,
-      });
+      await this.saveCoverPhoto(id, coverPhoto);
     }
 
     return { group };
   }
 
-  async saveCoverPhoto(groupId: number, { filename }: Express.Multer.File) {
+  async saveCoverPhoto(groupId: number, coverPhoto: Promise<FileUpload>) {
+    const filename = await saveImage(coverPhoto);
     await this.deleteCoverPhoto(groupId);
+
     return this.imagesService.createImage({
       imageType: ImageTypes.CoverPhoto,
       filename,
