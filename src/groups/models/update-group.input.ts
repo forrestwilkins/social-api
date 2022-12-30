@@ -1,5 +1,6 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
 import { Matches } from "class-validator";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { VALID_NAME_CHARACTERS } from "../../shared/shared.constants";
 
 @InputType()
@@ -15,4 +16,7 @@ export class UpdateGroupInput {
 
   @Field()
   description: string;
+
+  @Field(() => GraphQLUpload, { nullable: true })
+  coverPhoto?: Promise<FileUpload>;
 }

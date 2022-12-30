@@ -54,16 +54,27 @@ export class GroupsService {
     return mappedGroups;
   }
 
-  async createGroup(groupData: CreateGroupInput, userId: number) {
+  async createGroup(
+    { coverPhoto, ...groupData }: CreateGroupInput,
+    userId: number
+  ) {
     const group = await this.repository.save(groupData);
     await this.groupMembersService.createGroupMember(group.id, userId);
     await this.saveDefaultCoverPhoto(group.id);
+
+    // TODO: Remove when no longer needed for testing
+    console.log(coverPhoto);
+
     return { group };
   }
 
-  async updateGroup({ id, ...groupData }: UpdateGroupInput) {
+  async updateGroup({ id, coverPhoto, ...groupData }: UpdateGroupInput) {
     await this.repository.update(id, groupData);
     const group = await this.getGroup({ id });
+
+    // TODO: Remove when no longer needed for testing
+    console.log(coverPhoto);
+
     return { group };
   }
 
