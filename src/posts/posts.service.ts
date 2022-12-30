@@ -37,26 +37,19 @@ export class PostsService {
     return mappedImages;
   }
 
-  // TODO: Handle images passed with input
   async createPost(user: User, { images, ...postData }: CreatePostInput) {
     const post = await this.repository.save({ ...postData, userId: user.id });
-
-    // TODO: Remove when no longer needed for testing
-    console.log(images);
 
     if (images) {
       // TODO: Move to another service method once this is working
       for (const image of images) {
-        console.log("Attempting to save image:", image);
         const filename = await saveImage(image);
-
-        console.log("Saved image:", filename);
-
         const imageEntity = await this.imagesService.createImage({
           filename,
           postId: post.id,
         });
 
+        // TODO: Remove when no longer needed for testing
         console.log("Image entity:", imageEntity);
       }
     }
@@ -64,14 +57,18 @@ export class PostsService {
     return { post };
   }
 
-  // TODO: Handle images passed with input
   async updatePost({ id, images, ...data }: UpdatePostInput) {
     await this.repository.update(id, data);
     const post = await this.getPost(id);
-
-    // TODO: Remove when no longer needed for testing
-    console.log(images);
-
+    if (images) {
+      for (const image of images) {
+        const filename = await saveImage(image);
+        await this.imagesService.createImage({
+          filename,
+          postId: id,
+        });
+      }
+    }
     return { post };
   }
 
