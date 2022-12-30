@@ -21,6 +21,7 @@ import { Environments } from "./shared/shared.constants";
 import { Context } from "./shared/shared.types";
 import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
+import { VotesModule } from "./votes/votes.module";
 
 const ormConfig: TypeOrmModuleOptions = {
   type: "postgres",
@@ -83,6 +84,7 @@ const useFactory = (
     ProposalsModule,
     RolesModule,
     UsersModule,
+    VotesModule,
   ],
 })
 export class AppModule {}
