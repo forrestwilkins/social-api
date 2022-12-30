@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
@@ -39,46 +40,26 @@ export class PostsService {
 
   async createPost(user: User, { images, ...postData }: CreatePostInput) {
     const post = await this.repository.save({ ...postData, userId: user.id });
-
     if (images) {
-      // TODO: Move to another service method once this is working
-      for (const image of images) {
-        const filename = await saveImage(image);
-        const imageEntity = await this.imagesService.createImage({
-          filename,
-          postId: post.id,
-        });
-
-        // TODO: Remove when no longer needed for testing
-        console.log("Image entity:", imageEntity);
-      }
+      await this.savePostImages(post.id, images);
     }
-
     return { post };
   }
 
   async updatePost({ id, images, ...data }: UpdatePostInput) {
     await this.repository.update(id, data);
     const post = await this.getPost(id);
-    if (images) {
-      for (const image of images) {
-        const filename = await saveImage(image);
-        await this.imagesService.createImage({
-          filename,
-          postId: id,
-        });
-      }
+    if (post && images) {
+      await this.savePostImages(post.id, images);
     }
     return { post };
   }
 
-  async savePostImages(postId: number, images: Express.Multer.File[]) {
-    const savedImages: Image[] = [];
-    for (const { filename } of images) {
-      const image = await this.imagesService.createImage({ filename, postId });
-      savedImages.push(image);
+  async savePostImages(postId: number, images: Promise<FileUpload>[]) {
+    for (const image of images) {
+      const filename = await saveImage(image);
+      await this.imagesService.createImage({ filename, postId });
     }
-    return savedImages;
   }
 
   async deletePost(postId: number) {
