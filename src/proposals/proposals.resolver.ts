@@ -1,4 +1,5 @@
 import { Resolver } from "@nestjs/graphql";
+import { Proposal } from "./models/proposal.model";
 
-@Resolver()
+@Resolver(() => Proposal)
 export class ProposalsResolver {}

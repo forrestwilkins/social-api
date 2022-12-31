@@ -28,6 +28,7 @@ export class Proposal {
   @Field()
   action: string;
 
+  @Field(() => [Vote])
   @OneToMany(() => Vote, (vote) => vote.proposal, {
     cascade: true,
   })
