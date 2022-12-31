@@ -9,6 +9,9 @@ export class CreateProposalInput {
   @Field({ nullable: true })
   body: string;
 
+  @Field()
+  action: string;
+
   @Field(() => [GraphQLUpload], { nullable: true })
   images?: Promise<FileUpload>[];
 }
