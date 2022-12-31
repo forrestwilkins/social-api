@@ -17,7 +17,7 @@ export class ProposalsService {
   }
 
   async getProposals(where?: FindOptionsWhere<Proposal>) {
-    return this.repository.find({ where, order: { createdAt: "DESC" } });
+    return this.repository.find({ where });
   }
 
   async createProposal(
