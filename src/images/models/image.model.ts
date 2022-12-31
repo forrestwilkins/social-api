@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { Group } from "../../groups/models/group.model";
 import { Post } from "../../posts/models/post.model";
+import { Proposal } from "../../proposals/models/proposal.model";
 import { User } from "../../users/models/user.model";
 
 @ObjectType()
@@ -52,6 +53,15 @@ export class Image {
 
   @Column({ nullable: true })
   groupId: number;
+
+  @Field(() => Proposal)
+  @ManyToOne(() => Proposal, (proposal) => proposal.images, {
+    onDelete: "CASCADE",
+  })
+  proposal: Proposal;
+
+  @Column({ nullable: true })
+  proposalId: number;
 
   @CreateDateColumn()
   @Field()
