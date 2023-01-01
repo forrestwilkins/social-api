@@ -20,8 +20,8 @@ export class Proposal {
   @Field(() => Int)
   id: number;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
+  @Column()
+  @Field()
   body: string;
 
   @Column()
