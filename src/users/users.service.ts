@@ -9,6 +9,7 @@ import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { PostsService } from "../posts/posts.service";
+import { Proposal } from "../proposals/models/proposal.model";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { RolesService } from "../roles/roles.service";
 import { UpdateUserInput } from "./models/update-user.input";
@@ -46,6 +47,29 @@ export class UsersService {
       imageType: ImageTypes.CoverPhoto,
       userId,
     });
+  }
+
+  async getUserFeed(id: number) {
+    // TODO: Get posts from followed users and joined groups, instead of all posts
+    const posts = await this.postsService.getPosts();
+
+    const userWithJoinedGroupProposals = await this.getUser({ id }, [
+      "groupMembers.group.proposals",
+    ]);
+    if (!userWithJoinedGroupProposals) {
+      throw new UserInputError("User not found");
+    }
+
+    const { groupMembers } = userWithJoinedGroupProposals;
+    const proposals = groupMembers.reduce<Proposal[]>((result, groupMember) => {
+      result.push(...groupMember.group.proposals);
+      return result;
+    }, []);
+
+    const feed = [...posts, ...proposals].sort(
+      (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+    );
+    return feed;
   }
 
   async getUserPermissions(id: number) {

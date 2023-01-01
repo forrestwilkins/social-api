@@ -16,7 +16,7 @@ import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { UpdateUserInput } from "./models/update-user.input";
 import { UpdateUserPayload } from "./models/update-user.payload";
-import { User } from "./models/user.model";
+import { FeedItem, User } from "./models/user.model";
 import { UsersService } from "./users.service";
 
 @Resolver(() => User)
@@ -44,12 +44,10 @@ export class UsersResolver {
     return this.usersService.getUsers();
   }
 
-  // TODO: Add feed field resolver
-  // @ResolveField(() => [Post])
-  // async feed(@Parent() { id }: User) {
-  //   console.log(id);
-  //   return [];
-  // }
+  @ResolveField(() => [FeedItem])
+  async feed(@Parent() { id }: User) {
+    return this.usersService.getUserFeed(id);
+  }
 
   @ResolveField(() => [Post])
   async posts(@Parent() { id }: User) {

@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { createUnionType, Field, Int, ObjectType } from "@nestjs/graphql";
 import {
   Column,
   CreateDateColumn,
@@ -13,6 +13,11 @@ import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
 import { RoleMember } from "../../roles/role-members/models/role-member.model";
+
+export const FeedItem = createUnionType({
+  name: "FeedItem",
+  types: () => [Post, Proposal] as const,
+});
 
 @Entity()
 @ObjectType()
@@ -47,6 +52,9 @@ export class User {
   })
   @Field(() => [Proposal])
   proposals: Proposal[];
+
+  @Field(() => [FeedItem])
+  feed: Array<typeof FeedItem>;
 
   @OneToMany(() => Image, (image) => image.user, {
     cascade: true,
