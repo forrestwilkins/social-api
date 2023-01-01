@@ -14,6 +14,7 @@ const shieldPermissions = shield(
     Query: {
       "*": isAuthenticated,
       posts: allow,
+      proposals: allow,
       users: canBanMembers,
     },
     Mutation: {

@@ -1,5 +1,16 @@
-import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import {
+  Args,
+  Context,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import { Dataloaders } from "../dataloader/dataloader.service";
+import { Group } from "../groups/models/group.model";
 import { User } from "../users/models/user.model";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { CreateProposalPayload } from "./models/create-proposal.payload";
@@ -18,6 +29,22 @@ export class ProposalsResolver {
   @Query(() => [Proposal])
   async proposals() {
     return this.proposalsService.getProposals();
+  }
+
+  @ResolveField(() => User)
+  async user(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { userId }: Proposal
+  ) {
+    return loaders.usersLoader.load(userId);
+  }
+
+  @ResolveField(() => Group)
+  async group(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { groupId }: Proposal
+  ) {
+    return loaders.groupsLoader.load(groupId);
   }
 
   @Mutation(() => CreateProposalPayload)
