@@ -61,6 +61,6 @@ export class ProposalsResolver {
     @Args("proposalData") proposalData: CreateProposalInput,
     @CurrentUser() user: User
   ) {
-    return this.proposalsService.createProposal(user, proposalData);
+    return this.proposalsService.createProposal(proposalData, user);
   }
 }

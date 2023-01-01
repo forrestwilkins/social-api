@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
@@ -36,17 +38,37 @@ export class ProposalsService {
   }
 
   async createProposal(
-    user: User,
-    { images, ...proposalData }: CreateProposalInput
+    { images, ...proposalData }: CreateProposalInput,
+    user: User
   ) {
     const proposal = await this.repository.save({
       ...proposalData,
       userId: user.id,
     });
-
-    // TODO: Remove when no longer needed for testing
-    console.log(images);
-
+    if (images) {
+      try {
+        await this.saveProposalImages(proposal.id, images);
+      } catch (err) {
+        await this.deleteProposal(proposal.id);
+        throw new Error(err.message);
+      }
+    }
     return { proposal };
+  }
+
+  async saveProposalImages(proposalId: number, images: Promise<FileUpload>[]) {
+    for (const image of images) {
+      const filename = await saveImage(image);
+      await this.imagesService.createImage({ filename, proposalId });
+    }
+  }
+
+  async deleteProposal(proposalId: number) {
+    const images = await this.imagesService.getImages({ proposalId });
+    for (const { filename } of images) {
+      await deleteImageFile(filename);
+    }
+    await this.repository.delete(proposalId);
+    return true;
   }
 }
