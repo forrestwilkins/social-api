@@ -9,6 +9,7 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import FeedItem from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
@@ -16,7 +17,7 @@ import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { UpdateUserInput } from "./models/update-user.input";
 import { UpdateUserPayload } from "./models/update-user.payload";
-import { FeedItem, User } from "./models/user.model";
+import { User } from "./models/user.model";
 import { UsersService } from "./users.service";
 
 @Resolver(() => User)

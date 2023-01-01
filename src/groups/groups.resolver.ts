@@ -9,10 +9,11 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import FeedItem from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
-import { FeedItem, User } from "../users/models/user.model";
+import { User } from "../users/models/user.model";
 import { GroupMember } from "./group-members/models/group-member.model";
 import { GroupsService } from "./groups.service";
 import { CreateGroupInput } from "./models/create-group.input";

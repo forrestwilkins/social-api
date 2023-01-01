@@ -1,4 +1,4 @@
-import { createUnionType, Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 import {
   Column,
   CreateDateColumn,
@@ -8,16 +8,12 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
+import FeedItem from "../../common/models/feed-item.union";
 import { GroupMember } from "../../groups/group-members/models/group-member.model";
 import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
 import { RoleMember } from "../../roles/role-members/models/role-member.model";
-
-export const FeedItem = createUnionType({
-  name: "FeedItem",
-  types: () => [Post, Proposal] as const,
-});
 
 @Entity()
 @ObjectType()
