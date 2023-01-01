@@ -44,6 +44,13 @@ export class UsersResolver {
     return this.usersService.getUsers();
   }
 
+  // TODO: Add feed field resolver
+  // @ResolveField(() => [Post])
+  // async feed(@Parent() { id }: User) {
+  //   console.log(id);
+  //   return [];
+  // }
+
   @ResolveField(() => [Post])
   async posts(@Parent() { id }: User) {
     return this.postsService.getPosts({ userId: id });

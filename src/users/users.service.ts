@@ -41,32 +41,6 @@ export class UsersService {
     return this.repository.find({ where });
   }
 
-  async getUsersByBatch(userIds: number[]) {
-    const users = await this.getUsers({
-      id: In(userIds),
-    });
-    const mappedUsers = userIds.map(
-      (id) =>
-        users.find((user: User) => user.id === id) ||
-        new Error(`Could not load user: ${id}`)
-    );
-    return mappedUsers;
-  }
-
-  async getProfilePicturesByBatch(userIds: number[]) {
-    const profilePictures = await this.imagesService.getImages({
-      imageType: ImageTypes.ProfilePicture,
-      userId: In(userIds),
-    });
-    const mappedProfilePictures = userIds.map(
-      (id) =>
-        profilePictures.find(
-          (profilePicture: Image) => profilePicture.userId === id
-        ) || new Error(`Could not load profile picture: ${id}`)
-    );
-    return mappedProfilePictures;
-  }
-
   async getCoverPhoto(userId: number) {
     return this.imagesService.getImage({
       imageType: ImageTypes.CoverPhoto,
@@ -117,6 +91,32 @@ export class UsersService {
       throw new UserInputError("Post not found");
     }
     return post.userId === userId;
+  }
+
+  async getUsersByBatch(userIds: number[]) {
+    const users = await this.getUsers({
+      id: In(userIds),
+    });
+    const mappedUsers = userIds.map(
+      (id) =>
+        users.find((user: User) => user.id === id) ||
+        new Error(`Could not load user: ${id}`)
+    );
+    return mappedUsers;
+  }
+
+  async getProfilePicturesByBatch(userIds: number[]) {
+    const profilePictures = await this.imagesService.getImages({
+      imageType: ImageTypes.ProfilePicture,
+      userId: In(userIds),
+    });
+    const mappedProfilePictures = userIds.map(
+      (id) =>
+        profilePictures.find(
+          (profilePicture: Image) => profilePicture.userId === id
+        ) || new Error(`Could not load profile picture: ${id}`)
+    );
+    return mappedProfilePictures;
   }
 
   async createUser(data: Partial<User>) {
