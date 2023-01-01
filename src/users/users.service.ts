@@ -49,7 +49,7 @@ export class UsersService {
     });
   }
 
-  async getUserFeed(id: number) {
+  async getUserHomeFeed(id: number) {
     // TODO: Get posts from followed users and joined groups, instead of all posts
     const posts = await this.postsService.getPosts();
 
@@ -67,6 +67,17 @@ export class UsersService {
     }, []);
 
     const feed = [...posts, ...proposals].sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    );
+    return feed;
+  }
+
+  async getUserProfileFeed(id: number) {
+    const user = await this.getUser({ id }, ["proposals", "posts"]);
+    if (!user) {
+      throw new UserInputError("User not found");
+    }
+    const feed = [...user.posts, ...user.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
     );
     return feed;

@@ -45,8 +45,13 @@ export class UsersResolver {
   }
 
   @ResolveField(() => [FeedItem])
-  async feed(@Parent() { id }: User) {
-    return this.usersService.getUserFeed(id);
+  async homeFeed(@Parent() { id }: User) {
+    return this.usersService.getUserHomeFeed(id);
+  }
+
+  @ResolveField(() => [FeedItem])
+  async profileFeed(@Parent() { id }: User) {
+    return this.usersService.getUserProfileFeed(id);
   }
 
   @ResolveField(() => [Post])

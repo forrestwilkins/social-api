@@ -54,7 +54,10 @@ export class User {
   proposals: Proposal[];
 
   @Field(() => [FeedItem])
-  feed: Array<typeof FeedItem>;
+  homeFeed: Array<typeof FeedItem>;
+
+  @Field(() => [FeedItem])
+  profileFeed: Array<typeof FeedItem>;
 
   @OneToMany(() => Image, (image) => image.user, {
     cascade: true,
