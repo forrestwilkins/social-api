@@ -67,7 +67,7 @@ export class UsersService {
     }, []);
 
     const feed = [...posts, ...proposals].sort(
-      (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
     );
     return feed;
   }
