@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { UserInputError } from "apollo-server-express";
 import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
@@ -22,12 +23,23 @@ export class GroupsService {
     private imagesService: ImagesService
   ) {}
 
-  async getGroup(where: FindOptionsWhere<Group>) {
-    return this.repository.findOne({ where });
+  async getGroup(where: FindOptionsWhere<Group>, relations?: string[]) {
+    return this.repository.findOne({ where, relations });
   }
 
   async getGroups(where?: FindOptionsWhere<Group>) {
     return this.repository.find({ where, order: { updatedAt: "DESC" } });
+  }
+
+  async getGroupFeed(id: number) {
+    const group = await this.getGroup({ id }, ["proposals", "posts"]);
+    if (!group) {
+      throw new UserInputError("Group not found");
+    }
+    const feed = [...group.posts, ...group.proposals].sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    );
+    return feed;
   }
 
   async getCoverPhotosByBatch(groupIds: number[]) {

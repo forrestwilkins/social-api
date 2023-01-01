@@ -12,7 +12,7 @@ import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
-import { User } from "../users/models/user.model";
+import { FeedItem, User } from "../users/models/user.model";
 import { GroupMember } from "./group-members/models/group-member.model";
 import { GroupsService } from "./groups.service";
 import { CreateGroupInput } from "./models/create-group.input";
@@ -49,6 +49,11 @@ export class GroupsResolver {
     @Context() { loaders }: { loaders: Dataloaders }
   ) {
     return loaders.groupCoverPhotosLoader.load(id);
+  }
+
+  @ResolveField(() => [FeedItem])
+  async feed(@Parent() { id }: Group) {
+    return this.groupsService.getGroupFeed(id);
   }
 
   @ResolveField(() => [GroupMember])

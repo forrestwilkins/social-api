@@ -11,6 +11,7 @@ import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
 import { Role } from "../../roles/models/role.model";
+import { FeedItem } from "../../users/models/user.model";
 import { GroupMember } from "../group-members/models/group-member.model";
 import { MemberRequest } from "../member-requests/models/member-request.model";
 
@@ -28,6 +29,9 @@ export class Group {
   @Column()
   @Field()
   description: string;
+
+  @Field(() => [FeedItem])
+  feed: Array<typeof FeedItem>;
 
   @Field(() => [Post])
   @OneToMany(() => Post, (post) => post.group, {
