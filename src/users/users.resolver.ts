@@ -10,6 +10,7 @@ import {
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.service";
+import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
@@ -59,6 +60,11 @@ export class UsersResolver {
   @ResolveField(() => Image)
   async coverPhoto(@Parent() { id }: User) {
     return this.usersService.getCoverPhoto(id);
+  }
+
+  @ResolveField(() => [Group])
+  async joinedGroups(@Parent() { id }: User) {
+    return this.usersService.getJoinedGroups(id);
   }
 
   @ResolveField(() => [String])

@@ -4,6 +4,7 @@ import { UserInputError } from "apollo-server-express";
 import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { Group } from "../groups/models/group.model";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -32,8 +33,8 @@ export class UsersService {
     private roleMembersService: RoleMembersService
   ) {}
 
-  async getUser(where: FindOptionsWhere<User>) {
-    return await this.repository.findOne({ where });
+  async getUser(where: FindOptionsWhere<User>, relations?: string[]) {
+    return await this.repository.findOne({ where, relations });
   }
 
   async getUsers(where?: FindOptionsWhere<User>) {
@@ -93,6 +94,20 @@ export class UsersService {
         return result;
       },
       { serverPermissions: new Set(), groupPermissions: {} }
+    );
+  }
+
+  async getJoinedGroups(id: number) {
+    const userWithGroups = await this.getUser({ id }, ["groupMembers.group"]);
+    if (!userWithGroups) {
+      return [];
+    }
+    return userWithGroups.groupMembers.reduce<Group[]>(
+      (result, groupMember) => {
+        result.push(groupMember.group);
+        return result;
+      },
+      []
     );
   }
 
