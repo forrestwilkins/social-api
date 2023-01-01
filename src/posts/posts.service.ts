@@ -33,7 +33,7 @@ export class PostsService {
     const mappedImages = postIds.map(
       (id) =>
         images.filter((image: Image) => image.postId === id) ||
-        new Error(`Could not load images: ${id}`)
+        new Error(`Could not load images for post: ${id}`)
     );
     return mappedImages;
   }

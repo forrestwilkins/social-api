@@ -12,6 +12,7 @@ import { MemberRequestsService } from "../groups/member-requests/member-requests
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { PostsService } from "../posts/posts.service";
+import { ProposalsService } from "../proposals/proposals.service";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
@@ -24,6 +25,7 @@ export interface Dataloaders {
   memberRequestCountLoader: DataLoader<number, number>;
   postImagesLoader: DataLoader<number, Image[]>;
   profilePicturesLoader: DataLoader<number, Image>;
+  proposalImagesLoader: DataLoader<number, Image[]>;
   roleMemberCountLoader: DataLoader<number, number>;
   usersLoader: DataLoader<number, User>;
 }
@@ -35,6 +37,7 @@ export class DataloaderService {
     private groupsService: GroupsService,
     private memberRequestsService: MemberRequestsService,
     private postsService: PostsService,
+    private proposalsService: ProposalsService,
     private roleMembersService: RoleMembersService,
     private usersService: UsersService
   ) {}
@@ -48,6 +51,7 @@ export class DataloaderService {
       memberRequestCountLoader: this._createMemberRequestCountLoader(),
       postImagesLoader: this._createPostImagesLoader(),
       profilePicturesLoader: this._createProfilePicturesLoader(),
+      proposalImagesLoader: this._createProposalImagesLoader(),
       roleMemberCountLoader: this._createRoleMemberCountLoader(),
       usersLoader: this._createUsersLoader(),
     };
@@ -68,6 +72,12 @@ export class DataloaderService {
   private _createPostImagesLoader() {
     return new DataLoader<number, Image[]>(async (postIds) =>
       this.postsService.getPostImagesByBatch(postIds as number[])
+    );
+  }
+
+  private _createProposalImagesLoader() {
+    return new DataLoader<number, Image[]>(async (proposalIds) =>
+      this.proposalsService.getProposalImagesByBatch(proposalIds as number[])
     );
   }
 

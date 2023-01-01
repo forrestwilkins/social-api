@@ -11,6 +11,7 @@ import {
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Group } from "../groups/models/group.model";
+import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { CreateProposalPayload } from "./models/create-proposal.payload";
@@ -29,6 +30,14 @@ export class ProposalsResolver {
   @Query(() => [Proposal])
   async proposals() {
     return this.proposalsService.getProposals();
+  }
+
+  @ResolveField(() => [Image])
+  async images(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Proposal
+  ) {
+    return loaders.proposalImagesLoader.load(id);
   }
 
   @ResolveField(() => User)

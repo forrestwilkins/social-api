@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { FindOptionsWhere, In, Repository } from "typeorm";
+import { ImagesService } from "../images/images.service";
+import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
@@ -9,7 +11,8 @@ import { Proposal } from "./models/proposal.model";
 export class ProposalsService {
   constructor(
     @InjectRepository(Proposal)
-    private repository: Repository<Proposal>
+    private repository: Repository<Proposal>,
+    private imagesService: ImagesService
   ) {}
 
   async getProposal(id: number) {
@@ -18,6 +21,18 @@ export class ProposalsService {
 
   async getProposals(where?: FindOptionsWhere<Proposal>) {
     return this.repository.find({ where });
+  }
+
+  async getProposalImagesByBatch(proposalIds: number[]) {
+    const images = await this.imagesService.getImages({
+      proposalId: In(proposalIds),
+    });
+    const mappedImages = proposalIds.map(
+      (id) =>
+        images.filter((image: Image) => image.proposalId === id) ||
+        new Error(`Could not load images for proposal: ${id}`)
+    );
+    return mappedImages;
   }
 
   async createProposal(
