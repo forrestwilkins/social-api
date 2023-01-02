@@ -16,6 +16,7 @@ import { ProposalsService } from "../proposals/proposals.service";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
+import { Vote } from "../votes/models/vote.model";
 
 export interface Dataloaders {
   groupCoverPhotosLoader: DataLoader<number, Image>;
@@ -26,6 +27,7 @@ export interface Dataloaders {
   postImagesLoader: DataLoader<number, Image[]>;
   profilePicturesLoader: DataLoader<number, Image>;
   proposalImagesLoader: DataLoader<number, Image[]>;
+  proposalVotesLoader: DataLoader<number, Vote[]>;
   roleMemberCountLoader: DataLoader<number, number>;
   usersLoader: DataLoader<number, User>;
 }
@@ -52,6 +54,7 @@ export class DataloaderService {
       postImagesLoader: this._createPostImagesLoader(),
       profilePicturesLoader: this._createProfilePicturesLoader(),
       proposalImagesLoader: this._createProposalImagesLoader(),
+      proposalVotesLoader: this._createProposalVotesLoader(),
       roleMemberCountLoader: this._createRoleMemberCountLoader(),
       usersLoader: this._createUsersLoader(),
     };
@@ -72,6 +75,12 @@ export class DataloaderService {
   private _createPostImagesLoader() {
     return new DataLoader<number, Image[]>(async (postIds) =>
       this.postsService.getPostImagesByBatch(postIds as number[])
+    );
+  }
+
+  private _createProposalVotesLoader() {
+    return new DataLoader<number, Vote[]>(async (proposalIds) =>
+      this.proposalsService.getProposalVotesByBatch(proposalIds as number[])
     );
   }
 

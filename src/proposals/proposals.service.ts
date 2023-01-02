@@ -6,6 +6,8 @@ import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
+import { Vote } from "../votes/models/vote.model";
+import { VotesService } from "../votes/votes.service";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
 
@@ -14,7 +16,8 @@ export class ProposalsService {
   constructor(
     @InjectRepository(Proposal)
     private repository: Repository<Proposal>,
-    private imagesService: ImagesService
+    private imagesService: ImagesService,
+    private votesService: VotesService
   ) {}
 
   async getProposal(id: number) {
@@ -23,6 +26,18 @@ export class ProposalsService {
 
   async getProposals(where?: FindOptionsWhere<Proposal>) {
     return this.repository.find({ where });
+  }
+
+  async getProposalVotesByBatch(proposalIds: number[]) {
+    const votes = await this.votesService.getVotes({
+      proposalId: In(proposalIds),
+    });
+    const mappedVotes = proposalIds.map(
+      (id) =>
+        votes.filter((vote: Vote) => vote.proposalId === id) ||
+        new Error(`Could not load votes for proposal: ${id}`)
+    );
+    return mappedVotes;
   }
 
   async getProposalImagesByBatch(proposalIds: number[]) {

@@ -7,5 +7,6 @@ import { VotesService } from "./votes.service";
 @Module({
   imports: [TypeOrmModule.forFeature([Vote])],
   providers: [VotesService, VotesResolver],
+  exports: [VotesService],
 })
 export class VotesModule {}

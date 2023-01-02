@@ -170,16 +170,16 @@ type CreateMemberRequestPayload {
   memberRequest: MemberRequest!
 }
 
-type CreateProposalPayload {
-  proposal: Proposal!
-}
-
 type CreateVotePayload {
   vote: Vote!
 }
 
 type UpdateVotePayload {
   vote: Vote!
+}
+
+type CreateProposalPayload {
+  proposal: Proposal!
 }
 
 type Query {
@@ -194,11 +194,11 @@ type Query {
   posts: [Post!]!
   proposal(id: Int!): Proposal!
   proposals: [Proposal!]!
+  vote(id: Int!): Vote!
+  votes: [Vote!]!
   role(id: Int!): Role!
   serverRoles: [Role!]!
   authCheck: Boolean!
-  vote(id: Int!): Vote!
-  votes: [Vote!]!
 }
 
 type Mutation {
@@ -218,6 +218,9 @@ type Mutation {
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
   deletePost(id: Int!): Boolean!
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
+  createVote(voteData: CreateVoteInput!): CreateVotePayload!
+  updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
+  deleteVote(id: Int!): Boolean!
   deleteRoleMember(id: Int!): DeleteRoleMemberPayload!
   createRole(roleData: CreateRoleInput!): CreateRolePayload!
   updateRole(roleData: UpdateRoleInput!): UpdateRolePayload!
@@ -225,9 +228,6 @@ type Mutation {
   login(input: LoginInput!): LoginPayload!
   signUp(input: SignUpInput!): SignUpPayload!
   logOut: Boolean!
-  createVote(voteData: CreateVoteInput!): CreateVotePayload!
-  updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
-  deleteVote(id: Int!): Boolean!
 }
 
 input UpdateUserInput {
@@ -273,6 +273,16 @@ input CreateProposalInput {
   images: [Upload!]
 }
 
+input CreateVoteInput {
+  proposalId: Int!
+  voteType: String!
+}
+
+input UpdateVoteInput {
+  id: Int!
+  voteType: String!
+}
+
 input CreateRoleInput {
   name: String!
   color: String!
@@ -300,14 +310,4 @@ input SignUpInput {
   email: String!
   name: String!
   password: String!
-}
-
-input CreateVoteInput {
-  proposalId: Int!
-  voteType: String!
-}
-
-input UpdateVoteInput {
-  id: Int!
-  voteType: String!
 }
