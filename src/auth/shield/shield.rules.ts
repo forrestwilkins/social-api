@@ -1,7 +1,7 @@
 import { rule } from "graphql-shield";
 import { ServerPermissions } from "../../roles/permissions/permissions.constants";
-import { UNAUTHORIZED } from "../../shared/shared.constants";
-import { Context } from "../../shared/shared.types";
+import { UNAUTHORIZED } from "../../common/common.constants";
+import { Context } from "../../common/common.types";
 import { getJti, getSub } from "../auth.utils";
 import { hasPermission } from "./shield.utils";
 

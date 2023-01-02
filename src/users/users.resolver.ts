@@ -9,7 +9,9 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import FeedItem from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.service";
+import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
@@ -43,6 +45,16 @@ export class UsersResolver {
     return this.usersService.getUsers();
   }
 
+  @ResolveField(() => [FeedItem])
+  async homeFeed(@Parent() { id }: User) {
+    return this.usersService.getUserHomeFeed(id);
+  }
+
+  @ResolveField(() => [FeedItem])
+  async profileFeed(@Parent() { id }: User) {
+    return this.usersService.getUserProfileFeed(id);
+  }
+
   @ResolveField(() => [Post])
   async posts(@Parent() { id }: User) {
     return this.postsService.getPosts({ userId: id });
@@ -59,6 +71,11 @@ export class UsersResolver {
   @ResolveField(() => Image)
   async coverPhoto(@Parent() { id }: User) {
     return this.usersService.getCoverPhoto(id);
+  }
+
+  @ResolveField(() => [Group])
+  async joinedGroups(@Parent() { id }: User) {
+    return this.usersService.getJoinedGroups(id);
   }
 
   @ResolveField(() => [String])

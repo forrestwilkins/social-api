@@ -8,9 +8,11 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
+import FeedItem from "../../common/models/feed-item.union";
 import { GroupMember } from "../../groups/group-members/models/group-member.model";
 import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
+import { Proposal } from "../../proposals/models/proposal.model";
 import { RoleMember } from "../../roles/role-members/models/role-member.model";
 
 @Entity()
@@ -40,6 +42,18 @@ export class User {
   })
   @Field(() => [Post])
   posts: Post[];
+
+  @OneToMany(() => Proposal, (proposal) => proposal.user, {
+    cascade: true,
+  })
+  @Field(() => [Proposal])
+  proposals: Proposal[];
+
+  @Field(() => [FeedItem])
+  homeFeed: Array<typeof FeedItem>;
+
+  @Field(() => [FeedItem])
+  profileFeed: Array<typeof FeedItem>;
 
   @OneToMany(() => Image, (image) => image.user, {
     cascade: true,

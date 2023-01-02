@@ -33,12 +33,12 @@ export class PostsService {
     const mappedImages = postIds.map(
       (id) =>
         images.filter((image: Image) => image.postId === id) ||
-        new Error(`Could not load images: ${id}`)
+        new Error(`Could not load images for post: ${id}`)
     );
     return mappedImages;
   }
 
-  async createPost(user: User, { images, ...postData }: CreatePostInput) {
+  async createPost({ images, ...postData }: CreatePostInput, user: User) {
     const post = await this.repository.save({ ...postData, userId: user.id });
 
     if (images) {

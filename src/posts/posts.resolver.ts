@@ -65,7 +65,7 @@ export class PostsResolver {
     @Args("postData") postData: CreatePostInput,
     @CurrentUser() user: User
   ) {
-    return this.postsService.createPost(user, postData);
+    return this.postsService.createPost(postData, user);
   }
 
   @Mutation(() => UpdatePostPayload)
