@@ -17,6 +17,10 @@ export class Vote {
   @Field(() => Int)
   id: number;
 
+  @Column()
+  @Field()
+  voteType: string;
+
   @Field(() => Proposal)
   @ManyToOne(() => Proposal, (proposal) => proposal.votes, {
     onDelete: "CASCADE",
