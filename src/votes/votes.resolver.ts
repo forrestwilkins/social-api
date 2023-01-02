@@ -1,5 +1,15 @@
-import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import {
+  Args,
+  Context,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import { Dataloaders } from "../dataloader/dataloader.service";
 import { User } from "../users/models/user.model";
 import { CreateVoteInput } from "./models/create-vote.input";
 import { CreateVotePayload } from "./models/create-vote.payload";
@@ -20,6 +30,14 @@ export class VotesResolver {
   @Query(() => [Vote])
   async votes() {
     return this.votesService.getVotes();
+  }
+
+  @ResolveField(() => User)
+  async user(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { userId }: Vote
+  ) {
+    return loaders.usersLoader.load(userId);
   }
 
   @Mutation(() => CreateVotePayload)
