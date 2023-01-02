@@ -1,4 +1,10 @@
-import { Args, Int, Query, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import { User } from "../users/models/user.model";
+import { CreateVoteInput } from "./models/create-vote.input";
+import { CreateVotePayload } from "./models/create-vote.payload";
+import { UpdateVoteInput } from "./models/update-vote.input";
+import { UpdateVotePayload } from "./models/update-vote.payload";
 import { Vote } from "./models/vote.model";
 import { VotesService } from "./votes.service";
 
@@ -14,5 +20,23 @@ export class VotesResolver {
   @Query(() => [Vote])
   async votes() {
     return this.votesService.getVotes();
+  }
+
+  @Mutation(() => CreateVotePayload)
+  async createVote(
+    @Args("voteData") voteData: CreateVoteInput,
+    @CurrentUser() user: User
+  ) {
+    return this.votesService.createVote(voteData, user.id);
+  }
+
+  @Mutation(() => UpdateVotePayload)
+  async updateVote(@Args("voteData") voteData: UpdateVoteInput) {
+    return this.votesService.updateVote(voteData);
+  }
+
+  @Mutation(() => Boolean)
+  async deleteVote(@Args("id", { type: () => Int }) id: number) {
+    return this.votesService.deleteVote(id);
   }
 }
