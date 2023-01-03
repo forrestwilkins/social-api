@@ -10,6 +10,8 @@ import {
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.service";
+import { Proposal } from "../proposals/models/proposal.model";
+import { ProposalsService } from "../proposals/proposals.service";
 import { User } from "../users/models/user.model";
 import { CreateVoteInput } from "./models/create-vote.input";
 import { CreateVotePayload } from "./models/create-vote.payload";
@@ -20,7 +22,10 @@ import { VotesService } from "./votes.service";
 
 @Resolver(() => Vote)
 export class VotesResolver {
-  constructor(private votesService: VotesService) {}
+  constructor(
+    private proposalsService: ProposalsService,
+    private votesService: VotesService
+  ) {}
 
   @Query(() => Vote)
   async vote(@Args("id", { type: () => Int }) id: number) {
@@ -30,6 +35,11 @@ export class VotesResolver {
   @Query(() => [Vote])
   async votes() {
     return this.votesService.getVotes();
+  }
+
+  @ResolveField(() => Proposal)
+  async proposal(@Parent() { proposalId }: Vote) {
+    return this.proposalsService.getProposal(proposalId);
   }
 
   @ResolveField(() => User)
