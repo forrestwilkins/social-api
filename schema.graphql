@@ -29,6 +29,11 @@ type Proposal {
   group: Group
   createdAt: DateTime!
   updatedAt: DateTime!
+  voteCount: Int!
+  agreements: [Vote!]!
+  reservations: [Vote!]!
+  standAsides: [Vote!]!
+  blocks: [Vote!]!
   images: [Image!]!
 }
 

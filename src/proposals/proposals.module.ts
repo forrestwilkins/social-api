@@ -13,6 +13,6 @@ import { ProposalsService } from "./proposals.service";
     ImagesModule,
   ],
   providers: [ProposalsService, ProposalsResolver],
-  exports: [ProposalsService],
+  exports: [ProposalsService, TypeOrmModule],
 })
 export class ProposalsModule {}

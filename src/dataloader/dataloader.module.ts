@@ -6,6 +6,7 @@ import { PostsModule } from "../posts/posts.module";
 import { ProposalsModule } from "../proposals/proposals.module";
 import { RoleMembersModule } from "../roles/role-members/role-members.module";
 import { UsersModule } from "../users/users.module";
+import { VotesModule } from "../votes/votes.module";
 import { DataloaderService } from "./dataloader.service";
 
 @Module({
@@ -17,6 +18,7 @@ import { DataloaderService } from "./dataloader.service";
     ProposalsModule,
     RoleMembersModule,
     UsersModule,
+    VotesModule,
   ],
   providers: [DataloaderService],
   exports: [DataloaderService],

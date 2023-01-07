@@ -1,6 +1,8 @@
 /**
  * TODO: Determine whether data loaders should be renamed to more
  * clearly indicate whether IDs are being mapped to one or many
+ *
+ * TODO: Organize data loaders and types below by entity
  */
 
 import { Injectable } from "@nestjs/common";
@@ -17,6 +19,8 @@ import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 import { Vote } from "../votes/models/vote.model";
+import { VoteTypes } from "../votes/votes.constants";
+import { VotesService } from "../votes/votes.service";
 
 export interface Dataloaders {
   groupCoverPhotosLoader: DataLoader<number, Image>;
@@ -26,7 +30,12 @@ export interface Dataloaders {
   memberRequestCountLoader: DataLoader<number, number>;
   postImagesLoader: DataLoader<number, Image[]>;
   profilePicturesLoader: DataLoader<number, Image>;
+  proposalAgreementsLoader: DataLoader<number, Vote[]>;
+  proposalBlocksLoader: DataLoader<number, Vote[]>;
   proposalImagesLoader: DataLoader<number, Image[]>;
+  proposalReservationsLoader: DataLoader<number, Vote[]>;
+  proposalStandAsidesLoader: DataLoader<number, Vote[]>;
+  proposalVoteCountLoader: DataLoader<number, number>;
   proposalVotesLoader: DataLoader<number, Vote[]>;
   roleMemberCountLoader: DataLoader<number, number>;
   usersLoader: DataLoader<number, User>;
@@ -41,7 +50,8 @@ export class DataloaderService {
     private postsService: PostsService,
     private proposalsService: ProposalsService,
     private roleMembersService: RoleMembersService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private votesService: VotesService
   ) {}
 
   getLoaders(): Dataloaders {
@@ -53,9 +63,20 @@ export class DataloaderService {
       memberRequestCountLoader: this._createMemberRequestCountLoader(),
       postImagesLoader: this._createPostImagesLoader(),
       profilePicturesLoader: this._createProfilePicturesLoader(),
+      proposalAgreementsLoader: this._createProposalVotesLoader(
+        VoteTypes.Agreement
+      ),
+      proposalBlocksLoader: this._createProposalVotesLoader(VoteTypes.Block),
       proposalImagesLoader: this._createProposalImagesLoader(),
+      proposalReservationsLoader: this._createProposalVotesLoader(
+        VoteTypes.Reservations
+      ),
+      proposalStandAsidesLoader: this._createProposalVotesLoader(
+        VoteTypes.StandAside
+      ),
       proposalVotesLoader: this._createProposalVotesLoader(),
       roleMemberCountLoader: this._createRoleMemberCountLoader(),
+      proposalVoteCountLoader: this._createProposalVoteCountLoader(),
       usersLoader: this._createUsersLoader(),
     };
   }
@@ -78,9 +99,18 @@ export class DataloaderService {
     );
   }
 
-  private _createProposalVotesLoader() {
+  private _createProposalVotesLoader(voteType?: string) {
     return new DataLoader<number, Vote[]>(async (proposalIds) =>
-      this.proposalsService.getProposalVotesByBatch(proposalIds as number[])
+      this.proposalsService.getProposalVotesByBatch(
+        proposalIds as number[],
+        voteType
+      )
+    );
+  }
+
+  private _createProposalVoteCountLoader() {
+    return new DataLoader<number, number>(async (proposalIds) =>
+      this.votesService.getVoteCountByBatch(proposalIds as number[])
     );
   }
 
