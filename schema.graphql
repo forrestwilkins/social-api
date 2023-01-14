@@ -235,6 +235,7 @@ type Mutation {
   deletePost(id: Int!): Boolean!
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
+  deleteProposal(id: Int!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!

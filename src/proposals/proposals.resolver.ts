@@ -98,4 +98,9 @@ export class ProposalsResolver {
   ) {
     return this.proposalsService.updateProposal(proposalData);
   }
+
+  @Mutation(() => Boolean)
+  async deleteProposal(@Args("id", { type: () => Int }) id: number) {
+    return this.proposalsService.deleteProposal(id);
+  }
 }
