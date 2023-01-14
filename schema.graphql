@@ -188,6 +188,10 @@ type CreateProposalPayload {
   proposal: Proposal!
 }
 
+type UpdateProposalPayload {
+  proposal: Proposal!
+}
+
 type Query {
   me: User!
   user(id: Int, name: String): User!
@@ -224,6 +228,7 @@ type Mutation {
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
   deletePost(id: Int!): Boolean!
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
+  updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -276,6 +281,13 @@ input CreateProposalInput {
   groupId: Int
   body: String
   action: String!
+  images: [Upload!]
+}
+
+input UpdateProposalInput {
+  id: Int!
+  body: String
+  action: String
   images: [Upload!]
 }
 

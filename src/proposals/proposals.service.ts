@@ -84,7 +84,7 @@ export class ProposalsService {
     return { proposal };
   }
 
-  async updatePost({ id, images, ...data }: UpdateProposalInput) {
+  async updateProposal({ id, images, ...data }: UpdateProposalInput) {
     await this.repository.update(id, data);
     const proposal = await this.getProposal(id);
     if (proposal && images) {

@@ -17,6 +17,8 @@ import { Vote } from "../votes/models/vote.model";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { CreateProposalPayload } from "./models/create-proposal.payload";
 import { Proposal } from "./models/proposal.model";
+import { UpdateProposalInput } from "./models/update-proposal.input";
+import { UpdateProposalPayload } from "./models/update-proposal.payload";
 import { ProposalsService } from "./proposals.service";
 
 @Resolver(() => Proposal)
@@ -111,5 +113,12 @@ export class ProposalsResolver {
     @CurrentUser() user: User
   ) {
     return this.proposalsService.createProposal(proposalData, user);
+  }
+
+  @Mutation(() => UpdateProposalPayload)
+  async updateProposal(
+    @Args("proposalData") proposalData: UpdateProposalInput
+  ) {
+    return this.proposalsService.updateProposal(proposalData);
   }
 }
