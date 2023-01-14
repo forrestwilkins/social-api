@@ -286,10 +286,14 @@ input UpdatePostInput {
 input CreateProposalInput {
   groupId: Int
   body: String
+  action: ProposalActionInput!
+  images: [Upload!]
+}
+
+input ProposalActionInput {
   actionType: String!
   groupName: String
   groupDescription: String
-  images: [Upload!]
 }
 
 input UpdateProposalInput {

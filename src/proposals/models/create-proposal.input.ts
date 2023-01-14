@@ -1,5 +1,6 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
+import { ProposalActionInput } from "./proposal-action.input";
 
 @InputType()
 export class CreateProposalInput {
@@ -9,14 +10,8 @@ export class CreateProposalInput {
   @Field({ nullable: true })
   body: string;
 
-  @Field()
-  actionType: string;
-
-  @Field({ nullable: true })
-  groupName: string;
-
-  @Field({ nullable: true })
-  groupDescription: string;
+  @Field(() => ProposalActionInput)
+  action: ProposalActionInput;
 
   @Field(() => [GraphQLUpload], { nullable: true })
   images?: Promise<FileUpload>[];

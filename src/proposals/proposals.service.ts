@@ -64,24 +64,15 @@ export class ProposalsService {
     return mappedImages;
   }
 
+  // TODO: Refactor to avoid unneeded destructuring for action
   async createProposal(
-    {
-      actionType,
-      groupDescription,
-      groupName,
-      images,
-      ...proposalData
-    }: CreateProposalInput,
+    { action, images, ...proposalData }: CreateProposalInput,
     user: User
   ) {
     const proposal = await this.repository.save({
       ...proposalData,
-      action: {
-        actionType,
-        groupDescription,
-        groupName,
-      },
       userId: user.id,
+      action,
     });
     if (images) {
       try {
