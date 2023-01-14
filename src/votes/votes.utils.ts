@@ -1,7 +1,7 @@
 import { Vote } from "./models/vote.model";
 import { VoteTypes } from "./votes.constants";
 
-interface SortedVotes {
+interface SortedConsensusVotes {
   agreements: Vote[];
   reservations: Vote[];
   standAsides: Vote[];
@@ -9,7 +9,7 @@ interface SortedVotes {
 }
 
 export const sortConsensusVotesByType = (votes: Vote[]) =>
-  votes.reduce<SortedVotes>(
+  votes.reduce<SortedConsensusVotes>(
     (result, vote) => {
       if (vote.voteType === VoteTypes.Agreement) {
         result.agreements.push(vote);
