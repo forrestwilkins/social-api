@@ -13,6 +13,7 @@ import { VotesService } from "../votes/votes.service";
 import { sortVotesByType } from "../votes/votes.utils";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
+import { UpdateProposalInput } from "./models/update-proposal.input";
 import {
   MIN_GROUP_SIZE_TO_RATIFY,
   MIN_VOTE_COUNT_TO_RATIFY,
@@ -83,6 +84,15 @@ export class ProposalsService {
     return { proposal };
   }
 
+  async updatePost({ id, images, ...data }: UpdateProposalInput) {
+    await this.repository.update(id, data);
+    const proposal = await this.getProposal(id);
+    if (proposal && images) {
+      await this.saveProposalImages(proposal.id, images);
+    }
+    return { proposal };
+  }
+
   async saveProposalImages(proposalId: number, images: Promise<FileUpload>[]) {
     for (const image of images) {
       const filename = await saveImage(image);
@@ -90,8 +100,15 @@ export class ProposalsService {
     }
   }
 
-  // TODO: Add logic for ratifying proposal
   async ratifyProposal(proposalId: number) {
+    await this.repository.update(proposalId, {
+      stage: ProposalStages.Ratified,
+    });
+    await this.implementProposal(proposalId);
+  }
+
+  // TODO: Add logic for implementing proposal
+  async implementProposal(proposalId: number) {
     console.log(proposalId);
   }
 
