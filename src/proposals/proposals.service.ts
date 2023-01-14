@@ -2,11 +2,13 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { DefaultGroupSettings } from "../groups/groups.constants";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
+import { VoteTypes } from "../votes/votes.constants";
 import { VotesService } from "../votes/votes.service";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
@@ -15,6 +17,13 @@ import {
   MIN_VOTE_COUNT_TO_RATIFY,
   ProposalStages,
 } from "./proposals.constants";
+
+interface SortedVotes {
+  agreements: Vote[];
+  reservations: Vote[];
+  standAsides: Vote[];
+  blocks: Vote[];
+}
 
 @Injectable()
 export class ProposalsService {
@@ -107,8 +116,45 @@ export class ProposalsService {
       return false;
     }
 
-    console.log(proposalId);
-    return false;
+    const {
+      votes,
+      group: { members },
+    } = proposal;
+
+    const ratificationThreshold =
+      DefaultGroupSettings.RatificationThreshold * 0.01;
+
+    const { agreements, reservations, standAsides, blocks } =
+      votes.reduce<SortedVotes>(
+        (result, vote) => {
+          if (vote.voteType === VoteTypes.Agreement) {
+            result.agreements.push(vote);
+          }
+          if (vote.voteType === VoteTypes.Reservations) {
+            result.reservations.push(vote);
+          }
+          if (vote.voteType === VoteTypes.StandAside) {
+            result.standAsides.push(vote);
+          }
+          if (vote.voteType === VoteTypes.Block) {
+            result.blocks.push(vote);
+          }
+          return result;
+        },
+        {
+          agreements: [],
+          reservations: [],
+          standAsides: [],
+          blocks: [],
+        }
+      );
+
+    return (
+      agreements.length >= members.length * ratificationThreshold &&
+      reservations.length <= DefaultGroupSettings.ReservationsLimit &&
+      standAsides.length <= DefaultGroupSettings.StandAsidesLimit &&
+      blocks.length === 0
+    );
   }
 
   // TODO: Add logic for checking whether proposal has reached consensus
