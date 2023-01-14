@@ -5,6 +5,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -13,6 +14,7 @@ import { Image } from "../../images/models/image.model";
 import { User } from "../../users/models/user.model";
 import { Vote } from "../../votes/models/vote.model";
 import { ProposalStages } from "../proposals.constants";
+import { ProposalAction } from "./proposal-action.model";
 
 @Entity()
 @ObjectType()
@@ -25,9 +27,11 @@ export class Proposal {
   @Field()
   body: string;
 
-  @Column()
-  @Field()
-  action: string;
+  @OneToOne(() => ProposalAction, (action) => action.proposal, {
+    cascade: true,
+  })
+  @Field(() => ProposalAction)
+  action: ProposalAction;
 
   @Column({ default: ProposalStages.Voting })
   @Field()

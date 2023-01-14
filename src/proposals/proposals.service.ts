@@ -66,11 +66,12 @@ export class ProposalsService {
   }
 
   async createProposal(
-    { images, ...proposalData }: CreateProposalInput,
+    { actionType, images, ...proposalData }: CreateProposalInput,
     user: User
   ) {
     const proposal = await this.repository.save({
       ...proposalData,
+      action: { actionType },
       userId: user.id,
     });
     if (images) {
@@ -84,7 +85,10 @@ export class ProposalsService {
     return { proposal };
   }
 
-  async updateProposal({ id, images, ...data }: UpdateProposalInput) {
+  async updateProposal({ id, action, images, ...data }: UpdateProposalInput) {
+    // TODO: Add logic for updating proposal action
+    console.log(action);
+
     await this.repository.update(id, data);
     const proposal = await this.getProposal(id);
     if (proposal && images) {

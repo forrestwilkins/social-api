@@ -14,6 +14,8 @@ import { MemberRequestsService } from "../groups/member-requests/member-requests
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { PostsService } from "../posts/posts.service";
+import { ProposalAction } from "../proposals/models/proposal-action.model";
+import { ProposalActionsService } from "../proposals/proposal-actions/proposal-actions.service";
 import { ProposalsService } from "../proposals/proposals.service";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { User } from "../users/models/user.model";
@@ -30,6 +32,7 @@ export interface Dataloaders {
   memberRequestCountLoader: DataLoader<number, number>;
   postImagesLoader: DataLoader<number, Image[]>;
   profilePicturesLoader: DataLoader<number, Image>;
+  proposalActionsLoader: DataLoader<number, ProposalAction>;
   proposalAgreementsLoader: DataLoader<number, Vote[]>;
   proposalBlocksLoader: DataLoader<number, Vote[]>;
   proposalImagesLoader: DataLoader<number, Image[]>;
@@ -48,6 +51,7 @@ export class DataloaderService {
     private groupsService: GroupsService,
     private memberRequestsService: MemberRequestsService,
     private postsService: PostsService,
+    private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,
     private roleMembersService: RoleMembersService,
     private usersService: UsersService,
@@ -74,9 +78,10 @@ export class DataloaderService {
       proposalStandAsidesLoader: this._createProposalVotesLoader(
         VoteTypes.StandAside
       ),
+      proposalActionsLoader: this._createProposalActionsLoader(),
+      proposalVoteCountLoader: this._createProposalVoteCountLoader(),
       proposalVotesLoader: this._createProposalVotesLoader(),
       roleMemberCountLoader: this._createRoleMemberCountLoader(),
-      proposalVoteCountLoader: this._createProposalVoteCountLoader(),
       usersLoader: this._createUsersLoader(),
     };
   }
@@ -117,6 +122,14 @@ export class DataloaderService {
   private _createProposalImagesLoader() {
     return new DataLoader<number, Image[]>(async (proposalIds) =>
       this.proposalsService.getProposalImagesByBatch(proposalIds as number[])
+    );
+  }
+
+  private _createProposalActionsLoader() {
+    return new DataLoader<number, ProposalAction>(async (proposalActionIds) =>
+      this.proposalActionsService.getProposalActionsByBatch(
+        proposalActionIds as number[]
+      )
     );
   }
 

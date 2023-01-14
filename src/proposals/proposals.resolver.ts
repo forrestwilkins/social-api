@@ -16,6 +16,7 @@ import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { CreateProposalPayload } from "./models/create-proposal.payload";
+import { ProposalAction } from "./models/proposal-action.model";
 import { Proposal } from "./models/proposal.model";
 import { UpdateProposalInput } from "./models/update-proposal.input";
 import { UpdateProposalPayload } from "./models/update-proposal.payload";
@@ -89,6 +90,14 @@ export class ProposalsResolver {
     @Parent() { id }: Proposal
   ) {
     return loaders.proposalImagesLoader.load(id);
+  }
+
+  @ResolveField(() => ProposalAction)
+  async action(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Proposal
+  ) {
+    return loaders.proposalActionsLoader.load(id);
   }
 
   @ResolveField(() => User)

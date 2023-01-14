@@ -20,10 +20,20 @@ type Vote {
   updatedAt: DateTime!
 }
 
+type ProposalAction {
+  id: Int!
+  actionType: String!
+  groupName: String
+  groupDescription: String
+  proposal: Proposal!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Proposal {
   id: Int!
   body: String!
-  action: String!
+  action: ProposalAction!
   stage: String!
   votes: [Vote!]!
   user: User!
@@ -280,7 +290,7 @@ input UpdatePostInput {
 input CreateProposalInput {
   groupId: Int
   body: String
-  action: String!
+  actionType: String!
   images: [Upload!]
 }
 
