@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
@@ -10,18 +10,25 @@ import { Vote } from "../votes/models/vote.model";
 import { VotesService } from "../votes/votes.service";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
+import {
+  MIN_GROUP_SIZE_TO_RATIFY,
+  ProposalStages,
+} from "./proposals.constants";
 
 @Injectable()
 export class ProposalsService {
   constructor(
     @InjectRepository(Proposal)
     private repository: Repository<Proposal>,
-    private imagesService: ImagesService,
-    private votesService: VotesService
+
+    @Inject(forwardRef(() => VotesService))
+    private votesService: VotesService,
+
+    private imagesService: ImagesService
   ) {}
 
-  async getProposal(id: number) {
-    return this.repository.findOne({ where: { id } });
+  async getProposal(id: number, relations?: string[]) {
+    return this.repository.findOne({ where: { id }, relations });
   }
 
   async getProposals(where?: FindOptionsWhere<Proposal>) {
@@ -77,6 +84,32 @@ export class ProposalsService {
       const filename = await saveImage(image);
       await this.imagesService.createImage({ filename, proposalId });
     }
+  }
+
+  // TODO: Add logic for ratifying proposal
+  async ratifyProposal(proposalId: number) {
+    console.log(proposalId);
+  }
+
+  // TODO: Add logic for checking whether proposal can be ratified
+  async validateRatificationThreshold(proposalId: number) {
+    const proposal = await this.getProposal(proposalId, ["group.members"]);
+    if (
+      !proposal ||
+      proposal.stage !== ProposalStages.Voting ||
+      proposal.group.members.length < MIN_GROUP_SIZE_TO_RATIFY
+    ) {
+      return false;
+    }
+
+    console.log(proposalId);
+    return false;
+  }
+
+  // TODO: Add logic for checking whether proposal has reached consensus
+  async validateConsensus(proposalId: number) {
+    console.log(proposalId);
+    return false;
   }
 
   async deleteProposal(proposalId: number) {

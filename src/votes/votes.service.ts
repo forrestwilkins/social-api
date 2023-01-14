@@ -1,7 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { Proposal } from "../proposals/models/proposal.model";
+import { ProposalsService } from "../proposals/proposals.service";
 import { CreateVoteInput } from "./models/create-vote.input";
 import { UpdateVoteInput } from "./models/update-vote.input";
 import { Vote } from "./models/vote.model";
@@ -15,7 +16,10 @@ export class VotesService {
     private repository: Repository<Vote>,
 
     @InjectRepository(Proposal)
-    private proposalsRepository: Repository<Proposal>
+    private proposalsRepository: Repository<Proposal>,
+
+    @Inject(forwardRef(() => ProposalsService))
+    private proposalsService: ProposalsService
   ) {}
 
   async getVote(id: number) {
@@ -48,6 +52,16 @@ export class VotesService {
 
   async createVote(voteData: CreateVoteInput, userId: number) {
     const vote = await this.repository.save({ ...voteData, userId });
+
+    // TODO: Add remaining logic for ratifying proposals - below is a WIP
+    const isProposalRatifiable =
+      await this.proposalsService.validateRatificationThreshold(
+        vote.proposalId
+      );
+    if (isProposalRatifiable) {
+      await this.proposalsService.ratifyProposal(vote.proposalId);
+    }
+
     return { vote };
   }
 

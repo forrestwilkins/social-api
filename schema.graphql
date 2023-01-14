@@ -24,6 +24,7 @@ type Proposal {
   id: Int!
   body: String!
   action: String!
+  stage: String!
   votes: [Vote!]!
   user: User!
   group: Group
