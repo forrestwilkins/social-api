@@ -2,6 +2,7 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { GroupMember } from "../groups/group-members/models/group-member.model";
 import { DefaultGroupSettings } from "../groups/groups.constants";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
@@ -94,7 +95,6 @@ export class ProposalsService {
     console.log(proposalId);
   }
 
-  // TODO: Add logic for checking whether proposal can be ratified
   async validateRatificationThreshold(proposalId: number) {
     const proposal = await this.getProposal(proposalId, [
       "group.members",
@@ -110,28 +110,31 @@ export class ProposalsService {
     }
 
     const {
-      votes,
       group: { members },
+      votes,
     } = proposal;
 
     const ratificationThreshold =
       DefaultGroupSettings.RatificationThreshold * 0.01;
 
+    // TODO: Add support for other voting models
+    return this.validateConsensus(ratificationThreshold, members, votes);
+  }
+
+  async validateConsensus(
+    ratificationThreshold: number,
+    groupMembers: GroupMember[],
+    votes: Vote[]
+  ) {
     const { agreements, reservations, standAsides, blocks } =
       sortVotesByType(votes);
 
     return (
-      agreements.length >= members.length * ratificationThreshold &&
+      agreements.length >= groupMembers.length * ratificationThreshold &&
       reservations.length <= DefaultGroupSettings.ReservationsLimit &&
       standAsides.length <= DefaultGroupSettings.StandAsidesLimit &&
       blocks.length === 0
     );
-  }
-
-  // TODO: Add logic for checking whether proposal has reached consensus
-  async validateConsensus(proposalId: number) {
-    console.log(proposalId);
-    return false;
   }
 
   async deleteProposal(proposalId: number) {
