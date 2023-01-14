@@ -65,12 +65,22 @@ export class ProposalsService {
   }
 
   async createProposal(
-    { actionType, images, ...proposalData }: CreateProposalInput,
+    {
+      actionType,
+      groupDescription,
+      groupName,
+      images,
+      ...proposalData
+    }: CreateProposalInput,
     user: User
   ) {
     const proposal = await this.repository.save({
       ...proposalData,
-      action: { actionType },
+      action: {
+        actionType,
+        groupDescription,
+        groupName,
+      },
       userId: user.id,
     });
     if (images) {

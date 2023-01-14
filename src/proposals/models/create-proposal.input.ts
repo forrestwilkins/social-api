@@ -12,6 +12,12 @@ export class CreateProposalInput {
   @Field()
   actionType: string;
 
+  @Field({ nullable: true })
+  groupName: string;
+
+  @Field({ nullable: true })
+  groupDescription: string;
+
   @Field(() => [GraphQLUpload], { nullable: true })
   images?: Promise<FileUpload>[];
 }
