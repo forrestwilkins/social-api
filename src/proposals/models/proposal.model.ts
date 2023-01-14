@@ -12,6 +12,7 @@ import { Group } from "../../groups/models/group.model";
 import { Image } from "../../images/models/image.model";
 import { User } from "../../users/models/user.model";
 import { Vote } from "../../votes/models/vote.model";
+import { ProposalStages } from "../proposals.constants";
 
 @Entity()
 @ObjectType()
@@ -28,7 +29,7 @@ export class Proposal {
   @Field()
   action: string;
 
-  @Column()
+  @Column({ default: ProposalStages.Voting })
   @Field()
   stage: string;
 
