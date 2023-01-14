@@ -1,8 +1,6 @@
 /**
  * TODO: Determine whether data loaders should be renamed to more
  * clearly indicate whether IDs are being mapped to one or many
- *
- * TODO: Organize data loaders and types below by entity
  */
 
 import { Injectable } from "@nestjs/common";
@@ -25,13 +23,7 @@ import { VoteTypes } from "../votes/votes.constants";
 import { VotesService } from "../votes/votes.service";
 
 export interface Dataloaders {
-  groupCoverPhotosLoader: DataLoader<number, Image>;
-  groupMemberCountLoader: DataLoader<number, number>;
-  groupMembersLoader: DataLoader<number, GroupMember[]>;
-  groupsLoader: DataLoader<number, Group>;
-  memberRequestCountLoader: DataLoader<number, number>;
-  postImagesLoader: DataLoader<number, Image[]>;
-  profilePicturesLoader: DataLoader<number, Image>;
+  // Proposals & Votes
   proposalActionsLoader: DataLoader<number, ProposalAction>;
   proposalAgreementsLoader: DataLoader<number, Vote[]>;
   proposalBlocksLoader: DataLoader<number, Vote[]>;
@@ -40,6 +32,17 @@ export interface Dataloaders {
   proposalStandAsidesLoader: DataLoader<number, Vote[]>;
   proposalVoteCountLoader: DataLoader<number, number>;
   proposalVotesLoader: DataLoader<number, Vote[]>;
+
+  // Groups
+  groupCoverPhotosLoader: DataLoader<number, Image>;
+  groupMemberCountLoader: DataLoader<number, number>;
+  groupMembersLoader: DataLoader<number, GroupMember[]>;
+  groupsLoader: DataLoader<number, Group>;
+  memberRequestCountLoader: DataLoader<number, number>;
+
+  // Misc.
+  postImagesLoader: DataLoader<number, Image[]>;
+  profilePicturesLoader: DataLoader<number, Image>;
   roleMemberCountLoader: DataLoader<number, number>;
   usersLoader: DataLoader<number, User>;
 }
@@ -60,13 +63,7 @@ export class DataloaderService {
 
   getLoaders(): Dataloaders {
     return {
-      groupCoverPhotosLoader: this._createGroupCoverPhotosLoader(),
-      groupMemberCountLoader: this._createGroupMemberCountLoader(),
-      groupMembersLoader: this._createGroupMembersLoader(),
-      groupsLoader: this._createGroupsLoader(),
-      memberRequestCountLoader: this._createMemberRequestCountLoader(),
-      postImagesLoader: this._createPostImagesLoader(),
-      profilePicturesLoader: this._createProfilePicturesLoader(),
+      // Proposals & votes
       proposalAgreementsLoader: this._createProposalVotesLoader(
         VoteTypes.Agreement
       ),
@@ -81,28 +78,25 @@ export class DataloaderService {
       proposalActionsLoader: this._createProposalActionsLoader(),
       proposalVoteCountLoader: this._createProposalVoteCountLoader(),
       proposalVotesLoader: this._createProposalVotesLoader(),
+
+      // Groups
+      groupCoverPhotosLoader: this._createGroupCoverPhotosLoader(),
+      groupMemberCountLoader: this._createGroupMemberCountLoader(),
+      groupMembersLoader: this._createGroupMembersLoader(),
+      groupsLoader: this._createGroupsLoader(),
+      memberRequestCountLoader: this._createMemberRequestCountLoader(),
+
+      // Misc.
+      postImagesLoader: this._createPostImagesLoader(),
+      profilePicturesLoader: this._createProfilePicturesLoader(),
       roleMemberCountLoader: this._createRoleMemberCountLoader(),
       usersLoader: this._createUsersLoader(),
     };
   }
 
-  private _createUsersLoader() {
-    return new DataLoader<number, User>(async (userIds) =>
-      this.usersService.getUsersByBatch(userIds as number[])
-    );
-  }
-
-  private _createProfilePicturesLoader() {
-    return new DataLoader<number, Image>(async (userIds) =>
-      this.usersService.getProfilePicturesByBatch(userIds as number[])
-    );
-  }
-
-  private _createPostImagesLoader() {
-    return new DataLoader<number, Image[]>(async (postIds) =>
-      this.postsService.getPostImagesByBatch(postIds as number[])
-    );
-  }
+  // -------------------------------------------------------------------------
+  // Proposals & Votes
+  // -------------------------------------------------------------------------
 
   private _createProposalVotesLoader(voteType?: string) {
     return new DataLoader<number, Vote[]>(async (proposalIds) =>
@@ -133,6 +127,10 @@ export class DataloaderService {
     );
   }
 
+  // -------------------------------------------------------------------------
+  // Groups
+  // -------------------------------------------------------------------------
+
   private _createGroupsLoader() {
     return new DataLoader<number, Group>(async (groupIds) =>
       this.groupsService.getGroupsByBatch(groupIds as number[])
@@ -162,6 +160,28 @@ export class DataloaderService {
   private _createGroupMembersLoader() {
     return new DataLoader<number, GroupMember[]>(async (groupIds) =>
       this.groupMembersService.getGroupMembersByBatch(groupIds as number[])
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // Groups
+  // -------------------------------------------------------------------------
+
+  private _createUsersLoader() {
+    return new DataLoader<number, User>(async (userIds) =>
+      this.usersService.getUsersByBatch(userIds as number[])
+    );
+  }
+
+  private _createProfilePicturesLoader() {
+    return new DataLoader<number, Image>(async (userIds) =>
+      this.usersService.getProfilePicturesByBatch(userIds as number[])
+    );
+  }
+
+  private _createPostImagesLoader() {
+    return new DataLoader<number, Image[]>(async (postIds) =>
+      this.postsService.getPostImagesByBatch(postIds as number[])
     );
   }
 
