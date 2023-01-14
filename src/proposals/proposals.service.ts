@@ -12,6 +12,7 @@ import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
 import {
   MIN_GROUP_SIZE_TO_RATIFY,
+  MIN_VOTE_COUNT_TO_RATIFY,
   ProposalStages,
 } from "./proposals.constants";
 
@@ -93,10 +94,14 @@ export class ProposalsService {
 
   // TODO: Add logic for checking whether proposal can be ratified
   async validateRatificationThreshold(proposalId: number) {
-    const proposal = await this.getProposal(proposalId, ["group.members"]);
+    const proposal = await this.getProposal(proposalId, [
+      "group.members",
+      "votes",
+    ]);
     if (
       !proposal ||
       proposal.stage !== ProposalStages.Voting ||
+      proposal.votes.length < MIN_VOTE_COUNT_TO_RATIFY ||
       proposal.group.members.length < MIN_GROUP_SIZE_TO_RATIFY
     ) {
       return false;
