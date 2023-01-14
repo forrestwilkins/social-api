@@ -8,7 +8,7 @@ interface SortedVotes {
   blocks: Vote[];
 }
 
-export const sortVotesByType = (votes: Vote[]) =>
+export const sortConsensusVotesByType = (votes: Vote[]) =>
   votes.reduce<SortedVotes>(
     (result, vote) => {
       if (vote.voteType === VoteTypes.Agreement) {

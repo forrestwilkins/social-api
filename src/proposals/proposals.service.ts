@@ -10,7 +10,7 @@ import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
 import { VotesService } from "../votes/votes.service";
-import { sortVotesByType } from "../votes/votes.utils";
+import { sortConsensusVotesByType } from "../votes/votes.utils";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
 import { UpdateProposalInput } from "./models/update-proposal.input";
@@ -144,7 +144,7 @@ export class ProposalsService {
     votes: Vote[]
   ) {
     const { agreements, reservations, standAsides, blocks } =
-      sortVotesByType(votes);
+      sortConsensusVotesByType(votes);
 
     return (
       agreements.length >= groupMembers.length * ratificationThreshold &&
