@@ -40,10 +40,9 @@ export class ProposalsService {
     return this.repository.find({ where });
   }
 
-  async getProposalVotesByBatch(proposalIds: number[], voteType?: string) {
+  async getProposalVotesByBatch(proposalIds: number[]) {
     const votes = await this.votesService.getVotes({
       proposalId: In(proposalIds),
-      voteType,
     });
     const mappedVotes = proposalIds.map(
       (id) =>

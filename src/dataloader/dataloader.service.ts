@@ -19,17 +19,12 @@ import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 import { Vote } from "../votes/models/vote.model";
-import { VoteTypes } from "../votes/votes.constants";
 import { VotesService } from "../votes/votes.service";
 
 export interface Dataloaders {
   // Proposals & Votes
   proposalActionsLoader: DataLoader<number, ProposalAction>;
-  proposalAgreementsLoader: DataLoader<number, Vote[]>;
-  proposalBlocksLoader: DataLoader<number, Vote[]>;
   proposalImagesLoader: DataLoader<number, Image[]>;
-  proposalReservationsLoader: DataLoader<number, Vote[]>;
-  proposalStandAsidesLoader: DataLoader<number, Vote[]>;
   proposalVoteCountLoader: DataLoader<number, number>;
   proposalVotesLoader: DataLoader<number, Vote[]>;
 
@@ -64,18 +59,8 @@ export class DataloaderService {
   getLoaders(): Dataloaders {
     return {
       // Proposals & votes
-      proposalAgreementsLoader: this._createProposalVotesLoader(
-        VoteTypes.Agreement
-      ),
-      proposalBlocksLoader: this._createProposalVotesLoader(VoteTypes.Block),
-      proposalImagesLoader: this._createProposalImagesLoader(),
-      proposalReservationsLoader: this._createProposalVotesLoader(
-        VoteTypes.Reservations
-      ),
-      proposalStandAsidesLoader: this._createProposalVotesLoader(
-        VoteTypes.StandAside
-      ),
       proposalActionsLoader: this._createProposalActionsLoader(),
+      proposalImagesLoader: this._createProposalImagesLoader(),
       proposalVoteCountLoader: this._createProposalVoteCountLoader(),
       proposalVotesLoader: this._createProposalVotesLoader(),
 
@@ -98,12 +83,9 @@ export class DataloaderService {
   // Proposals & Votes
   // -------------------------------------------------------------------------
 
-  private _createProposalVotesLoader(voteType?: string) {
+  private _createProposalVotesLoader() {
     return new DataLoader<number, Vote[]>(async (proposalIds) =>
-      this.proposalsService.getProposalVotesByBatch(
-        proposalIds as number[],
-        voteType
-      )
+      this.proposalsService.getProposalVotesByBatch(proposalIds as number[])
     );
   }
 

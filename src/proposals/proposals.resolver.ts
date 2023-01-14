@@ -52,38 +52,6 @@ export class ProposalsResolver {
     return loaders.proposalVoteCountLoader.load(id);
   }
 
-  @ResolveField(() => [Vote])
-  async agreements(
-    @Context() { loaders }: { loaders: Dataloaders },
-    @Parent() { id }: Proposal
-  ) {
-    return loaders.proposalAgreementsLoader.load(id);
-  }
-
-  @ResolveField(() => [Vote])
-  async reservations(
-    @Context() { loaders }: { loaders: Dataloaders },
-    @Parent() { id }: Proposal
-  ) {
-    return loaders.proposalReservationsLoader.load(id);
-  }
-
-  @ResolveField(() => [Vote])
-  async standAsides(
-    @Context() { loaders }: { loaders: Dataloaders },
-    @Parent() { id }: Proposal
-  ) {
-    return loaders.proposalStandAsidesLoader.load(id);
-  }
-
-  @ResolveField(() => [Vote])
-  async blocks(
-    @Context() { loaders }: { loaders: Dataloaders },
-    @Parent() { id }: Proposal
-  ) {
-    return loaders.proposalBlocksLoader.load(id);
-  }
-
   @ResolveField(() => [Image])
   async images(
     @Context() { loaders }: { loaders: Dataloaders },
