@@ -43,7 +43,9 @@ export class ProposalAction {
   groupDescription: string;
 
   @Field(() => Proposal)
-  @OneToOne(() => Proposal, (proposal) => proposal.action)
+  @OneToOne(() => Proposal, (proposal) => proposal.action, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn()
   proposal: Proposal;
 
