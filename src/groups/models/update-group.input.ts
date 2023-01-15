@@ -8,14 +8,14 @@ export class UpdateGroupInput {
   @Field(() => Int)
   id: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Matches(VALID_NAME_CHARACTERS, {
     message: "Group names cannot contain special characters",
   })
-  name: string;
+  name?: string;
 
-  @Field()
-  description: string;
+  @Field({ nullable: true })
+  description?: string;
 
   @Field(() => GraphQLUpload, { nullable: true })
   coverPhoto?: Promise<FileUpload>;

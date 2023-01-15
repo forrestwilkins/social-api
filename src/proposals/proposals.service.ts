@@ -5,6 +5,7 @@ import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { GroupMember } from "../groups/group-members/models/group-member.model";
 import { DefaultGroupSettings } from "../groups/groups.constants";
+import { GroupsService } from "../groups/groups.service";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -18,6 +19,7 @@ import { UpdateProposalInput } from "./models/update-proposal.input";
 import {
   MIN_GROUP_SIZE_TO_RATIFY,
   MIN_VOTE_COUNT_TO_RATIFY,
+  ProposalActionTypes,
   ProposalStages,
 } from "./proposals.constants";
 
@@ -30,7 +32,8 @@ export class ProposalsService {
     @Inject(forwardRef(() => VotesService))
     private votesService: VotesService,
 
-    private imagesService: ImagesService
+    private imagesService: ImagesService,
+    private groupsService: GroupsService
   ) {}
 
   async getProposal(id: number, relations?: string[]) {
@@ -109,9 +112,28 @@ export class ProposalsService {
     await this.implementProposal(proposalId);
   }
 
-  // TODO: Add logic for implementing proposal
+  // TODO: Add support for implementing remaining action types
   async implementProposal(proposalId: number) {
-    console.log(proposalId);
+    const proposal = await this.getProposal(proposalId, ["action"]);
+    if (!proposal) {
+      throw new UserInputError("Could not implement proposal");
+    }
+
+    const {
+      action: { actionType, groupDescription, groupName },
+      groupId,
+    } = proposal;
+
+    if (actionType === ProposalActionTypes.ChangeName) {
+      await this.groupsService.updateGroup({ id: groupId, name: groupName });
+    }
+
+    if (actionType === ProposalActionTypes.ChangeDescription) {
+      await this.groupsService.updateGroup({
+        id: groupId,
+        description: groupDescription,
+      });
+    }
   }
 
   async validateRatificationThreshold(proposalId: number) {
