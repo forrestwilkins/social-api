@@ -22,8 +22,8 @@ export class VotesService {
     private proposalsService: ProposalsService
   ) {}
 
-  async getVote(id: number) {
-    return this.repository.findOne({ where: { id } });
+  async getVote(id: number, relations?: string[]) {
+    return this.repository.findOne({ where: { id }, relations });
   }
 
   async getVotes(where?: FindOptionsWhere<Vote>) {

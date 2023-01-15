@@ -1,3 +1,4 @@
+import { UsePipes } from "@nestjs/common";
 import {
   Args,
   Context,
@@ -18,6 +19,7 @@ import { CreateVotePayload } from "./models/create-vote.payload";
 import { UpdateVoteInput } from "./models/update-vote.input";
 import { UpdateVotePayload } from "./models/update-vote.payload";
 import { Vote } from "./models/vote.model";
+import { VoteValidationPipe } from "./pipes/vote-validation.pipe";
 import { VotesService } from "./votes.service";
 
 @Resolver(() => Vote)
@@ -51,6 +53,7 @@ export class VotesResolver {
   }
 
   @Mutation(() => CreateVotePayload)
+  @UsePipes(VoteValidationPipe)
   async createVote(
     @Args("voteData") voteData: CreateVoteInput,
     @CurrentUser() user: User
@@ -59,11 +62,13 @@ export class VotesResolver {
   }
 
   @Mutation(() => UpdateVotePayload)
+  @UsePipes(VoteValidationPipe)
   async updateVote(@Args("voteData") voteData: UpdateVoteInput) {
     return this.votesService.updateVote(voteData);
   }
 
   @Mutation(() => Boolean)
+  @UsePipes(VoteValidationPipe)
   async deleteVote(@Args("id", { type: () => Int }) id: number) {
     return this.votesService.deleteVote(id);
   }
