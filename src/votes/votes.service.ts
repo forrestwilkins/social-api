@@ -51,9 +51,10 @@ export class VotesService {
   }
 
   async createVote(voteData: CreateVoteInput, userId: number) {
-    const vote = await this.repository.save({ ...voteData, userId });
-
-    // TODO: Add remaining logic for ratifying proposals - below is a WIP
+    const vote = await this.repository.save({
+      ...voteData,
+      userId,
+    });
     const isProposalRatifiable =
       await this.proposalsService.validateRatificationThreshold(
         vote.proposalId
@@ -61,7 +62,6 @@ export class VotesService {
     if (isProposalRatifiable) {
       await this.proposalsService.ratifyProposal(vote.proposalId);
     }
-
     return { vote };
   }
 
