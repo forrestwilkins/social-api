@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { UserInputError } from "apollo-server-express";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { GroupMember } from "../groups/group-members/models/group-member.model";
@@ -156,6 +157,13 @@ export class ProposalsService {
   }
 
   async deleteProposal(proposalId: number) {
+    const votes = await this.votesService.getVotes({ proposalId });
+    if (votes.length) {
+      throw new UserInputError(
+        "Proposals cannot be deleted after votes have been cast"
+      );
+    }
+
     const images = await this.imagesService.getImages({ proposalId });
     for (const { filename } of images) {
       await deleteImageFile(filename);
