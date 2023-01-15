@@ -1,4 +1,4 @@
-import { Injectable, PipeTransform } from "@nestjs/common";
+import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
 import { ValidationError } from "apollo-server-express";
 import { ProposalStages } from "../../proposals/proposals.constants";
 import { ProposalsService } from "../../proposals/proposals.service";
@@ -15,8 +15,8 @@ export class VoteValidationPipe implements PipeTransform {
     private votesService: VotesService
   ) {}
 
-  async transform(value: VoteInput) {
-    const isRatified = await this.isRatified(value);
+  async transform(value: VoteInput, metadata: ArgumentMetadata) {
+    const isRatified = await this.isRatified(value, metadata);
     if (isRatified) {
       throw new ValidationError(
         "Proposal has been ratified and can no longer be voted on"
@@ -25,21 +25,21 @@ export class VoteValidationPipe implements PipeTransform {
     return value;
   }
 
-  async isRatified(value: VoteInput) {
+  async isRatified(value: VoteInput, { data }: ArgumentMetadata) {
     // Delete vote
     if (typeof value === "number") {
       const vote = await this.votesService.getVote(value, ["proposal"]);
       return vote?.proposal.stage === ProposalStages.Ratified;
     }
     // Create vote
-    if ("proposalId" in value) {
+    if (data === "voteData" && "proposalId" in value) {
       const proposal = await this.proposalsService.getProposal(
         value.proposalId
       );
       return proposal?.stage === ProposalStages.Ratified;
     }
     // Update vote
-    if ("id" in value) {
+    if (data === "voteData" && "id" in value) {
       const vote = await this.votesService.getVote(value.id, ["proposal"]);
       return vote?.proposal.stage === ProposalStages.Ratified;
     }
