@@ -300,7 +300,7 @@ input ProposalActionInput {
 input UpdateProposalInput {
   id: Int!
   body: String
-  action: String
+  action: ProposalActionInput!
   images: [Upload!]
 }
 

@@ -87,9 +87,7 @@ export class ProposalsService {
     return { proposal };
   }
 
-  async updateProposal({ id, action, images, ...data }: UpdateProposalInput) {
-    console.log("TODO: Add logic for updating proposal action", action);
-
+  async updateProposal({ id, images, ...data }: UpdateProposalInput) {
     await this.repository.update(id, data);
     const proposal = await this.getProposal(id);
     if (proposal && images) {

@@ -1,3 +1,14 @@
+/**
+ * TODO: Add the following fields (pulled from Praxis) to ProposalAction model below:
+ * groupEvent: EventMotionInput
+ * groupImage: FileUpload
+ * groupRole: CreateRoleInput
+ * groupRoleId: String
+ * groupRolePermissions: [ProposedPermissionInput]
+ * groupSettings: [SettingInput]
+ * userId: String
+ */
+
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import {
   Column,
@@ -9,19 +20,6 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Proposal } from "./proposal.model";
-
-// TODO: Add fields to ProposalAction model
-// input ActionDataInput {
-//   groupName: String
-//   groupImage: FileUpload
-//   groupDescription: String
-//   groupSettings: [SettingInput]
-//   groupRole: CreateRoleInput
-//   groupRolePermissions: [ProposedPermissionInput]
-//   groupEvent: EventMotionInput
-//   groupRoleId: String
-//   userId: String
-// }
 
 @Entity()
 @ObjectType()
