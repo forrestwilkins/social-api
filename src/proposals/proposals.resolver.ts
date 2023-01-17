@@ -1,3 +1,4 @@
+import { UsePipes } from "@nestjs/common";
 import {
   Args,
   Context,
@@ -20,6 +21,7 @@ import { ProposalAction } from "./models/proposal-action.model";
 import { Proposal } from "./models/proposal.model";
 import { UpdateProposalInput } from "./models/update-proposal.input";
 import { UpdateProposalPayload } from "./models/update-proposal.payload";
+import { ProposalValidationPipe } from "./pipes/proposal-validation.pipe";
 import { ProposalsService } from "./proposals.service";
 
 @Resolver(() => Proposal)
@@ -93,6 +95,7 @@ export class ProposalsResolver {
   }
 
   @Mutation(() => UpdateProposalPayload)
+  @UsePipes(ProposalValidationPipe)
   async updateProposal(
     @Args("proposalData") proposalData: UpdateProposalInput
   ) {
@@ -100,6 +103,7 @@ export class ProposalsResolver {
   }
 
   @Mutation(() => Boolean)
+  @UsePipes(ProposalValidationPipe)
   async deleteProposal(@Args("id", { type: () => Int }) id: number) {
     return this.proposalsService.deleteProposal(id);
   }
