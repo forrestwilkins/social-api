@@ -88,10 +88,21 @@ export class ProposalsService {
   }
 
   async updateProposal({ id, images, ...data }: UpdateProposalInput) {
-    await this.repository.update(id, data);
-    const proposal = await this.getProposal(id);
-    if (proposal && images) {
-      await this.saveProposalImages(proposal.id, images);
+    const proposalWithAction = await this.getProposal(id, ["action"]);
+    if (!proposalWithAction) {
+      throw new UserInputError("Could not update proposal");
+    }
+    const action = {
+      ...proposalWithAction.action,
+      ...data.action,
+    };
+    const proposal = await this.repository.save({
+      ...proposalWithAction,
+      ...data,
+      action,
+    });
+    if (proposalWithAction && images) {
+      await this.saveProposalImages(proposalWithAction.id, images);
     }
     return { proposal };
   }
