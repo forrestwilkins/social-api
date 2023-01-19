@@ -56,9 +56,7 @@ export class VotesService {
       userId,
     });
     const isProposalRatifiable =
-      await this.proposalsService.validateRatificationThreshold(
-        vote.proposalId
-      );
+      await this.proposalsService.isProposalRatifiable(vote.proposalId);
     if (isProposalRatifiable) {
       await this.proposalsService.ratifyProposal(vote.proposalId);
     }

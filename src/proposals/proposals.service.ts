@@ -145,7 +145,7 @@ export class ProposalsService {
     }
   }
 
-  async validateRatificationThreshold(proposalId: number) {
+  async isProposalRatifiable(proposalId: number) {
     const proposal = await this.getProposal(proposalId, [
       "group.members",
       "votes",
@@ -168,10 +168,10 @@ export class ProposalsService {
       DefaultGroupSettings.RatificationThreshold * 0.01;
 
     // TODO: Add support for other voting models
-    return this.validateConsensus(ratificationThreshold, members, votes);
+    return this.hasConsensus(ratificationThreshold, members, votes);
   }
 
-  async validateConsensus(
+  async hasConsensus(
     ratificationThreshold: number,
     groupMembers: GroupMember[],
     votes: Vote[]
