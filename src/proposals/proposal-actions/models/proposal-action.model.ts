@@ -19,7 +19,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Proposal } from "./proposal.model";
+import { Proposal } from "../../models/proposal.model";
 
 @Entity()
 @ObjectType()

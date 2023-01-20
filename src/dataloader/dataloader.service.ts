@@ -12,7 +12,7 @@ import { MemberRequestsService } from "../groups/member-requests/member-requests
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { PostsService } from "../posts/posts.service";
-import { ProposalAction } from "../proposals/models/proposal-action.model";
+import { ProposalAction } from "../proposals/proposal-actions/models/proposal-action.model";
 import { ProposalActionsService } from "../proposals/proposal-actions/proposal-actions.service";
 import { ProposalsService } from "../proposals/proposals.service";
 import { RoleMembersService } from "../roles/role-members/role-members.service";

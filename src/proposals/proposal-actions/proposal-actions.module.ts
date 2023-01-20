@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ProposalAction } from "../models/proposal-action.model";
+import { ProposalAction } from "./models/proposal-action.model";
 import { ProposalActionsResolver } from "./proposal-actions.resolver";
 import { ProposalActionsService } from "./proposal-actions.service";
 

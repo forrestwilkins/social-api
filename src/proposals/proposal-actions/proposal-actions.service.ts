@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, In, Repository } from "typeorm";
-import { ProposalAction } from "../models/proposal-action.model";
+import { ProposalAction } from "./models/proposal-action.model";
 
 @Injectable()
 export class ProposalActionsService {
