@@ -1,3 +1,8 @@
+/**
+ * TODO: Add support for implementing remaining action types
+ * TODO: Add support for other voting models
+ */
+
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
@@ -7,7 +12,7 @@ import { GroupMember } from "../groups/group-members/models/group-member.model";
 import { DefaultGroupSettings } from "../groups/groups.constants";
 import { GroupsService } from "../groups/groups.service";
 import { deleteImageFile, saveImage } from "../images/image.utils";
-import { ImagesService } from "../images/images.service";
+import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
@@ -16,6 +21,7 @@ import { sortConsensusVotesByType } from "../votes/votes.utils";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
 import { UpdateProposalInput } from "./models/update-proposal.input";
+import { ProposalActionsService } from "./proposal-actions/proposal-actions.service";
 import {
   MIN_GROUP_SIZE_TO_RATIFY,
   MIN_VOTE_COUNT_TO_RATIFY,
@@ -32,8 +38,9 @@ export class ProposalsService {
     @Inject(forwardRef(() => VotesService))
     private votesService: VotesService,
 
+    private groupsService: GroupsService,
     private imagesService: ImagesService,
-    private groupsService: GroupsService
+    private proposalActionsService: ProposalActionsService
   ) {}
 
   async getProposal(id: number, relations?: string[]) {
@@ -69,41 +76,70 @@ export class ProposalsService {
   }
 
   async createProposal(
-    { images, ...proposalData }: CreateProposalInput,
+    {
+      images,
+      action: { groupCoverPhoto, ...action },
+      ...proposalData
+    }: CreateProposalInput,
     user: User
   ) {
     const proposal = await this.repository.save({
       ...proposalData,
       userId: user.id,
+      action,
     });
-    if (images) {
-      try {
+    try {
+      if (images) {
         await this.saveProposalImages(proposal.id, images);
-      } catch (err) {
-        await this.deleteProposal(proposal.id);
-        throw new Error(err.message);
       }
+      if (groupCoverPhoto) {
+        await this.proposalActionsService.saveProposalActionImage(
+          proposal.action.id,
+          groupCoverPhoto,
+          ImageTypes.CoverPhoto
+        );
+      }
+    } catch (err) {
+      await this.deleteProposal(proposal.id);
+      throw new Error(err.message);
     }
     return { proposal };
   }
 
-  async updateProposal({ id, images, ...data }: UpdateProposalInput) {
+  async updateProposal({
+    id,
+    images,
+    action: { groupCoverPhoto, ...action },
+    ...data
+  }: UpdateProposalInput) {
     const proposalWithAction = await this.getProposal(id, ["action"]);
     if (!proposalWithAction) {
       throw new UserInputError("Could not update proposal");
     }
-    const action = {
+    const newAction = {
       ...proposalWithAction.action,
-      ...data.action,
+      ...action,
     };
     const proposal = await this.repository.save({
       ...proposalWithAction,
       ...data,
-      action,
+      action: newAction,
     });
-    if (proposalWithAction && images) {
-      await this.saveProposalImages(proposalWithAction.id, images);
+
+    if (groupCoverPhoto && proposal.action.groupCoverPhoto) {
+      await this.imagesService.deleteImage({
+        id: proposal.action.groupCoverPhoto.id,
+      });
+      await this.proposalActionsService.saveProposalActionImage(
+        proposal.action.id,
+        groupCoverPhoto,
+        ImageTypes.CoverPhoto
+      );
     }
+    if (images) {
+      await this.saveProposalImages(id, images);
+    }
+
     return { proposal };
   }
 
@@ -121,20 +157,19 @@ export class ProposalsService {
     await this.implementProposal(proposalId);
   }
 
-  // TODO: Add support for implementing remaining action types
   async implementProposal(proposalId: number) {
     const proposal = await this.getProposal(proposalId, ["action"]);
     if (!proposal) {
       throw new UserInputError("Could not implement proposal");
     }
-
     const {
-      action: { actionType, groupDescription, groupName },
+      action: { actionType, groupDescription, groupCoverPhoto, groupName },
       groupId,
     } = proposal;
 
     if (actionType === ProposalActionTypes.ChangeName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
+      return;
     }
 
     if (actionType === ProposalActionTypes.ChangeDescription) {
@@ -142,6 +177,15 @@ export class ProposalsService {
         id: groupId,
         description: groupDescription,
       });
+      return;
+    }
+
+    if (
+      actionType === ProposalActionTypes.ChangeCoverPhoto &&
+      groupCoverPhoto
+    ) {
+      await this.groupsService.deleteCoverPhoto(groupId);
+      await this.imagesService.updateImage(groupCoverPhoto.id, { groupId });
     }
   }
 
@@ -167,7 +211,6 @@ export class ProposalsService {
     const ratificationThreshold =
       DefaultGroupSettings.RatificationThreshold * 0.01;
 
-    // TODO: Add support for other voting models
     return this.hasConsensus(ratificationThreshold, members, votes);
   }
 

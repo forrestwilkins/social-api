@@ -77,7 +77,7 @@ export class Image {
   @JoinColumn()
   proposalAction: ProposalAction;
 
-  @Column()
+  @Column({ nullable: true })
   proposalActionId: number;
 
   @CreateDateColumn()

@@ -28,6 +28,10 @@ export class ImagesService {
     return this.repository.save(data);
   }
 
+  async updateImage(id: number, data: Partial<Image>) {
+    return this.repository.save({ id, ...data });
+  }
+
   async deleteImage(where: FindOptionsWhere<Image>) {
     const image = await this.getImage(where);
     if (!image) {

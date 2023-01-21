@@ -35,17 +35,17 @@ export class ProposalAction {
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  groupName: string;
+  groupName?: string;
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  groupDescription: string;
+  groupDescription?: string;
 
   @OneToOne(() => Image, (image) => image.proposalAction, {
     cascade: true,
   })
-  @Field(() => Image)
-  groupCoverPhoto: Image;
+  @Field(() => Image, { nullable: true })
+  groupCoverPhoto?: Image;
 
   @Field(() => Proposal)
   @OneToOne(() => Proposal, (proposal) => proposal.action, {
