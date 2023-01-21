@@ -19,6 +19,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Image } from "../../../images/models/image.model";
 import { Proposal } from "../../models/proposal.model";
 
 @Entity()
@@ -39,6 +40,12 @@ export class ProposalAction {
   @Column({ nullable: true })
   @Field({ nullable: true })
   groupDescription: string;
+
+  @OneToOne(() => Image, (image) => image.proposalAction, {
+    cascade: true,
+  })
+  @Field(() => Image)
+  groupCoverPhoto: Image;
 
   @Field(() => Proposal)
   @OneToOne(() => Proposal, (proposal) => proposal.action, {

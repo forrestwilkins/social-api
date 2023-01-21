@@ -25,6 +25,7 @@ type ProposalAction {
   actionType: String!
   groupName: String
   groupDescription: String
+  groupCoverPhoto: Image!
   proposal: Proposal!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -129,6 +130,7 @@ type Image {
   user: User!
   group: Group!
   proposal: Proposal!
+  proposalAction: ProposalAction!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
