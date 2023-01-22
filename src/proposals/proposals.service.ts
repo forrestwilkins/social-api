@@ -123,9 +123,12 @@ export class ProposalsService {
       action: newAction,
     });
 
-    if (groupCoverPhoto && proposal.action.groupCoverPhoto) {
+    if (
+      groupCoverPhoto &&
+      proposal.action.actionType === ProposalActionTypes.ChangeCoverPhoto
+    ) {
       await this.imagesService.deleteImage({
-        id: proposal.action.groupCoverPhoto.id,
+        proposalActionId: proposal.action.id,
       });
       await this.proposalActionsService.saveProposalActionImage(
         proposal.action.id,
