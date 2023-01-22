@@ -11,10 +11,10 @@ import { ProposalsService } from "./proposals.service";
 @Module({
   imports: [
     TypeOrmModule.forFeature([Proposal]),
+    forwardRef(() => ProposalActionsModule),
     forwardRef(() => VotesModule),
     GroupsModule,
     ImagesModule,
-    ProposalActionsModule,
   ],
   providers: [ProposalsService, ProposalsResolver],
   exports: [ProposalsService, TypeOrmModule],
