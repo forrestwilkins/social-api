@@ -11,8 +11,8 @@ type ProposalInput = CreateProposalInput | UpdateProposalInput | number;
 @Injectable()
 export class ProposalValidationPipe implements PipeTransform {
   constructor(
-    private votesService: VotesService,
-    private proposalsService: ProposalsService
+    private proposalsService: ProposalsService,
+    private votesService: VotesService
   ) {}
 
   async transform(value: ProposalInput, { metatype }: ArgumentMetadata) {
