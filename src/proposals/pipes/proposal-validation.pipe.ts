@@ -13,12 +13,7 @@ export class ProposalValidationPipe implements PipeTransform {
 
   async transform(value: ProposalInput, metadata: ArgumentMetadata) {
     await this.validateProposalAction(value, metadata);
-    const hasVotes = await this.hasVotes(value, metadata);
-    if (hasVotes) {
-      throw new ValidationError(
-        "Proposals cannot be updated or deleted after receiving votes"
-      );
-    }
+    await this.validateVotesReceived(value, metadata);
     return value;
   }
 
@@ -62,19 +57,27 @@ export class ProposalValidationPipe implements PipeTransform {
     }
   }
 
-  async hasVotes(value: ProposalInput, { data }: ArgumentMetadata) {
-    // Delete proposal
+  async validateVotesReceived(
+    value: ProposalInput,
+    { metatype }: ArgumentMetadata
+  ) {
+    if (metatype?.name === "UpdateProposalInput") {
+      const votes = await this.votesService.getVotes({
+        proposalId: (value as UpdateProposalInput).id,
+      });
+      if (votes.length) {
+        throw new ValidationError(
+          "Proposals cannot be updated after receiving votes"
+        );
+      }
+    }
     if (typeof value === "number") {
       const votes = await this.votesService.getVotes({ proposalId: value });
-      return !!votes.length;
+      if (votes.length) {
+        throw new ValidationError(
+          "Proposals cannot be deleted after receiving votes"
+        );
+      }
     }
-    // Update proposal
-    if (data === "proposalData" && "id" in value) {
-      const votes = await this.votesService.getVotes({
-        proposalId: value.id,
-      });
-      return !!votes.length;
-    }
-    return false;
   }
 }
