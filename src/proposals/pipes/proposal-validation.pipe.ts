@@ -11,57 +11,45 @@ type ProposalInput = CreateProposalInput | UpdateProposalInput | number;
 export class ProposalValidationPipe implements PipeTransform {
   constructor(private votesService: VotesService) {}
 
-  async transform(value: ProposalInput, metadata: ArgumentMetadata) {
-    await this.validateProposalAction(value, metadata);
-    await this.validateVotesReceived(value, metadata);
+  async transform(value: ProposalInput, { metatype }: ArgumentMetadata) {
+    await this.validateProposalAction(value, metatype?.name || "");
+    await this.validateVotesReceived(value, metatype?.name || "");
     return value;
   }
 
-  async validateProposalAction(
-    value: ProposalInput,
-    { metatype }: ArgumentMetadata
-  ) {
+  async validateProposalAction(value: ProposalInput, typeName: string) {
+    if (!["CreateProposalInput", "UpdateProposalInput"].includes(typeName)) {
+      return;
+    }
+    const { action } = value as CreateProposalInput | UpdateProposalInput;
     if (
-      ["CreateProposalInput", "UpdateProposalInput"].includes(
-        metatype?.name || ""
-      )
+      action.actionType === ProposalActionTypes.ChangeName &&
+      !action.groupName
     ) {
-      const { action } = value as CreateProposalInput | UpdateProposalInput;
-
-      if (
-        action.actionType === ProposalActionTypes.ChangeName &&
-        !action.groupName
-      ) {
-        throw new ValidationError(
-          "Proposals to change group name must include a name field"
-        );
-      }
-
-      if (
-        action.actionType === ProposalActionTypes.ChangeDescription &&
-        !action.groupDescription
-      ) {
-        throw new ValidationError(
-          "Proposals to change group description must include a description field"
-        );
-      }
-
-      if (
-        action.actionType === ProposalActionTypes.ChangeCoverPhoto &&
-        !action.groupCoverPhoto
-      ) {
-        throw new ValidationError(
-          "Proposals to change group cover photo must include a cover photo"
-        );
-      }
+      throw new ValidationError(
+        "Proposals to change group name must include a name field"
+      );
+    }
+    if (
+      action.actionType === ProposalActionTypes.ChangeDescription &&
+      !action.groupDescription
+    ) {
+      throw new ValidationError(
+        "Proposals to change group description must include a description field"
+      );
+    }
+    if (
+      action.actionType === ProposalActionTypes.ChangeCoverPhoto &&
+      !action.groupCoverPhoto
+    ) {
+      throw new ValidationError(
+        "Proposals to change group cover photo must include a cover photo"
+      );
     }
   }
 
-  async validateVotesReceived(
-    value: ProposalInput,
-    { metatype }: ArgumentMetadata
-  ) {
-    if (metatype?.name === "UpdateProposalInput") {
+  async validateVotesReceived(value: ProposalInput, typeName: string) {
+    if (typeName === "UpdateProposalInput") {
       const votes = await this.votesService.getVotes({
         proposalId: (value as UpdateProposalInput).id,
       });
