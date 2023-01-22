@@ -36,7 +36,7 @@ export class VoteValidationPipe implements PipeTransform {
       const proposal = await this.proposalsService.getProposal(
         value.proposalId
       );
-      return proposal?.stage === ProposalStages.Ratified;
+      return proposal.stage === ProposalStages.Ratified;
     }
     // Update vote
     if (data === "voteData" && "id" in value) {

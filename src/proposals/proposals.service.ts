@@ -44,7 +44,7 @@ export class ProposalsService {
   ) {}
 
   async getProposal(id: number, relations?: string[]) {
-    return this.repository.findOne({ where: { id }, relations });
+    return this.repository.findOneOrFail({ where: { id }, relations });
   }
 
   async getProposals(where?: FindOptionsWhere<Proposal>) {
@@ -113,9 +113,6 @@ export class ProposalsService {
     ...data
   }: UpdateProposalInput) {
     const proposalWithAction = await this.getProposal(id, ["action"]);
-    if (!proposalWithAction) {
-      throw new UserInputError("Could not update proposal");
-    }
     const newAction = {
       ...proposalWithAction.action,
       ...action,
@@ -158,14 +155,10 @@ export class ProposalsService {
   }
 
   async implementProposal(proposalId: number) {
-    const proposal = await this.getProposal(proposalId, ["action"]);
-    if (!proposal) {
-      throw new UserInputError("Could not implement proposal");
-    }
     const {
       action: { actionType, groupDescription, groupCoverPhoto, groupName },
       groupId,
-    } = proposal;
+    } = await this.getProposal(proposalId, ["action"]);
 
     if (actionType === ProposalActionTypes.ChangeName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
@@ -185,9 +178,7 @@ export class ProposalsService {
       groupCoverPhoto
     ) {
       const { coverPhoto: currentCoverPhoto } =
-        await this.groupsService.getGroup({ id: proposal.groupId }, [
-          "coverPhoto",
-        ]);
+        await this.groupsService.getGroup({ id: groupId }, ["coverPhoto"]);
       await this.imagesService.updateImage(groupCoverPhoto.id, { groupId });
       await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
     }
@@ -199,7 +190,6 @@ export class ProposalsService {
       "votes",
     ]);
     if (
-      !proposal ||
       proposal.stage !== ProposalStages.Voting ||
       proposal.votes.length < MIN_VOTE_COUNT_TO_RATIFY ||
       proposal.group.members.length < MIN_GROUP_SIZE_TO_RATIFY
