@@ -17,11 +17,13 @@ import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { CreateProposalPayload } from "./models/create-proposal.payload";
-import { ProposalAction } from "./proposal-actions/models/proposal-action.model";
 import { Proposal } from "./models/proposal.model";
 import { UpdateProposalInput } from "./models/update-proposal.input";
 import { UpdateProposalPayload } from "./models/update-proposal.payload";
-import { ProposalValidationPipe } from "./pipes/proposal-validation.pipe";
+import { CreateProposalValidationPipe } from "./pipes/create-proposal-validation.pipe";
+import { DeleteProposalValidationPipe } from "./pipes/delete-proposal-validation.pipe";
+import { UpdateProposalValidationPipe } from "./pipes/update-proposal-validation.pipe";
+import { ProposalAction } from "./proposal-actions/models/proposal-action.model";
 import { ProposalsService } from "./proposals.service";
 
 @Resolver(() => Proposal)
@@ -87,7 +89,7 @@ export class ProposalsResolver {
   }
 
   @Mutation(() => CreateProposalPayload)
-  @UsePipes(ProposalValidationPipe)
+  @UsePipes(CreateProposalValidationPipe)
   async createProposal(
     @Args("proposalData") proposalData: CreateProposalInput,
     @CurrentUser() user: User
@@ -96,7 +98,7 @@ export class ProposalsResolver {
   }
 
   @Mutation(() => UpdateProposalPayload)
-  @UsePipes(ProposalValidationPipe)
+  @UsePipes(UpdateProposalValidationPipe)
   async updateProposal(
     @Args("proposalData") proposalData: UpdateProposalInput
   ) {
@@ -104,7 +106,7 @@ export class ProposalsResolver {
   }
 
   @Mutation(() => Boolean)
-  @UsePipes(ProposalValidationPipe)
+  @UsePipes(DeleteProposalValidationPipe)
   async deleteProposal(@Args("id", { type: () => Int }) id: number) {
     return this.proposalsService.deleteProposal(id);
   }
