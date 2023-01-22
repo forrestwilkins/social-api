@@ -19,7 +19,7 @@ export class ProposalActionsService {
     where: FindOptionsWhere<ProposalAction>,
     relations?: string[]
   ) {
-    return this.repository.findOneOrFail({ where, relations });
+    return this.repository.findOne({ where, relations });
   }
 
   async getProposalActions(where?: FindOptionsWhere<ProposalAction>) {
@@ -27,14 +27,14 @@ export class ProposalActionsService {
   }
 
   async getProposedGroupCoverPhoto(proposalActionId: number) {
-    const { groupCoverPhoto } = await this.getProposalAction(
+    const action = await this.getProposalAction(
       {
         id: proposalActionId,
         actionType: ProposalActionTypes.ChangeCoverPhoto,
       },
       ["groupCoverPhoto"]
     );
-    return groupCoverPhoto;
+    return action?.groupCoverPhoto;
   }
 
   async getProposalActionsByBatch(proposalIds: number[]) {
