@@ -4,12 +4,16 @@ import { VotesService } from "../../votes/votes.service";
 import { CreateProposalInput } from "../models/create-proposal.input";
 import { UpdateProposalInput } from "../models/update-proposal.input";
 import { ProposalActionTypes } from "../proposals.constants";
+import { ProposalsService } from "../proposals.service";
 
 type ProposalInput = CreateProposalInput | UpdateProposalInput | number;
 
 @Injectable()
 export class ProposalValidationPipe implements PipeTransform {
-  constructor(private votesService: VotesService) {}
+  constructor(
+    private votesService: VotesService,
+    private proposalsService: ProposalsService
+  ) {}
 
   async transform(value: ProposalInput, { metatype }: ArgumentMetadata) {
     await this.validateProposalAction(value, metatype?.name || "");
@@ -22,8 +26,17 @@ export class ProposalValidationPipe implements PipeTransform {
       return;
     }
     const { action } = value as CreateProposalInput | UpdateProposalInput;
+    const proposal =
+      typeName === "UpdateProposalInput"
+        ? await this.proposalsService.getProposal(
+            (value as UpdateProposalInput).id,
+            ["action.groupCoverPhoto"]
+          )
+        : null;
+
     if (
       action.actionType === ProposalActionTypes.ChangeName &&
+      !proposal?.action.groupName &&
       !action.groupName
     ) {
       throw new ValidationError(
@@ -32,6 +45,7 @@ export class ProposalValidationPipe implements PipeTransform {
     }
     if (
       action.actionType === ProposalActionTypes.ChangeDescription &&
+      !proposal?.action.groupDescription &&
       !action.groupDescription
     ) {
       throw new ValidationError(
@@ -40,6 +54,7 @@ export class ProposalValidationPipe implements PipeTransform {
     }
     if (
       action.actionType === ProposalActionTypes.ChangeCoverPhoto &&
+      !proposal?.action.groupCoverPhoto &&
       !action.groupCoverPhoto
     ) {
       throw new ValidationError(
