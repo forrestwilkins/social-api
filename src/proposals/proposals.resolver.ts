@@ -87,6 +87,7 @@ export class ProposalsResolver {
   }
 
   @Mutation(() => CreateProposalPayload)
+  @UsePipes(ProposalValidationPipe)
   async createProposal(
     @Args("proposalData") proposalData: CreateProposalInput,
     @CurrentUser() user: User
