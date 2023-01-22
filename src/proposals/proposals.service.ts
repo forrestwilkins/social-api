@@ -158,7 +158,7 @@ export class ProposalsService {
     const {
       action: { actionType, groupDescription, groupCoverPhoto, groupName },
       groupId,
-    } = await this.getProposal(proposalId, ["action"]);
+    } = await this.getProposal(proposalId, ["action.groupCoverPhoto"]);
 
     if (actionType === ProposalActionTypes.ChangeName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
@@ -167,8 +167,8 @@ export class ProposalsService {
 
     if (actionType === ProposalActionTypes.ChangeDescription) {
       await this.groupsService.updateGroup({
-        id: groupId,
         description: groupDescription,
+        id: groupId,
       });
       return;
     }
@@ -177,8 +177,13 @@ export class ProposalsService {
       actionType === ProposalActionTypes.ChangeCoverPhoto &&
       groupCoverPhoto
     ) {
-      const { coverPhoto: currentCoverPhoto } =
-        await this.groupsService.getGroup({ id: groupId }, ["coverPhoto"]);
+      const currentCoverPhoto = await this.imagesService.getImage({
+        imageType: ImageTypes.CoverPhoto,
+        groupId,
+      });
+      if (!currentCoverPhoto) {
+        throw new UserInputError("Could not find group cover photo");
+      }
       await this.imagesService.updateImage(groupCoverPhoto.id, { groupId });
       await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
     }
