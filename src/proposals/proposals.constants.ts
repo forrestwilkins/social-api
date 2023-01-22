@@ -1,4 +1,6 @@
-export const MIN_GROUP_SIZE_TO_RATIFY = 3;
+// TODO: Set back to 3 after testing
+export const MIN_GROUP_SIZE_TO_RATIFY = 2;
+
 export const MIN_VOTE_COUNT_TO_RATIFY = 2;
 
 export enum ProposalActionTypes {

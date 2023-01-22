@@ -184,8 +184,12 @@ export class ProposalsService {
       actionType === ProposalActionTypes.ChangeCoverPhoto &&
       groupCoverPhoto
     ) {
-      await this.groupsService.deleteCoverPhoto(groupId);
+      const { coverPhoto: currentCoverPhoto } =
+        await this.groupsService.getGroup({ id: proposal.groupId }, [
+          "coverPhoto",
+        ]);
       await this.imagesService.updateImage(groupCoverPhoto.id, { groupId });
+      await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
     }
   }
 
