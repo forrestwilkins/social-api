@@ -1,4 +1,4 @@
-import { Injectable, PipeTransform } from "@nestjs/common";
+import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
 import { ValidationError } from "apollo-server-express";
 import { CreateProposalInput } from "../models/create-proposal.input";
 import { ProposalActionInput } from "../proposal-actions/models/proposal-action.input";
@@ -6,8 +6,10 @@ import { ProposalActionTypes } from "../proposals.constants";
 
 @Injectable()
 export class CreateProposalValidationPipe implements PipeTransform {
-  async transform(value: CreateProposalInput) {
-    await this.validateProposalAction(value.action);
+  async transform(value: CreateProposalInput, metadata: ArgumentMetadata) {
+    if (metadata.metatype?.name === CreateProposalInput.name) {
+      await this.validateProposalAction(value.action);
+    }
     return value;
   }
 
