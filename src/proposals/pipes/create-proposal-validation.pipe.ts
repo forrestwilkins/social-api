@@ -1,21 +1,23 @@
 import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
 import { ValidationError } from "apollo-server-express";
 import { CreateProposalInput } from "../models/create-proposal.input";
-import { ProposalActionInput } from "../proposal-actions/models/proposal-action.input";
 import { ProposalActionTypes } from "../proposals.constants";
 
 @Injectable()
 export class CreateProposalValidationPipe implements PipeTransform {
-  async transform(value: CreateProposalInput, metadata: ArgumentMetadata) {
+  async transform(value: any, metadata: ArgumentMetadata) {
     if (metadata.metatype?.name === CreateProposalInput.name) {
-      await this.validateProposalAction(value.action);
+      await this.validateProposalAction(value);
+      await this.validateGroupId(value);
     }
     return value;
   }
 
-  async validateProposalAction(action: ProposalActionInput) {
+  async validateProposalAction({ action }: CreateProposalInput) {
+    if (!action) {
+      throw new ValidationError("Proposals must include an action");
+    }
     const { actionType, groupCoverPhoto, groupDescription, groupName } = action;
-
     if (actionType === ProposalActionTypes.ChangeName && !groupName) {
       throw new ValidationError(
         "Proposals to change group name must include a name field"
@@ -35,6 +37,14 @@ export class CreateProposalValidationPipe implements PipeTransform {
     ) {
       throw new ValidationError(
         "Proposals to change group cover photo must include a cover photo"
+      );
+    }
+  }
+
+  async validateGroupId({ groupId }: CreateProposalInput) {
+    if (!groupId) {
+      throw new ValidationError(
+        "Only group proposals are supported at this time"
       );
     }
   }
