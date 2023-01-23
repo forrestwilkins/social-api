@@ -41,6 +41,7 @@ export class CreateProposalValidationPipe implements PipeTransform {
     }
   }
 
+  // TODO: Remove once support for server proposals has been added
   async validateGroupId({ groupId }: CreateProposalInput) {
     if (!groupId) {
       throw new ValidationError(
