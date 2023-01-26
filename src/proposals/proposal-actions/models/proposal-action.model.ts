@@ -1,7 +1,6 @@
 /**
  * TODO: Add the following fields (pulled from Praxis) to ProposalAction model below:
  * groupEvent: EventMotionInput
- * groupImage: FileUpload
  * groupRole: CreateRoleInput
  * groupRoleId: String
  * groupRolePermissions: [ProposedPermissionInput]
