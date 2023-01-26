@@ -1,4 +1,4 @@
-// TODO: Add error handling for field validation
+// TODO: Add pipes for group validation
 
 import { Field, InputType } from "@nestjs/graphql";
 import { Matches } from "class-validator";
