@@ -1,3 +1,5 @@
+// TODO: Add one to one relations for profile picture and cover photo
+
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import {
   Column,
