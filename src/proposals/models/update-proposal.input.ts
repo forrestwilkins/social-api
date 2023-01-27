@@ -8,7 +8,7 @@ export class UpdateProposalInput {
   id: number;
 
   @Field({ nullable: true })
-  body: string;
+  body?: string;
 
   @Field(() => ProposalActionInput)
   action: ProposalActionInput;
