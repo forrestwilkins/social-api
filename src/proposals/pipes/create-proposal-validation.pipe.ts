@@ -36,7 +36,7 @@ export class CreateProposalValidationPipe implements PipeTransform {
       !groupCoverPhoto
     ) {
       throw new ValidationError(
-        "Proposals to change group cover photo must include a cover photo"
+        "Proposals to change group cover photo must include an image"
       );
     }
   }
