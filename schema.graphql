@@ -33,16 +33,16 @@ type ProposalAction {
 
 type Proposal {
   id: Int!
-  body: String!
+  body: String
   action: ProposalAction!
   stage: String!
   votes: [Vote!]!
+  images: [Image!]!
   user: User!
   group: Group
   createdAt: DateTime!
   updatedAt: DateTime!
   voteCount: Int!
-  images: [Image!]!
 }
 
 type Permission {
@@ -90,7 +90,7 @@ union FeedItem = Post | Proposal
 
 type Post {
   id: Int!
-  body: String!
+  body: String
   images: [Image!]!
   user: User!
   group: Group

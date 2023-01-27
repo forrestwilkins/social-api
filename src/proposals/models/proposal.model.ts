@@ -23,9 +23,9 @@ export class Proposal {
   @Field(() => Int)
   id: number;
 
-  @Column()
-  @Field()
-  body: string;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  body?: string;
 
   @OneToOne(() => ProposalAction, (action) => action.proposal, {
     cascade: true,
@@ -46,6 +46,7 @@ export class Proposal {
   @OneToMany(() => Image, (image) => image.proposal, {
     cascade: true,
   })
+  @Field(() => [Image])
   images: Image[];
 
   @Field(() => User)
