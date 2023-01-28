@@ -15,8 +15,8 @@ export class DeleteVoteValidationPipe implements PipeTransform {
   }
 
   async validateProposalStage(value: number) {
-    const vote = await this.votesService.getVote(value, ["proposal"]);
-    if (vote.proposal.stage === ProposalStages.Ratified) {
+    const { proposal } = await this.votesService.getVote(value, ["proposal"]);
+    if (proposal.stage === ProposalStages.Ratified) {
       throw new ValidationError(
         "Proposal has been ratified and can no longer be voted on"
       );
