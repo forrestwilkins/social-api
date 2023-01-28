@@ -233,13 +233,6 @@ export class ProposalsService {
   }
 
   async deleteProposal(proposalId: number) {
-    const votes = await this.votesService.getVotes({ proposalId });
-    if (votes.length) {
-      throw new UserInputError(
-        "Proposals cannot be deleted after votes have been cast"
-      );
-    }
-
     const images = await this.imagesService.getImages({ proposalId });
     for (const { filename } of images) {
       await deleteImageFile(filename);
