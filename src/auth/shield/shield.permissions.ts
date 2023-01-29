@@ -1,5 +1,5 @@
 import { allow, and, not, or, shield } from "graphql-shield";
-import { FORBIDDEN } from "../../shared/shared.constants";
+import { FORBIDDEN } from "../../common/common.constants";
 import {
   canBanMembers,
   canManagePosts,
@@ -13,7 +13,6 @@ const shieldPermissions = shield(
   {
     Query: {
       "*": isAuthenticated,
-      posts: allow,
       users: canBanMembers,
     },
     Mutation: {

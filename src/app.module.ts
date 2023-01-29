@@ -2,24 +2,26 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { GraphQLSchema } from "graphql";
+import { applyMiddleware } from "graphql-middleware";
+import { GraphQLUpload } from "graphql-upload";
 import { AuthModule } from "./auth/auth.module";
+import { getClaims, getSub } from "./auth/auth.utils";
 import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
 import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
+import shieldPermissions from "./auth/shield/shield.permissions";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
-import { GraphQLUpload } from "graphql-upload";
 import { ImagesModule } from "./images/images.module";
 import { PostsModule } from "./posts/posts.module";
+import { ProposalsModule } from "./proposals/proposals.module";
 import { RolesModule } from "./roles/roles.module";
+import { Environments } from "./common/common.constants";
+import { Context } from "./common/common.types";
 import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
-import { GraphQLSchema } from "graphql";
-import { applyMiddleware } from "graphql-middleware";
-import { getClaims, getSub } from "./auth/auth.utils";
-import shieldPermissions from "./auth/shield/shield.permissions";
-import { Environments } from "./shared/shared.constants";
-import { Context } from "./shared/shared.types";
+import { VotesModule } from "./votes/votes.module";
 
 const ormConfig: TypeOrmModuleOptions = {
   type: "postgres",
@@ -79,8 +81,10 @@ const useFactory = (
     GroupsModule,
     ImagesModule,
     PostsModule,
+    ProposalsModule,
     RolesModule,
     UsersModule,
+    VotesModule,
   ],
 })
 export class AppModule {}

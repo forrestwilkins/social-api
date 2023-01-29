@@ -9,6 +9,7 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import FeedItem from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
@@ -49,6 +50,11 @@ export class GroupsResolver {
     @Context() { loaders }: { loaders: Dataloaders }
   ) {
     return loaders.groupCoverPhotosLoader.load(id);
+  }
+
+  @ResolveField(() => [FeedItem])
+  async feed(@Parent() { id }: Group) {
+    return this.groupsService.getGroupFeed(id);
   }
 
   @ResolveField(() => [GroupMember])

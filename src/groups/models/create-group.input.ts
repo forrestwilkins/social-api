@@ -1,9 +1,9 @@
-// TODO: Add error handling for field validation
+// TODO: Add pipes for group validation
 
 import { Field, InputType } from "@nestjs/graphql";
 import { Matches } from "class-validator";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
-import { VALID_NAME_CHARACTERS } from "../../shared/shared.constants";
+import { VALID_NAME_CHARACTERS } from "../../common/common.constants";
 
 @InputType()
 export class CreateGroupInput {

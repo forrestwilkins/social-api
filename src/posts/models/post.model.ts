@@ -21,9 +21,9 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  @Field()
-  body: string;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  body?: string;
 
   @Field(() => [Image])
   @OneToMany(() => Image, (image) => image.post)

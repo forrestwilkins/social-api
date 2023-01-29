@@ -22,12 +22,20 @@ export class GroupsService {
     private imagesService: ImagesService
   ) {}
 
-  async getGroup(where: FindOptionsWhere<Group>) {
-    return this.repository.findOne({ where });
+  async getGroup(where: FindOptionsWhere<Group>, relations?: string[]) {
+    return this.repository.findOneOrFail({ where, relations });
   }
 
   async getGroups(where?: FindOptionsWhere<Group>) {
     return this.repository.find({ where, order: { updatedAt: "DESC" } });
+  }
+
+  async getGroupFeed(id: number) {
+    const group = await this.getGroup({ id }, ["proposals", "posts"]);
+    const feed = [...group.posts, ...group.proposals].sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    );
+    return feed;
   }
 
   async getCoverPhotosByBatch(groupIds: number[]) {

@@ -1,3 +1,5 @@
+// TODO: Add one to one relation for cover photo
+
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import {
   Column,
@@ -7,8 +9,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import FeedItem from "../../common/models/feed-item.union";
 import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
+import { Proposal } from "../../proposals/models/proposal.model";
 import { Role } from "../../roles/models/role.model";
 import { GroupMember } from "../group-members/models/group-member.model";
 import { MemberRequest } from "../member-requests/models/member-request.model";
@@ -27,6 +31,9 @@ export class Group {
   @Column()
   @Field()
   description: string;
+
+  @Field(() => [FeedItem])
+  feed: Array<typeof FeedItem>;
 
   @Field(() => [Post])
   @OneToMany(() => Post, (post) => post.group, {
@@ -55,6 +62,12 @@ export class Group {
     cascade: true,
   })
   roles: Role[];
+
+  @Field(() => [Proposal])
+  @OneToMany(() => Proposal, (proposal) => proposal.group, {
+    cascade: true,
+  })
+  proposals: Proposal[];
 
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;

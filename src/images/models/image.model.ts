@@ -3,12 +3,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Group } from "../../groups/models/group.model";
 import { Post } from "../../posts/models/post.model";
+import { Proposal } from "../../proposals/models/proposal.model";
+import { ProposalAction } from "../../proposals/proposal-actions/models/proposal-action.model";
 import { User } from "../../users/models/user.model";
 
 @ObjectType()
@@ -52,6 +56,29 @@ export class Image {
 
   @Column({ nullable: true })
   groupId: number;
+
+  @Field(() => Proposal)
+  @ManyToOne(() => Proposal, (proposal) => proposal.images, {
+    onDelete: "CASCADE",
+  })
+  proposal: Proposal;
+
+  @Column({ nullable: true })
+  proposalId: number;
+
+  @Field(() => ProposalAction)
+  @OneToOne(
+    () => ProposalAction,
+    (proposalAction) => proposalAction.groupCoverPhoto,
+    {
+      onDelete: "CASCADE",
+    }
+  )
+  @JoinColumn()
+  proposalAction: ProposalAction;
+
+  @Column({ nullable: true })
+  proposalActionId: number;
 
   @CreateDateColumn()
   @Field()
