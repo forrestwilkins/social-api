@@ -24,8 +24,10 @@ import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
 import { VotesModule } from "./votes/votes.module";
 
+require("dotenv").config();
+
 // TODO: Remove when no longer needed for testing
-console.log("\n\nprocess.env:", process.env);
+console.log("\n\nDB_SCHEMA:", process.env.DB_SCHEMA);
 
 const ormConfig: TypeOrmModuleOptions = {
   type: "postgres",
