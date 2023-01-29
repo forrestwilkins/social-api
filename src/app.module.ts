@@ -24,6 +24,9 @@ import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
 import { VotesModule } from "./votes/votes.module";
 
+// TODO: Remove when no longer needed for testing
+console.log("\n\nprocess.env:", process.env);
+
 const ormConfig: TypeOrmModuleOptions = {
   type: "postgres",
   host: process.env.DB_HOST,
