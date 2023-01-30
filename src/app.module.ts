@@ -26,9 +26,6 @@ import { VotesModule } from "./votes/votes.module";
 
 require("dotenv").config();
 
-// TODO: Remove when no longer needed for testing
-console.log("\n\nDB_SCHEMA:", process.env.DB_SCHEMA);
-
 const ormConfig: TypeOrmModuleOptions = {
   type: "postgres",
   host: process.env.DB_HOST,
