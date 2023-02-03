@@ -22,7 +22,7 @@ export default new DataSource({
   database: process.env.DB_SCHEMA,
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT as string),
+  port: parseInt(process.env.DB_PORT),
   entities: [
     Group,
     GroupMember,
