@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 import { DataSource } from "typeorm";
+import { Initial1675388391336 } from "./migrations/1675388391336-Initial";
 import { RefreshToken } from "./src/auth/refresh-tokens/models/refresh-token.model";
 import { GroupMember } from "./src/groups/group-members/models/group-member.model";
 import { MemberRequest } from "./src/groups/member-requests/models/member-request.model";
@@ -22,7 +23,7 @@ export default new DataSource({
   database: process.env.DB_SCHEMA,
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT),
+  port: parseInt(process.env.DB_PORT as string),
   entities: [
     Group,
     GroupMember,
@@ -38,4 +39,5 @@ export default new DataSource({
     User,
     Vote,
   ],
+  migrations: [Initial1675388391336],
 });
