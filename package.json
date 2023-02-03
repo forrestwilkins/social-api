@@ -20,7 +20,7 @@
     "test:watch": "jest --watch",
     "test": "jest",
     "typeorm": "yarn typeorm-ts-node-esm",
-    "typeorm:migrate": "yarn typeorm migration:generate -d ./typeOrm.config.ts"
+    "typeorm:gen": "yarn typeorm migration:generate -d ./typeOrm.config.ts"
   },
   "dependencies": {
     "@nestjs/apollo": "^10.0.13",
