@@ -18,12 +18,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:watch": "jest --watch",
-    "test": "jest",
-    "typeorm": "ts-node ./node_modules/typeorm/cli",
-    "typeorm:run-migrations": "yarn typeorm migration:run -- -d ./typeOrm.config.ts",
-    "typeorm:generate-migration": "yarn typeorm -- -d ./typeOrm.config.ts migration:generate ./migrations/$npm_config_name",
-    "typeorm:create-migration": "yarn typeorm -- migration:create ./migrations/$npm_config_name",
-    "typeorm:revert-migration": "yarn typeorm -- -d ./typeOrm.config.ts migration:revert"
+    "test": "jest"
   },
   "dependencies": {
     "@nestjs/apollo": "^10.0.13",
