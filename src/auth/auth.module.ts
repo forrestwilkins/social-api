@@ -1,4 +1,5 @@
 import { forwardRef, Module } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { UsersModule } from "../users/users.module";
@@ -9,8 +10,11 @@ import { JwtStrategy } from "./strategies/jwt.strategy";
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: process.env.JWT_KEY,
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get("JWT_KEY"),
+      }),
     }),
     forwardRef(() => RefreshTokensModule),
     PassportModule,

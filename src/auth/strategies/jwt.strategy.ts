@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { Request } from "express";
 import { Strategy } from "passport-jwt";
@@ -14,10 +15,13 @@ export interface AccessTokenPayload {
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private usersService: UsersService) {
+  constructor(
+    private usersService: UsersService,
+    configService: ConfigService
+  ) {
     super({
       jwtFromRequest: JwtStrategy.extractJWT,
-      secretOrKey: process.env.JWT_KEY,
+      secretOrKey: configService.get("JWT_KEY"),
       ignoreExpiration: false,
     });
   }
