@@ -8,6 +8,7 @@ import { AuthService } from "./auth.service";
 import { RefreshTokensModule } from "./refresh-tokens/refresh-tokens.module";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 
+// TODO: Determine whether this is really needed, or if config service should be used
 config();
 
 @Module({

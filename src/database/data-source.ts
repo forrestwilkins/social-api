@@ -15,6 +15,7 @@ import { RoleMember } from "../roles/role-members/models/role-member.model";
 import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
 
+// TODO: Determine whether this is really needed, or if config service should be used
 config();
 
 export default new DataSource({
