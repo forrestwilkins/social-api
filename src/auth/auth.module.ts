@@ -1,20 +1,21 @@
 import { forwardRef, Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
-import { config } from "dotenv";
 import { UsersModule } from "../users/users.module";
 import { AuthResolver } from "./auth.resolver";
 import { AuthService } from "./auth.service";
 import { RefreshTokensModule } from "./refresh-tokens/refresh-tokens.module";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 
-// TODO: Determine whether this is really needed, or if config service should be used
-config();
-
 @Module({
   imports: [
-    JwtModule.register({
-      secret: process.env.JWT_KEY,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get("JWT_KEY"),
+      }),
     }),
     forwardRef(() => RefreshTokensModule),
     PassportModule,
