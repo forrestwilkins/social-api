@@ -17,7 +17,6 @@ import { Environments } from "../common/common.constants";
 
         synchronize: configService.get("NODE_ENV") === Environments.Development,
         entities: ["dist/**/*{.entity,.model}.js"],
-        migrations: ["migrations/*.js"],
       }),
     }),
   ],
