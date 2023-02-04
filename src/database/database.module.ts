@@ -16,7 +16,7 @@ import { Environments } from "../common/common.constants";
         port: parseInt(configService.get("DB_PORT") as string),
 
         synchronize: configService.get("NODE_ENV") === Environments.Development,
-        entities: ["dist/**/*{.entity,.model}{.ts,.js}"],
+        entities: ["dist/**/*{.entity,.model}.js"],
         migrations: ["migrations/*.js"],
       }),
     }),
