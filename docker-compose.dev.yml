@@ -5,7 +5,7 @@ services:
     container_name: main
     build:
       context: .
-      dockerfile: Dockerfile-dev
+      dockerfile: Dockerfile.dev
       target: build_stage
     volumes:
       - .:/app
