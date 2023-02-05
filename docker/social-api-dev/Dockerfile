@@ -8,23 +8,21 @@ WORKDIR /usr/src/app
 COPY package.json /usr/src/app
 COPY yarn.lock /usr/src/app
 
-RUN npm install -D
+RUN yarn install --development
 
 COPY . .
 
-RUN npm run build
+RUN yarn build
 
 FROM node:16.13-alpine AS runtime_stage
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-ENV NODE_ENV=production
-
 COPY package.json /usr/src/app
 COPY yarn.lock /usr/src/app
 
-RUN npm install --only=production
+RUN yarn install --production
 
 COPY . .
 COPY --from=build_stage /usr/src/app/dist ./dist
