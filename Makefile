@@ -1,23 +1,23 @@
-.PHONY: build-development
-build-development: ## Build the development docker image.
-	docker compose -f docker-compose.dev.yml build
+.PHONY: build-dev
+build-dev: ## Build the development docker image.
+	docker compose -f docker/social-api-dev/docker-compose.yml build
 
-.PHONY: start-development
-start-development: ## Start the development docker container.
-	docker compose -f docker-compose.dev.yml up -d
+.PHONY: start-dev
+start-dev: ## Start the development docker container.
+	docker compose -f docker/social-api-dev/docker-compose.yml up -d
 
-.PHONY: stop-development
-stop-development: ## Stop the development docker container.
-	docker compose -f docker-compose.dev.yml down
+.PHONY: stop-dev
+stop-dev: ## Stop the development docker container.
+	docker compose -f docker/social-api-dev/docker-compose.yml down
   
-.PHONY: build-production
-build-production: ## Build the production docker image.
-	docker compose -f docker-compose.prod.yml build
+.PHONY: build-prod
+build-prod: ## Build the production docker image.
+	docker compose -f docker/social-api-prod/docker-compose.yml build
 
-.PHONY: start-production
-start-production: ## Start the production docker container.
-	docker compose -f docker-compose.prod.yml up -d
+.PHONY: start-prod
+start-prod: ## Start the production docker container.
+	docker compose -f docker/social-api-prod/docker-compose.yml up -d
 
-.PHONY: stop-production
-stop-production: ## Stop the production docker container.
-	docker compose -f docker-compose.prod.yml down
+.PHONY: stop-prod
+stop-prod: ## Stop the production docker container.
+	docker compose -f docker/social-api-prod/docker-compose.yml down

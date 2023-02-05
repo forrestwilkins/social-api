@@ -4,18 +4,16 @@ services:
   main:
     container_name: main
     build:
-      context: .
-      dockerfile: Dockerfile.dev
+      context: ../../
+      dockerfile: docker/social-api-dev/Dockerfile
       target: build_stage
     volumes:
       - .:/app
       - /app/node_modules
     ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
+      - 3100:3100
       - 9229:9229
     command: npm run start:debug
-    env_file:
-      - .env
     networks:
       - webnet
     depends_on:
@@ -27,9 +25,9 @@ services:
     networks:
       - webnet
     environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_DB: ${DB_SCHEMA}
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5432:5432

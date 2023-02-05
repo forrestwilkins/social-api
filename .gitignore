@@ -19,8 +19,8 @@
 .husky
 
 # compiled output
-/dist
-/node_modules
+dist
+node_modules
 
 # Environment variables file
 .env
