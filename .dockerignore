@@ -3,6 +3,9 @@
 .vscode
 coverage
 docker-compose.yml
+Dockerfile
+dist
+.dockerignore
 README.md
 
 # Node Files #

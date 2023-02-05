@@ -1,8 +1,8 @@
-version: "3.7"
+version: "3.8"
 
 services:
-  main:
-    container_name: main
+  social-api-prod:
+    container_name: social-api-prod
     build:
       context: .
       dockerfile: Dockerfile.prod
@@ -12,31 +12,6 @@ services:
       - /app/node_modules
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
-      - 9229:9229
-    command: npm run start:debug
+    command: npm run start
     env_file:
       - .env
-    networks:
-      - webnet
-    depends_on:
-      - postgres
-
-  postgres:
-    container_name: postgres
-    image: postgres:12
-    networks:
-      - webnet
-    environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_DB: ${DB_SCHEMA}
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5432:5432
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
-networks:
-  webnet:
-volumes:
-  pgdata:
