@@ -13,5 +13,3 @@ services:
     ports:
       - "3100:3100"
     command: npm run start
-    env_file:
-      - .env
