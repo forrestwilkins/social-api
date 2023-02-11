@@ -8,8 +8,8 @@ services:
       dockerfile: docker/social-api-dev/Dockerfile
       target: build_stage
     volumes:
-      - .:/app
-      - /app/node_modules
+      - ../../:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
       - 9229:9229
