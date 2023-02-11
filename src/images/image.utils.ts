@@ -7,6 +7,8 @@ const DEFAULT_IMAGES_SIZE = 10;
 const VALID_IMAGE_FORMAT = /(jpe?g|png|gif|webp)$/;
 
 export const saveImage = async (image: Promise<FileUpload>) => {
+  console.log("Called `saveImage`...");
+
   const { createReadStream, mimetype } = await image;
   const extension = mimetype.split("/")[1];
 
@@ -16,6 +18,8 @@ export const saveImage = async (image: Promise<FileUpload>) => {
 
   const filename = `${Date.now()}.${extension}`;
   const path = `./uploads/${filename}`;
+
+  console.log("Attempting to save image...");
 
   await new Promise((resolve, reject) => {
     const stream = createReadStream();
@@ -28,6 +32,8 @@ export const saveImage = async (image: Promise<FileUpload>) => {
       })
       .on("finish", resolve);
   });
+
+  console.log("Successfully saved image...");
 
   return filename;
 };
