@@ -2,11 +2,10 @@ FROM node:16.13-alpine AS build_stage
 
 RUN apk add --update python3 build-base
 
-RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-COPY package.json /usr/src/app
-COPY yarn.lock /usr/src/app
+COPY package.json ./
+COPY yarn.lock ./
 
 RUN yarn install --development
 
@@ -16,11 +15,13 @@ RUN yarn build
 
 FROM node:16.13-alpine AS runtime_stage
 
-RUN mkdir -p /usr/src/app
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
 WORKDIR /usr/src/app
 
-COPY package.json /usr/src/app
-COPY yarn.lock /usr/src/app
+COPY package.json ./
+COPY yarn.lock ./
 
 RUN yarn install --production
 
