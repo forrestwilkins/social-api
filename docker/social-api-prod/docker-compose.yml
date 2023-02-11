@@ -8,8 +8,8 @@ services:
       dockerfile: docker/social-api-prod/Dockerfile
       target: build_stage
     volumes:
-      - .:/app
-      - /app/node_modules
+      - ../../:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
       - 3100:3100
     command: npm run start
