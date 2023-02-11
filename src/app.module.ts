@@ -10,7 +10,6 @@ import { getClaims, getSub } from "./auth/auth.utils";
 import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
 import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
 import shieldPermissions from "./auth/shield/shield.permissions";
-import { Environments } from "./common/common.constants";
 import { Context } from "./common/common.types";
 import { DatabaseModule } from "./database/database.module";
 import { DataloaderModule } from "./dataloader/dataloader.module";
@@ -54,7 +53,10 @@ const useFactory = (
   },
   autoSchemaFile: true,
   cors: { origin: true, credentials: true },
-  csrfPrevention: process.env.NODE_ENV !== Environments.Development,
+
+  // TODO: Re-enable after ruling out as cause of image upload failures
+  // csrfPrevention: process.env.NODE_ENV !== Environments.Development,
+
   resolvers: { Upload: GraphQLUpload },
 });
 
