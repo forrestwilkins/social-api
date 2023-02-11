@@ -65,6 +65,9 @@ export class PostsResolver {
     @Args("postData") postData: CreatePostInput,
     @CurrentUser() user: User
   ) {
+    // TODO: Remove when no longer needed for testing
+    console.log("Reached `createPost` resolver...");
+
     return this.postsService.createPost(postData, user);
   }
 
