@@ -1,5 +1,6 @@
 .PHONY: build-dev
 build-dev: ## Build the development docker image.
+	cp .env docker/social-api-dev/.env
 	docker compose -f docker/social-api-dev/docker-compose.yml build
 
 .PHONY: start-dev
@@ -12,6 +13,7 @@ stop-dev: ## Stop the development docker container.
   
 .PHONY: build-prod
 build-prod: ## Build the production docker image.
+	cp .env docker/social-api-prod/.env
 	docker compose -f docker/social-api-prod/docker-compose.yml build
 
 .PHONY: start-prod
