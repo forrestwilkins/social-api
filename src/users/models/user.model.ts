@@ -16,6 +16,7 @@ import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
 import { RoleMember } from "../../roles/role-members/models/role-member.model";
+import { ServerInvite } from "../../server-invites/models/server-invite.model";
 
 @Entity()
 @ObjectType()
@@ -77,6 +78,11 @@ export class User {
     cascade: true,
   })
   roleMembers: RoleMember[];
+
+  @OneToMany(() => ServerInvite, (serverInvite) => serverInvite.user, {
+    cascade: true,
+  })
+  serverInvites: ServerInvite[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     cascade: true,
