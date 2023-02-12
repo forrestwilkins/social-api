@@ -2,29 +2,27 @@ FROM node:16.13-alpine AS build_stage
 
 RUN apk add --update python3 build-base
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY package.json ./
+COPY yarn.lock ./
 
-RUN npm install -D
+RUN yarn install --development
 
 COPY . .
 
-RUN npm run build
+RUN yarn build
 
 FROM node:16.13-alpine AS runtime_stage
 
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
+WORKDIR /usr/src/app
 
-WORKDIR /app
+COPY package.json ./
+COPY yarn.lock ./
 
-COPY package*.json ./
-
-RUN npm install --only=production
+RUN yarn install --production
 
 COPY . .
-
 COPY --from=build_stage /app/dist ./dist
 
 CMD ["node", "dist/main"]

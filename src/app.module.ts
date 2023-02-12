@@ -1,7 +1,8 @@
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
-import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { config } from "dotenv";
 import { GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { GraphQLUpload } from "graphql-upload";
@@ -10,6 +11,9 @@ import { getClaims, getSub } from "./auth/auth.utils";
 import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
 import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
 import shieldPermissions from "./auth/shield/shield.permissions";
+import { Environments } from "./common/common.constants";
+import { Context } from "./common/common.types";
+import { DatabaseModule } from "./database/database.module";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
@@ -17,23 +21,11 @@ import { ImagesModule } from "./images/images.module";
 import { PostsModule } from "./posts/posts.module";
 import { ProposalsModule } from "./proposals/proposals.module";
 import { RolesModule } from "./roles/roles.module";
-import { Environments } from "./common/common.constants";
-import { Context } from "./common/common.types";
 import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
 import { VotesModule } from "./votes/votes.module";
 
-const ormConfig: TypeOrmModuleOptions = {
-  type: "postgres",
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT as string),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_SCHEMA,
-  entities: ["dist/**/*{.entity,.model}{.ts,.js}"],
-  migrations: ["migrations/*.js"],
-  synchronize: process.env.NODE_ENV === Environments.Development,
-};
+config();
 
 const useFactory = (
   dataloaderService: DataloaderService,
@@ -69,7 +61,7 @@ const useFactory = (
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(ormConfig),
+    ConfigModule.forRoot({ isGlobal: true }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       imports: [DataloaderModule, RefreshTokensModule, UsersModule],
@@ -77,6 +69,7 @@ const useFactory = (
       useFactory,
     }),
     AuthModule,
+    DatabaseModule,
     DataloaderModule,
     GroupsModule,
     ImagesModule,

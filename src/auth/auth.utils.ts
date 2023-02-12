@@ -1,5 +1,8 @@
+import { config } from "dotenv";
 import { JwtPayload, verify } from "jsonwebtoken";
 import { AuthTokens } from "./auth.service";
+
+config();
 
 interface Claims {
   accessTokenClaims: JwtPayload | null;
