@@ -18,10 +18,10 @@ import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
 import { ImagesModule } from "./images/images.module";
-import { InvitesModule } from "./invites/invites.module";
 import { PostsModule } from "./posts/posts.module";
 import { ProposalsModule } from "./proposals/proposals.module";
 import { RolesModule } from "./roles/roles.module";
+import { ServerInvitesModule } from "./server-invites/server-invites.module";
 import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
 import { VotesModule } from "./votes/votes.module";
@@ -36,7 +36,6 @@ const useFactory = (
   context: async ({ req }: { req: Request }): Promise<Context> => {
     const claims = getClaims(req);
     const sub = getSub(claims.accessTokenClaims);
-
     const loaders = dataloaderService.getLoaders();
     const permissions = sub ? await usersService.getUserPermissions(sub) : null;
     const user = sub ? await usersService.getUser({ id: sub }) : null;
@@ -56,6 +55,8 @@ const useFactory = (
   },
   autoSchemaFile: true,
   cors: { origin: true, credentials: true },
+
+  // TODO: Use config service here instead of process.env
   csrfPrevention: process.env.NODE_ENV !== Environments.Development,
   resolvers: { Upload: GraphQLUpload },
 });
@@ -74,10 +75,10 @@ const useFactory = (
     DataloaderModule,
     GroupsModule,
     ImagesModule,
-    InvitesModule,
     PostsModule,
     ProposalsModule,
     RolesModule,
+    ServerInvitesModule,
     UsersModule,
     VotesModule,
   ],

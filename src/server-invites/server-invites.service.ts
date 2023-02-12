@@ -1,4 +1,4 @@
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
-export class InvitesService {}
+export class ServerInvitesService {}
