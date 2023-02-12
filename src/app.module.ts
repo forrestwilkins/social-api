@@ -18,6 +18,7 @@ import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
 import { ImagesModule } from "./images/images.module";
+import { InvitesModule } from "./invites/invites.module";
 import { PostsModule } from "./posts/posts.module";
 import { ProposalsModule } from "./proposals/proposals.module";
 import { RolesModule } from "./roles/roles.module";
@@ -73,6 +74,7 @@ const useFactory = (
     DataloaderModule,
     GroupsModule,
     ImagesModule,
+    InvitesModule,
     PostsModule,
     ProposalsModule,
     RolesModule,
