@@ -1,8 +1,8 @@
 version: "3.7"
 
 services:
-  main:
-    container_name: main
+  social-api-dev:
+    container_name: social-api-dev
     build:
       context: ../../
       dockerfile: docker/social-api-dev/Dockerfile
