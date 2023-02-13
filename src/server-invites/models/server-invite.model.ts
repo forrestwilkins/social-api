@@ -21,9 +21,11 @@ export class ServerInvite {
   token: string;
 
   @Column({ default: 0 })
+  @Field(() => Int)
   uses: number;
 
   @Column({ nullable: true })
+  @Field(() => Int, { nullable: true })
   maxUses?: number;
 
   @Field(() => User)

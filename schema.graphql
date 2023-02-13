@@ -69,6 +69,17 @@ type RoleMember {
   user: User!
 }
 
+type ServerInvite {
+  id: Int!
+  token: String!
+  uses: Int!
+  maxUses: Int
+  user: User!
+  expiresAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type User {
   id: Int!
   name: String!
@@ -217,6 +228,7 @@ type Query {
   role(id: Int!): Role!
   serverRoles: [Role!]!
   authCheck: Boolean!
+  serverInvites: [ServerInvite!]!
 }
 
 type Mutation {
