@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
+import { User } from "../users/models/user.model";
+import { CreateServerInviteInput } from "./models/create-server-invite.input";
 import { ServerInvite } from "./models/server-invite.model";
 
 @Injectable()
@@ -16,5 +18,16 @@ export class ServerInvitesService {
 
   async getServerInvites(where?: FindOptionsWhere<ServerInvite>) {
     return this.repository.find({ where });
+  }
+
+  async createServerInvite(
+    serverInviteData: CreateServerInviteInput,
+    user: User
+  ) {
+    const serverInvite = await this.repository.save({
+      ...serverInviteData,
+      userId: user.id,
+    });
+    return { serverInvite };
   }
 }
