@@ -75,7 +75,7 @@ type ServerInvite {
   uses: Int!
   maxUses: Int
   user: User!
-  expiresAt: DateTime!
+  expiresAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }

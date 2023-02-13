@@ -36,7 +36,7 @@ export class ServerInvite {
   userId: number;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   expiresAt?: Date;
 
   @CreateDateColumn()
