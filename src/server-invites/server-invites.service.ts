@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import * as cryptoRandomString from "crypto-random-string";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { User } from "../users/models/user.model";
 import { CreateServerInviteInput } from "./models/create-server-invite.input";
@@ -24,9 +25,11 @@ export class ServerInvitesService {
     serverInviteData: CreateServerInviteInput,
     user: User
   ) {
+    const token = cryptoRandomString({ length: 8 });
     const serverInvite = await this.repository.save({
       ...serverInviteData,
       userId: user.id,
+      token,
     });
     return { serverInvite };
   }
