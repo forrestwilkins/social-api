@@ -33,4 +33,9 @@ export class ServerInvitesService {
     });
     return { serverInvite };
   }
+
+  async deleteServerInvite(serverInviteId: number) {
+    await this.repository.delete(serverInviteId);
+    return true;
+  }
 }

@@ -1,6 +1,7 @@
 import {
   Args,
   Context,
+  Int,
   Mutation,
   Parent,
   Query,
@@ -38,5 +39,10 @@ export class ServerInvitesResolver {
     @CurrentUser() user: User
   ) {
     return this.serverInvitesService.createServerInvite(serverInviteData, user);
+  }
+
+  @Mutation(() => Boolean)
+  async deleteServerInvite(@Args("id", { type: () => Int }) id: number) {
+    return this.serverInvitesService.deleteServerInvite(id);
   }
 }

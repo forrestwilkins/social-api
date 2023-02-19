@@ -265,6 +265,7 @@ type Mutation {
   signUp(input: SignUpInput!): SignUpPayload!
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
+  deleteServerInvite(id: Int!): Boolean!
 }
 
 input UpdateUserInput {
