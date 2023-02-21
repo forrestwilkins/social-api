@@ -13,8 +13,11 @@ export class ServerInvitesService {
     private repository: Repository<ServerInvite>
   ) {}
 
-  async getServerInvite(id: number, relations?: string[]) {
-    return this.repository.findOneOrFail({ where: { id }, relations });
+  async getServerInvite(
+    where: FindOptionsWhere<ServerInvite>,
+    relations?: string[]
+  ) {
+    return this.repository.findOneOrFail({ where, relations });
   }
 
   async getServerInvites(where?: FindOptionsWhere<ServerInvite>) {
@@ -32,6 +35,14 @@ export class ServerInvitesService {
       token,
     });
     return { serverInvite };
+  }
+
+  // TODO: Add remaining functionality
+  async redeemServerInvite(token: string) {
+    const serverInvite = await this.getServerInvite({ token });
+    await this.repository.update(serverInvite.id, {
+      uses: serverInvite.uses + 1,
+    });
   }
 
   async deleteServerInvite(serverInviteId: number) {
