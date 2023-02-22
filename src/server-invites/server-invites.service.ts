@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { ValidationError } from "apollo-server-express";
 import * as cryptoRandomString from "crypto-random-string";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { User } from "../users/models/user.model";
@@ -37,12 +38,30 @@ export class ServerInvitesService {
     return { serverInvite };
   }
 
-  // TODO: Add remaining functionality
   async redeemServerInvite(token: string) {
     const serverInvite = await this.getServerInvite({ token });
+    const isValid = await this.validateServerInvite(serverInvite.id);
+    if (!isValid) {
+      throw new ValidationError("Invalid server invite");
+    }
     await this.repository.update(serverInvite.id, {
       uses: serverInvite.uses + 1,
     });
+    return true;
+  }
+
+  async validateServerInvite(serverInviteId: number) {
+    const serverInvite = await this.getServerInvite({ id: serverInviteId });
+
+    const isExpired =
+      serverInvite.expiresAt && Number(serverInvite.expiresAt) >= Date.now();
+    const maxUsesReached =
+      serverInvite.maxUses && serverInvite.uses >= serverInvite.maxUses;
+
+    if (isExpired || maxUsesReached) {
+      return false;
+    }
+    return true;
   }
 
   async deleteServerInvite(serverInviteId: number) {
