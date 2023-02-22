@@ -232,6 +232,7 @@ type Query {
   role(id: Int!): Role!
   serverRoles: [Role!]!
   authCheck: Boolean!
+  serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
 }
 

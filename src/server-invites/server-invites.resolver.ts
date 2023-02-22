@@ -20,6 +20,11 @@ import { ServerInvitesService } from "./server-invites.service";
 export class ServerInvitesResolver {
   constructor(private serverInvitesService: ServerInvitesService) {}
 
+  @Query(() => ServerInvite)
+  async serverInvite(@Args("token", { type: () => String }) token: string) {
+    return this.serverInvitesService.getServerInvite({ token });
+  }
+
   @Query(() => [ServerInvite])
   async serverInvites() {
     return this.serverInvitesService.getServerInvites();
