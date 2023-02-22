@@ -14,6 +14,7 @@ const shieldPermissions = shield(
     Query: {
       "*": isAuthenticated,
       users: canBanMembers,
+      serverInvite: allow,
 
       // TODO: Remove once no longer needed for testing
       serverInvites: allow,
