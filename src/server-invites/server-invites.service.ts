@@ -6,6 +6,7 @@ import { FindOptionsWhere, Repository } from "typeorm";
 import { User } from "../users/models/user.model";
 import { CreateServerInviteInput } from "./models/create-server-invite.input";
 import { ServerInvite } from "./models/server-invite.model";
+import { validateServerInvite } from "./server-invites.utils";
 
 @Injectable()
 export class ServerInvitesService {
@@ -27,6 +28,18 @@ export class ServerInvitesService {
 
   async getServerInvites(where?: FindOptionsWhere<ServerInvite>) {
     return this.repository.find({ where });
+  }
+
+  async getValidServerInvites() {
+    const serverInvites = await this.getServerInvites();
+
+    return serverInvites.reduce<ServerInvite[]>((result, serverInvite) => {
+      const isValid = validateServerInvite(serverInvite);
+      if (isValid) {
+        result.push(serverInvite);
+      }
+      return result;
+    }, []);
   }
 
   async createServerInvite(
@@ -60,16 +73,7 @@ export class ServerInvitesService {
 
   async validateServerInvite(token: string) {
     const serverInvite = await this.getServerInvite({ token });
-
-    const isExpired =
-      serverInvite.expiresAt && Date.now() >= Number(serverInvite.expiresAt);
-    const maxUsesReached =
-      serverInvite.maxUses && serverInvite.uses >= serverInvite.maxUses;
-
-    if (isExpired || maxUsesReached) {
-      return false;
-    }
-    return true;
+    return validateServerInvite(serverInvite);
   }
 
   async deleteServerInvite(serverInviteId: number) {

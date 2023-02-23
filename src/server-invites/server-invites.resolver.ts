@@ -27,7 +27,7 @@ export class ServerInvitesResolver {
 
   @Query(() => [ServerInvite])
   async serverInvites() {
-    return this.serverInvitesService.getServerInvites();
+    return this.serverInvitesService.getValidServerInvites();
   }
 
   @ResolveField(() => User)
