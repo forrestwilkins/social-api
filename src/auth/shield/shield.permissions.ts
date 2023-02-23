@@ -2,6 +2,8 @@ import { allow, and, not, or, shield } from "graphql-shield";
 import { FORBIDDEN } from "../../common/common.constants";
 import {
   canBanMembers,
+  canCreateInvites,
+  canManageInvites,
   canManagePosts,
   canManageRoles,
   hasValidRefreshToken,
@@ -15,14 +17,17 @@ const shieldPermissions = shield(
       "*": isAuthenticated,
       users: canBanMembers,
       serverInvite: allow,
+      serverInvites: or(canCreateInvites, canManageInvites),
     },
     Mutation: {
       "*": isAuthenticated,
       login: allow,
       logOut: allow,
       signUp: allow,
-      deletePost: or(canManagePosts, isOwnPost),
       refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
+      deletePost: or(canManagePosts, isOwnPost),
+      createServerInvite: or(canCreateInvites, canManageInvites),
+      deleteServerInvite: canManageInvites,
     },
     Role: canManageRoles,
     RoleMember: canManageRoles,

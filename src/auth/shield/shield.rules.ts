@@ -5,6 +5,16 @@ import { Context } from "../../common/common.types";
 import { getJti, getSub } from "../auth.utils";
 import { hasPermission } from "./shield.utils";
 
+export const canCreateInvites = rule()(
+  async (_parent, _args, { permissions }: Context) =>
+    hasPermission(permissions, ServerPermissions.CreateInvites)
+);
+
+export const canManageInvites = rule()(
+  async (_parent, _args, { permissions }: Context) =>
+    hasPermission(permissions, ServerPermissions.ManageInvites)
+);
+
 export const canManagePosts = rule()(
   async (_parent, _args, { permissions }: Context) =>
     hasPermission(permissions, ServerPermissions.ManagePosts)
