@@ -42,23 +42,27 @@ export class ServerInvitesService {
     return { serverInvite };
   }
 
+  /**
+   * Verifies that server invite is valid, and increments `uses` by 1
+   *
+   * Throws validation error if invalid
+   */
   async redeemServerInvite(token: string) {
-    const serverInvite = await this.getServerInvite({ token });
-    const isValid = await this.validateServerInvite(serverInvite.id);
+    const isValid = await this.validateServerInvite(token);
     if (!isValid) {
       throw new ValidationError("Invalid server invite");
     }
+    const serverInvite = await this.getServerInvite({ token });
     await this.repository.update(serverInvite.id, {
       uses: serverInvite.uses + 1,
     });
-    return true;
   }
 
-  async validateServerInvite(serverInviteId: number) {
-    const serverInvite = await this.getServerInvite({ id: serverInviteId });
+  async validateServerInvite(token: string) {
+    const serverInvite = await this.getServerInvite({ token });
 
     const isExpired =
-      serverInvite.expiresAt && Number(serverInvite.expiresAt) >= Date.now();
+      serverInvite.expiresAt && Date.now() >= Number(serverInvite.expiresAt);
     const maxUsesReached =
       serverInvite.maxUses && serverInvite.uses >= serverInvite.maxUses;
 

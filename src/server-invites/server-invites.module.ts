@@ -7,5 +7,6 @@ import { ServerInvitesService } from "./server-invites.service";
 @Module({
   imports: [TypeOrmModule.forFeature([ServerInvite])],
   providers: [ServerInvitesResolver, ServerInvitesService],
+  exports: [ServerInvitesService],
 })
 export class ServerInvitesModule {}

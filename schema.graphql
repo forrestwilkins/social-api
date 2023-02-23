@@ -1,16 +1,3 @@
-type GroupMember {
-  id: Int!
-  user: User!
-  group: Group!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type Vote {
   id: Int!
   voteType: String!
@@ -19,6 +6,11 @@ type Vote {
   createdAt: DateTime!
   updatedAt: DateTime!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type ProposalAction {
   id: Int!
@@ -45,11 +37,30 @@ type Proposal {
   voteCount: Int!
 }
 
+type Image {
+  id: Int!
+  filename: String!
+  imageType: String!
+  post: Post!
+  user: User!
+  group: Group!
+  proposal: Proposal!
+  proposalAction: ProposalAction!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Permission {
   id: Int!
   name: String!
   enabled: Boolean!
   role: Role!
+}
+
+type RoleMember {
+  id: Int!
+  role: Role!
+  user: User!
 }
 
 type Role {
@@ -63,48 +74,10 @@ type Role {
   availableUsersToAdd: [User!]!
 }
 
-type RoleMember {
+type GroupMember {
   id: Int!
-  role: Role!
   user: User!
-}
-
-type ServerInvite {
-  id: Int!
-  token: String!
-  uses: Int!
-  maxUses: Int
-  user: User!
-  expiresAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type User {
-  id: Int!
-  name: String!
-  email: String!
-  bio: String
-  posts: [Post!]!
-  proposals: [Proposal!]!
-  homeFeed: [FeedItem!]!
-  profileFeed: [FeedItem!]!
-  profilePicture: Image!
-  coverPhoto: Image
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  joinedGroups: [Group!]!
-  serverPermissions: [String!]!
-}
-
-union FeedItem = Post | Proposal
-
-type Post {
-  id: Int!
-  body: String
-  images: [Image!]!
-  user: User!
-  group: Group
+  group: Group!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -133,17 +106,48 @@ type Group {
   memberRequestCount: Int!
 }
 
-type Image {
+union FeedItem = Post | Proposal
+
+type Post {
   id: Int!
-  filename: String!
-  imageType: String!
-  post: Post!
+  body: String
+  images: [Image!]!
   user: User!
-  group: Group!
-  proposal: Proposal!
-  proposalAction: ProposalAction!
+  group: Group
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type User {
+  id: Int!
+  name: String!
+  email: String!
+  bio: String
+  posts: [Post!]!
+  proposals: [Proposal!]!
+  homeFeed: [FeedItem!]!
+  profileFeed: [FeedItem!]!
+  profilePicture: Image!
+  coverPhoto: Image
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  joinedGroups: [Group!]!
+  serverPermissions: [String!]!
+}
+
+type ServerInvite {
+  id: Int!
+  token: String!
+  uses: Int!
+  maxUses: Int
+  user: User!
+  expiresAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type CreateServerInvitePayload {
+  serverInvite: ServerInvite!
 }
 
 type CreatePostPayload {
@@ -209,10 +213,6 @@ type CreateProposalPayload {
 
 type UpdateProposalPayload {
   proposal: Proposal!
-}
-
-type CreateServerInvitePayload {
-  serverInvite: ServerInvite!
 }
 
 type Query {
