@@ -30,6 +30,15 @@ export class ServerInvitesService {
     return this.repository.find({ where });
   }
 
+  async getValidServerInvite(token: string) {
+    const serverInvite = await this.getServerInvite({ token });
+    const isValid = validateServerInvite(serverInvite);
+    if (!isValid) {
+      throw new ValidationError("Invalid server invite");
+    }
+    return serverInvite;
+  }
+
   async getValidServerInvites() {
     const serverInvites = await this.getServerInvites();
 
