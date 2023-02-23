@@ -10,4 +10,7 @@ export class SignUpInput {
 
   @Field()
   password: string;
+
+  @Field()
+  inviteToken: string;
 }
