@@ -38,9 +38,15 @@ export class AuthService {
 
   async signUp({
     password,
+    inviteToken,
     ...userData
   }: SignUpInput): Promise<SetAuthCookieInput> {
-    await this.serverInvitesService.redeemServerInvite(userData.inviteToken);
+    const isValidInvite = await this.serverInvitesService.validateServerInvite(
+      inviteToken
+    );
+    if (!isValidInvite) {
+      throw new ValidationError("Invalid invite token");
+    }
 
     const existingUser = await this.usersService.getUser({
       email: userData.email,
@@ -55,6 +61,9 @@ export class AuthService {
       ...userData,
     });
     const authTokens = await this.generateAuthTokens(user.id);
+
+    // Redeem invite only after successful sign up
+    await this.serverInvitesService.redeemServerInvite(inviteToken);
 
     return { user, authTokens };
   }
