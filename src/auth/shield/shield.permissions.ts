@@ -15,9 +15,6 @@ const shieldPermissions = shield(
       "*": isAuthenticated,
       users: canBanMembers,
       serverInvite: allow,
-
-      // TODO: Remove once no longer needed for testing
-      serverInvites: allow,
     },
     Mutation: {
       "*": isAuthenticated,
