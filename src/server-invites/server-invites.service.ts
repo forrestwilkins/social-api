@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ValidationError } from "apollo-server-express";
+import { UserInputError, ValidationError } from "apollo-server-express";
 import * as cryptoRandomString from "crypto-random-string";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { User } from "../users/models/user.model";
@@ -18,7 +18,11 @@ export class ServerInvitesService {
     where: FindOptionsWhere<ServerInvite>,
     relations?: string[]
   ) {
-    return this.repository.findOneOrFail({ where, relations });
+    const serverInvite = await this.repository.findOne({ where, relations });
+    if (!serverInvite) {
+      throw new UserInputError("Invite not found");
+    }
+    return serverInvite;
   }
 
   async getServerInvites(where?: FindOptionsWhere<ServerInvite>) {
