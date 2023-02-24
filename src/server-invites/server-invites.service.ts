@@ -64,11 +64,6 @@ export class ServerInvitesService {
     return { serverInvite };
   }
 
-  /**
-   * Verifies that server invite is valid, and increments `uses` by 1
-   *
-   * Throws validation error if invalid
-   */
   async redeemServerInvite(token: string) {
     const isValid = await this.validateServerInvite(token);
     if (!isValid) {
