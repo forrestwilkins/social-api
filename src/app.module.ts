@@ -1,8 +1,7 @@
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
-import { config } from "dotenv";
 import { GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { GraphQLUpload } from "graphql-upload";
@@ -26,9 +25,8 @@ import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
 import { VotesModule } from "./votes/votes.module";
 
-config();
-
 const useFactory = (
+  configService: ConfigService,
   dataloaderService: DataloaderService,
   refreshTokensService: RefreshTokensService,
   usersService: UsersService
@@ -55,9 +53,7 @@ const useFactory = (
   },
   autoSchemaFile: true,
   cors: { origin: true, credentials: true },
-
-  // TODO: Use config service here instead of process.env
-  csrfPrevention: process.env.NODE_ENV !== Environments.Development,
+  csrfPrevention: configService.get("NODE_ENV") !== Environments.Development,
   resolvers: { Upload: GraphQLUpload },
 });
 
@@ -67,7 +63,12 @@ const useFactory = (
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       imports: [DataloaderModule, RefreshTokensModule, UsersModule],
-      inject: [DataloaderService, RefreshTokensService, UsersService],
+      inject: [
+        ConfigService,
+        DataloaderService,
+        RefreshTokensService,
+        UsersService,
+      ],
       useFactory,
     }),
     AuthModule,
