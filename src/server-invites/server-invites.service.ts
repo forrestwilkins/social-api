@@ -33,13 +33,9 @@ export class ServerInvitesService {
     const serverInvites = await this.repository.find({
       order: { createdAt: "DESC" },
     });
-    return serverInvites.reduce<ServerInvite[]>((result, serverInvite) => {
-      const isValid = validateServerInvite(serverInvite);
-      if (isValid) {
-        result.push(serverInvite);
-      }
-      return result;
-    }, []);
+    return serverInvites.filter((serverInvite) =>
+      validateServerInvite(serverInvite)
+    );
   }
 
   async createServerInvite(
