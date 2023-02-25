@@ -2,6 +2,7 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserInputError, ValidationError } from "apollo-server-express";
 import { compare, hash } from "bcrypt";
+import { ServerInvitesService } from "../server-invites/server-invites.service";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 import { SetAuthCookieInput } from "./interceptors/set-auth-cookie.interceptor";
@@ -23,8 +24,10 @@ export class AuthService {
   constructor(
     @Inject(forwardRef(() => RefreshTokensService))
     private refreshTokensService: RefreshTokensService,
-    private usersService: UsersService,
-    private jwtService: JwtService
+
+    private jwtService: JwtService,
+    private serverInvitesService: ServerInvitesService,
+    private usersService: UsersService
   ) {}
 
   async login({ email, password }: LoginInput): Promise<SetAuthCookieInput> {
@@ -35,8 +38,12 @@ export class AuthService {
 
   async signUp({
     password,
+    inviteToken,
     ...userData
   }: SignUpInput): Promise<SetAuthCookieInput> {
+    const serverInvite = await this.serverInvitesService.getServerInvite(
+      inviteToken
+    );
     const existingUser = await this.usersService.getUser({
       email: userData.email,
     });
@@ -50,6 +57,9 @@ export class AuthService {
       ...userData,
     });
     const authTokens = await this.generateAuthTokens(user.id);
+
+    // Redeem invite only after successful sign up
+    await this.serverInvitesService.redeemServerInvite(serverInvite.id);
 
     return { user, authTokens };
   }

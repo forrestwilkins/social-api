@@ -2,6 +2,7 @@ import { forwardRef, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
+import { ServerInvitesModule } from "../server-invites/server-invites.module";
 import { UsersModule } from "../users/users.module";
 import { AuthResolver } from "./auth.resolver";
 import { AuthService } from "./auth.service";
@@ -18,6 +19,7 @@ import { JwtStrategy } from "./strategies/jwt.strategy";
     }),
     forwardRef(() => RefreshTokensModule),
     PassportModule,
+    ServerInvitesModule,
     UsersModule,
   ],
   providers: [AuthResolver, AuthService, JwtStrategy],

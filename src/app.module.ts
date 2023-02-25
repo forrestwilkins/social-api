@@ -1,8 +1,7 @@
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
-import { config } from "dotenv";
 import { GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { GraphQLUpload } from "graphql-upload";
@@ -21,13 +20,13 @@ import { ImagesModule } from "./images/images.module";
 import { PostsModule } from "./posts/posts.module";
 import { ProposalsModule } from "./proposals/proposals.module";
 import { RolesModule } from "./roles/roles.module";
+import { ServerInvitesModule } from "./server-invites/server-invites.module";
 import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
 import { VotesModule } from "./votes/votes.module";
 
-config();
-
 const useFactory = (
+  configService: ConfigService,
   dataloaderService: DataloaderService,
   refreshTokensService: RefreshTokensService,
   usersService: UsersService
@@ -35,7 +34,6 @@ const useFactory = (
   context: async ({ req }: { req: Request }): Promise<Context> => {
     const claims = getClaims(req);
     const sub = getSub(claims.accessTokenClaims);
-
     const loaders = dataloaderService.getLoaders();
     const permissions = sub ? await usersService.getUserPermissions(sub) : null;
     const user = sub ? await usersService.getUser({ id: sub }) : null;
@@ -55,7 +53,7 @@ const useFactory = (
   },
   autoSchemaFile: true,
   cors: { origin: true, credentials: true },
-  csrfPrevention: process.env.NODE_ENV !== Environments.Development,
+  csrfPrevention: configService.get("NODE_ENV") !== Environments.Development,
   resolvers: { Upload: GraphQLUpload },
 });
 
@@ -65,7 +63,12 @@ const useFactory = (
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       imports: [DataloaderModule, RefreshTokensModule, UsersModule],
-      inject: [DataloaderService, RefreshTokensService, UsersService],
+      inject: [
+        ConfigService,
+        DataloaderService,
+        RefreshTokensService,
+        UsersService,
+      ],
       useFactory,
     }),
     AuthModule,
@@ -76,6 +79,7 @@ const useFactory = (
     PostsModule,
     ProposalsModule,
     RolesModule,
+    ServerInvitesModule,
     UsersModule,
     VotesModule,
   ],
