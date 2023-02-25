@@ -27,7 +27,10 @@ export class ServerInvitesService {
   }
 
   async getServerInvites(where?: FindOptionsWhere<ServerInvite>) {
-    return this.repository.find({ where });
+    return this.repository.find({
+      order: { createdAt: "DESC" },
+      where,
+    });
   }
 
   async getValidServerInvite(token: string) {
